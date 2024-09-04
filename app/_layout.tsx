@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-/* export default function RootLayout() {
+export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
@@ -16,4 +16,3 @@ import { Stack } from 'expo-router';
     </Stack>
   );
 }
-*/

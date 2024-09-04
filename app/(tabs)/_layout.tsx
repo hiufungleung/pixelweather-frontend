@@ -6,8 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 export default function TabLayout() {
   return (
     <>
-        {/* StatusBar Configuration */}
-        <StatusBar style="light" backgroundColor="#1CA9C9" />
+        <StatusBar style="light" backgroundColor="#000000" />
 
         <Tabs
           screenOptions={{
