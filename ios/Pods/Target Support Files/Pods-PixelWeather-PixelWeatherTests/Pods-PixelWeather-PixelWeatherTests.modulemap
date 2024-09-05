@@ -1,0 +1,6 @@
+module Pods_PixelWeather_PixelWeatherTests {
+  umbrella header "Pods-PixelWeather-PixelWeatherTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

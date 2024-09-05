@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.pixelweather.app-merged_res-38:/mipmap-hdpi_pixel_weather.png.flat",
+        "source": "com.pixelweather.app-main-40:/mipmap-hdpi/pixel_weather.png"
+    },
+    {
+        "merged": "com.pixelweather.app-merged_res-38:/mipmap-xhdpi_pixel_weather.png.flat",
+        "source": "com.pixelweather.app-main-40:/mipmap-xhdpi/pixel_weather.png"
+    },
+    {
+        "merged": "com.pixelweather.app-merged_res-38:/mipmap-xxhdpi_pixel_weather.png.flat",
+        "source": "com.pixelweather.app-main-40:/mipmap-xxhdpi/pixel_weather.png"
+    },
+    {
+        "merged": "com.pixelweather.app-merged_res-38:/mipmap-xxxhdpi_pixel_weather.png.flat",
+        "source": "com.pixelweather.app-main-40:/mipmap-xxxhdpi/pixel_weather.png"
+    },
+    {
+        "merged": "com.pixelweather.app-merged_res-38:/drawable_rn_edit_text_material.xml.flat",
+        "source": "com.pixelweather.app-main-40:/drawable/rn_edit_text_material.xml"
+    },
+    {
+        "merged": "com.pixelweather.app-merged_res-38:/mipmap-mdpi_pixel_weather.png.flat",
+        "source": "com.pixelweather.app-main-40:/mipmap-mdpi/pixel_weather.png"
+    }
+]
