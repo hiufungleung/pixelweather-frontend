@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     padding: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
   },
   header: {
     fontSize: 24,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     marginBottom: 10, // Adds space between rows
   },
   selectedButton: {
-    backgroundColor: '#1CA9C9', // Light red background for selected buttons
+    backgroundColor: '#BCB2FE', // Light red background for selected buttons
   },
   buttonText: {
     color: 'black',

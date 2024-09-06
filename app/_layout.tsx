@@ -1,18 +1,23 @@
 import { Stack } from 'expo-router';
+import GradientTheme from '@/components/GradientTheme';
 
 export default function RootLayout() {
+
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: '#1CA9C9',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-        headerTitleAlign: 'center',
-      }}>
-    </Stack>
+    <GradientTheme>
+        <Stack
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: 'transparent',
+            },
+            headerTintColor: '#fff',
+            title: '',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+            headerTitleAlign: 'center',
+          }}>
+        </Stack>
+    </GradientTheme>
   );
 }
