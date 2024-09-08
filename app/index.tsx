@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import GradientTheme from '@/components/GradientTheme';
+import * as ColourScheme from '@/constants.ColourScheme'
 
 const API_KEY = '9480d17e216cfcf5b44da6050c7286a4'; // Replace with your weather API key
 
@@ -79,7 +80,7 @@ const HomeScreen = () => {
 
   return (
     <GradientTheme>
-      <View style={{ flex: 1, padding: 20 }}>
+      <View style={{ flex: 1, paddingTop: 100, paddingHorizontal: 15 }}>
         <TextInput
           style={{
             height: 40,
@@ -133,33 +134,6 @@ const HomeScreen = () => {
     </GradientTheme>
   );
 };
-
-
-
-// Other screens (Past, Alerts, Settings)
-const PastScreen = () => (
-  <GradientTheme>
-    <View>
-      <Text>Past Weather</Text>
-    </View>
-  </GradientTheme>
-);
-
-const AlertsScreen = () => (
-  <GradientTheme>
-    <View>
-      <Text>Weather Alerts</Text>
-    </View>
-  </GradientTheme>
-);
-
-const SettingsScreen = () => (
-  <GradientTheme>
-    <View>
-      <Text>Settings</Text>
-    </View>
-  </GradientTheme>
-);
 
 const styles = StyleSheet.create({
   gradient: {
