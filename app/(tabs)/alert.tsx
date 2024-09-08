@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, View, Text, Switch, StyleSheet } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { FontAwesome } from '@expo/vector-icons';
 
 // AlertButton component that accepts an alertText prop and an isSelected prop
-function AlertButton({ alertText, isActive = false }) {
-    const [isSelected, setSelected] = useState(isActive);
+function AlertButton({ alertText, isSelected = true }) {
+    /* const [isSelected, setSelected] = useState(isActive);
 
     function handleClick() {
         isSelected ? setSelected(false) : setSelected(true)
-    }
+    } */
 
     return (
         <TouchableOpacity
             style={[styles.button, isSelected && styles.selectedButton]}
-            onPress={handleClick}
         >
             <Text
                 style={[styles.buttonText, isSelected && styles.selectedButtonText]}
@@ -26,12 +26,46 @@ function AlertButton({ alertText, isActive = false }) {
     );
 }
 
+// Edit Button Component for editing Alert Type and Areas
+function EditButton() {
+    return (
+        <TouchableOpacity
+            style={styles.editButton}
+        >
+            <FontAwesome name="edit" size={24} color="black" style={styles.editIcon} />
+        </TouchableOpacity>
+    );
+}
+
+function AreaButton ({ areaLocation }) {
+    return (
+        <TouchableOpacity
+             style={ styles.button }>
+            <Text
+                 style={ styles.buttonText }
+                 adjustsFontSizeToFit
+                 numberOfLines={1}>
+                {areaLocation}
+            </Text>
+        </TouchableOpacity>
+    );
+}
+
 // Timing Component
 function TimingBar({ startTime, endTime }) {
+
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
     return (
         <View style={styles.timingBar}>
             <Text style={styles.timingBarText}>{startTime}-{endTime}</Text>
-            <Switch/>
+            <Switch
+                    trackColor={{false: '#767577', true: '#363EFF'}}
+                    thumbColor={isEnabled ? '#BCB2FE' : '#f4f3f4'}
+                    onValueChange={toggleSwitch}
+                    value={isEnabled}
+            />
         </View>
     );
 }
@@ -40,26 +74,28 @@ function TimingBar({ startTime, endTime }) {
 export default function AlertsScreen() {
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.headerContainer}>
           <Text style={styles.header}>Alert Type</Text>
+          <EditButton />
+      </View>
+      <View>
           <View style={styles.buttonContainer}>
-            <AlertButton alertText="Test" isActive={true}/>
+            <AlertButton alertText="Test"/>
             <AlertButton alertText="Foggy"/>
             <AlertButton alertText="Strong Wind"/>
             <AlertButton alertText="Floods"/>
-            <AlertButton alertText="Thunder"/>
-            <AlertButton alertText="Scorching"/>
-            <AlertButton alertText="Tornadoes"/>
-            <AlertButton alertText="High Ultraviolet"/>
           </View>
       </View>
       <View>
-          <Text style={styles.header}>Areas</Text>
+          <View style={styles.headerContainer}>
+            <Text style={styles.header}>Areas</Text>
+            <EditButton />
+          </View>
           <View style={styles.buttonContainer}>
-            <AlertButton alertText="Woolloongabba"/>
-            <AlertButton alertText="Brisbane City"/>
-            <AlertButton alertText="South Brisbane"/>
-            <AlertButton alertText="More"/>
+            <AreaButton areaLocation="Woolloongabba"/>
+            <AreaButton areaLocation="Brisbane City"/>
+            <AreaButton areaLocation="South Brisbane"/>
+            <AreaButton areaLocation="+"/>
           </View>
       </View>
       <View>
@@ -80,6 +116,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     padding: 20,
     backgroundColor: 'transparent',
+  },
+  headerContainer: {
+      flexDirection: 'row', // Puts the text and icon in a row
+      justifyContent: 'space-between', // Aligns text to the left and icon to the right
+      alignItems: 'center', // Vertically centers the text and icon
+      marginBottom: 10,
+      width: '100%',
   },
   header: {
     fontSize: 24,
@@ -115,6 +158,12 @@ const styles = StyleSheet.create({
   selectedButtonText: {
       color: 'black', // Change text color for selected buttons
   },
+  editButton: {
+      borderColor: 'black',
+      borderWidth: 1,
+      padding: 5,
+      borderRadius: 5,
+  },
   timingBarContainer: {
       width: '100%',
   },
@@ -126,6 +175,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       paddingHorizontal: 20,
       borderRadius: 10,
+      padding: 10,
       marginBottom: 10, // Adds space between rows
   },
   timingBarText: {
