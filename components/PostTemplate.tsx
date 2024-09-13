@@ -1,16 +1,80 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-export default function PostTemplate() {
+// Helper function to format the time difference
+const formatTimeDifference = (postedTime) => {
+    const now = new Date();
+    const postDate = new Date(postedTime);
+    const differenceInMs = now - postDate;
+    const differenceInMins = Math.floor(differenceInMs / 60000);
+    const differenceInHours = Math.floor(differenceInMins / 60);
+
+    if (differenceInMins < 1) {
+        return "Now";
+    } else if (differenceInMins < 60) {
+        return `${differenceInMins} mins ago`;
+    } else if (differenceInHours < 24) {
+        return `${differenceInHours} hrs ago`;
+    } else {
+        const differenceInDays = Math.floor(differenceInHours / 24);
+        return `${differenceInDays} days ago`;
+    }
+};
+
+// Helper function to format the likes count
+const formatLikes = (likes) => {
+    if (likes < 1000) {
+        return likes.toString();
+    } else {
+        return (likes / 1000).toFixed(1) + 'k';
+    }
+};
+
+export default function PostTemplate({ postId, icon, weatherCondition, location, postedTime, likes }) {
     return (
         <View style={styles.postContainer}>
-            <View style={styles.postInfoContainer}>
-                <View >
-                    <Text> testing123 </Text>
-                </View>
-                <View>
+            {/* Weather Icon */}
+            <View style={styles.postIcon}>
+                <Text>{icon}</Text>
+            </View>
+
+            {/* Weather Information */}
+            <View style={styles.postInfo}>
+
+                {/* Weather Info */}
+                <View style={styles.infoContainer}>
+                    <View style={styles.statusContainer}>
+                        <Text style={styles.statusText}>Now it is {weatherCondition}</Text>
+                    </View>
+                    <View style={styles.timeContainer}>
+                        <Text style={styles.timeText}>{formatTimeDifference(postedTime)}</Text>
+                    </View>
                 </View>
 
+                <View style={styles.locationContainer}>
+                    <Text style={styles.locationText}>{location}</Text>
+                </View>
+
+                {/* Action Icons */}
+                <View style={styles.footer}>
+                    <View style={styles.actionIcons}>
+                        <TouchableOpacity style={styles.iconGroup}>
+                            <Icon name="favorite-border" size={24} color="black" />
+                            <Text style={styles.likeCount}>{formatLikes(likes)}</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.iconGroup}>
+                            <Icon name="share" size={24} color="black" />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View>
+                        <TouchableOpacity>
+                            <Text style={styles.reportText}>Report</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         </View>
     );
@@ -18,16 +82,80 @@ export default function PostTemplate() {
 
 const styles = StyleSheet.create({
     postContainer: {
-        backgroundColor: '#D9D9D9',
-        borderRadius: 10,
+        padding: 16,
+        backgroundColor: '#F9F9F9',
+        borderRadius: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+        marginVertical: 10,
+        height: 150,
+        width: '90%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
-    postInfoContainer: {
-        flex: 1,
+    postIcon: {
+        width: '30%',
+        height: '100%',
     },
-    weatherIcon: {
+    postInfo: {
+        width: '70%',
+        justifyContent: 'space-between',
+    },
+    infoContainer: {
+        flexDirection: 'row',
+        height: '20%',
+    },
+    statusContainer: {
+        width: '70%',
+    },
+    statusText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    timeContainer: {
         width: '30%',
     },
-    weatherInfo: {
+    timeText: {
+        fontSize: 12,
+        color: '#999',
+        textAlign: 'right',
+    },
+    locationContainer: {
+        height: '60%',
+        justifyContent: 'center',
+    },
+    locationText: {
+        fontSize: 14,
+        color: '#666',
+    },
+    footer: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        height: '20%',
+        justifyContent: 'space-between',
+    },
+    actionIcons: {
         width: '70%',
+        flexDirection: 'row',
+        justifyContent: 'start',
+    },
+    iconGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 15,
+    },
+    likeCount: {
+        fontSize: 12,
+        marginLeft: 5,
+        color: '#333',
+    },
+    reportText: {
+        color: '#007BFF',
+        fontSize: 12,
+        alignItems: 'center',
     },
 });

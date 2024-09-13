@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, SafeAreaView } from 'react-native';
+import { Text, View, StyleSheet, SafeAreaView, ScrollView, FlatList } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import PostTemplate from '@/components/PostTemplate'
 import GradientTheme from '@/components/GradientTheme';
@@ -8,26 +8,105 @@ import * as ColorScheme from '@/constants/ColorScheme'
 // Top Tab Navigator
 const Tab = createMaterialTopTabNavigator();
 
+// Sample data for testing
+const data = [
+    {
+        postId: 1,
+        icon: '☀️',
+        weatherCondition: 'Sunny',
+        location: '49-1 Boomerang Rd \nSt Lucia',
+        postedTime: '2024-09-13T04:00:00Z',
+        likes: 20000,
+    },
+    {
+        postId: 2,
+        icon: '🌧️',
+        weatherCondition: 'Rainy',
+        location: '12 James St \nFortitude Valley',
+        postedTime: '2024-09-12T11:30:00Z',
+        likes: 1350,
+    },
+    {
+        postId: 3,
+        icon: '⛅',
+        weatherCondition: 'Cloudy',
+        location: '25 Main St \nSouth Bank',
+        postedTime: '2024-09-12T09:15:00Z',
+        likes: 999,
+    },
+    {
+        postId: 4,
+        icon: '🌩️',
+        weatherCondition: 'Stormy',
+        location: '500 Queen St \nBrisbane',
+        postedTime: '2024-09-11T23:00:00Z',
+        likes: 3005,
+    },
+    {
+        postId: 5,
+        icon: '❄️',
+        weatherCondition: 'Snowy',
+        location: '10 Beach Ave \nGold Coast',
+        postedTime: '2024-09-10T05:00:00Z',
+        likes: 150,
+    },
+    {
+        postId: 6,
+        icon: '🌤️',
+        weatherCondition: 'Clear',
+        location: '35 Park Rd \nToowong',
+        postedTime: '2024-09-12T07:45:00Z',
+        likes: 9500,
+    },
+];
+
 // Viewed Screen
 function ViewedScreen() {
-  return (
-      <GradientTheme>
-      <SafeAreaView style={styles.container}>
-          <Text style={styles.text}>Viewed Posts</Text>
-      </SafeAreaView>
-      </GradientTheme>
-  );
+    const renderItem = ({ item }) => (
+        <PostTemplate
+            postId={item.postId}
+            icon={item.icon}
+            weatherCondition={item.weatherCondition}
+            location={item.location}
+            postedTime={item.postedTime}
+            likes={item.likes}
+        />
+    );
+
+    return (
+        <GradientTheme>
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.postId.toString()}
+                contentContainerStyle={styles.flatListContent}
+            />
+        </GradientTheme>
+    );
 }
 
 // Posted Screen
 function PostedScreen() {
-  return (
-      <GradientTheme>
-      <View style={styles.container}>
-          <Text style={styles.text}>Posted Posts</Text>
-      </View>
-      </GradientTheme>
-  );
+    const renderItem = ({ item }) => (
+        <PostTemplate
+            postId={item.postId}
+            icon={item.icon}
+            weatherCondition={item.weatherCondition}
+            location={item.location}
+            postedTime={item.postedTime}
+            likes={item.likes}
+        />
+    );
+    return (
+        <GradientTheme>
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.postId.toString()}
+                contentContainerStyle={styles.flatListContent}
+            />
+        </GradientTheme>
+    );
 }
 
 // Main Logs Component with Top Tabs
@@ -62,12 +141,16 @@ export default function LogsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 18,
-  },
+    container: {
+        marginTop: 10,
+        flex: 1,
+        gap: 8,
+    },
+    flatListContent: {
+        alignItems: 'center',
+        paddingTop: 10,
+    },
+    text: {
+        fontSize: 18,
+    },
 });

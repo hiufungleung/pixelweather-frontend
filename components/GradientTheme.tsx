@@ -7,9 +7,10 @@ import * as ColorScheme from '@/constants/ColorScheme'
 const GradientTheme = ({ children }) => {
     return (
         <LinearGradient
-          colors={[ColorScheme.TOP_COLOUR, ColorScheme.BOTTOM_COLOUR]} // Gradient effect
-          style={{ flex: 1 }}>
-          {children}
+            colors={[ColorScheme.TOP_COLOUR, ColorScheme.BOTTOM_COLOUR]} // Gradient effect
+            style={{ flex: 1 }}
+        >
+            {children}
         </LinearGradient>
     );
 };

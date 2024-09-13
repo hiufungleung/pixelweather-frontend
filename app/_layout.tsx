@@ -24,6 +24,7 @@ export default function TabLayout() {
                backgroundColor: '#363EFF',
             },
             headerTintColor: '#FFFFFF',
+            headerShown: false,
           }}
         >
           <Tabs.Screen
@@ -32,7 +33,6 @@ export default function TabLayout() {
               title: 'Home',
               tabBarIcon: ({ color }) => <FontAwesome6 size={28} name="location-dot" color={color} />,
               headerTransparent: true,
-              headerShown: false,
             }}
           />
           <Tabs.Screen
@@ -41,7 +41,6 @@ export default function TabLayout() {
               title: 'Log',
               tabBarIcon: ({ color }) => <FontAwesome size={28} name="folder" color={color} />,
               headerTransparent: true,
-              headerShown: false,
             }}
           />
           <Tabs.Screen

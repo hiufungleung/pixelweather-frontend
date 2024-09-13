@@ -129,11 +129,12 @@ const HomeScreen = () => {
           </View>
         ) : null}
 */}
-
       </View>
     </GradientTheme>
   );
+
 };
+
 
 const styles = StyleSheet.create({
   gradient: {
