@@ -33,12 +33,12 @@ async function loadApiDocumentation(documentationLink) {
 }
 
 function handleMenuBtn() {
-    const header = document.querySelector("#menuBtn");
+    const menuBtn = document.querySelector("#menuBtn");
     const catalogue = document.querySelector("#catalogue");
     const links = document.querySelectorAll("#catalogue a");
 
     // 點擊漢堡按鈕時顯示或隱藏菜單
-    header.addEventListener("click", function () {
+    menuBtn.addEventListener("click", function () {
         catalogue.classList.toggle("show");
     });
 
@@ -48,7 +48,7 @@ function handleMenuBtn() {
             catalogue.classList.remove("show");
         });
     });
-    document.getElementById('api-doc').addEventListener("click", () => catalogue.classList.toggle("show"));
+    document.getElementById('api-doc').addEventListener("click", () => catalogue.classList.remove("show"));
 }
 
 function loadPage(apiData) {
