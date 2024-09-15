@@ -1,2 +1,2 @@
 export const TOP_COLOUR = '#ACEFEB';
-export const BOTTOM_COLOUR = '#2D66F9';
+export const BOTTOM_COLOUR = '#9896FB';

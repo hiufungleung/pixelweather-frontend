@@ -5,9 +5,9 @@ import GradientTheme from '@/components/GradientTheme';
 import { useRouter } from 'expo-router';
 
 const data = [
-    { id: '1', title: 'Account Center', icon: 'arrow-right', action: () => alert('Account Center') },
+    { id: '1', title: 'Account Center', icon: 'arrow-right', route: '/(accountSetting)/accountSetting' },
     { id: '2', title: 'Saved Location', icon: 'arrow-right', action: () => alert('Saved Location') },
-    { id: '3', title: 'Help Center', icon: 'arrow-right', action: () => alert('Help Center') },
+    { id: '3', title: 'Help Center', icon: 'arrow-right', route: '/helpCenter' },
     { id: '4', title: 'Privacy', icon: 'arrow-right', route: '/privacy' },
 ];
 
@@ -41,8 +41,8 @@ export default function SettingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 16,
-        marginTop: 70,
+        paddingHorizontal: '4%',
+        marginTop: '15%',
     },
     headerTitle: {
         fontSize: 24,

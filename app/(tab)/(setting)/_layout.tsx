@@ -7,7 +7,6 @@ export default function HomeLayout() {
         headerShown: false,
       }}>
       <Stack.Screen name="setting" />
-      <Stack.Screen name="privacy" />
     </Stack>
   );
 }

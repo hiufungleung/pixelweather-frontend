@@ -95,9 +95,8 @@ export default function AlertsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        backgroundColor: 'transparent',
-        marginTop: 50,
+        paddingHorizontal: '5%',
+        marginTop: '15%',
     },
     headerContainer: {
         flexDirection: 'row', // Puts the text and icon in a row
