@@ -20,7 +20,7 @@ async function ready() {
     loadPage(apiData);
     listenToColorScheme();
     handleMenuBtn();
-    document.querySelector('header').addEventListener('click', e => {
+    document.getElementById('title').addEventListener('click', e => {
         e.preventDefault();
         document.getElementById('api-0').scrollIntoView({behavior: 'smooth'});
     })
@@ -156,30 +156,29 @@ function listenToColorScheme() {
     // 使用 matchMedia 監聽 prefers-color-scheme 媒體查詢
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
+    const catalogue = document.getElementById('catalogue');
+    const erd = document.getElementById('erd');
+    const darkBackgroundColor = 'black';
+    const darkFontColor = 'white';
+
     // 根據系統的深色模式設置相應樣式
     function applyColorScheme(event) {
-        const style = document.getElementById('scroll-bar-color-scheme');
-
         if (event.matches) {
             // 如果是深色模式
             document.body.style.backgroundColor = darkBackgroundColor;
             document.body.style.color = darkFontColor;
-            document.querySelectorAll('pre').forEach(item => {item.style.backgroundColor = '#202020';});
-            document.querySelectorAll('.api-link').forEach(item => {item.style.color = darkFontColor;});
+            document.querySelectorAll('pre').forEach(item => { item.style.backgroundColor = '#202020'; });
+            document.querySelectorAll('.api-link').forEach(item => { item.style.color = darkFontColor; });
             erd.setAttribute('src', 'db_structure_dark.svg');
-            if (catalogue.classList.contains('show')) {
-                catalogue.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-            }
+            catalogue.style.backgroundColor = 'rgba(0, 0, 0, 0.9)'; // 直接設置背景顏色
         } else {
             // 如果是淺色模式
             document.body.style.backgroundColor = 'white';
             document.body.style.color = 'black';
-            document.querySelectorAll('pre').forEach(item => {item.style.backgroundColor = '#f5f5f5';});
-            document.querySelectorAll('.api-link').forEach(item => {item.style.color = '#444';});
+            document.querySelectorAll('pre').forEach(item => { item.style.backgroundColor = '#f5f5f5'; });
+            document.querySelectorAll('.api-link').forEach(item => { item.style.color = '#444'; });
             erd.setAttribute('src', 'db_structure.svg');
-            if (catalogue.classList.contains('show')) {
-                catalogue.style.backgroundColor = 'rgba(255,255,255, 0.95)';
-            }
+            catalogue.style.backgroundColor = 'rgba(255,255,255, 0.95)'; // 直接設置背景顏色
         }
     }
 
@@ -187,5 +186,5 @@ function listenToColorScheme() {
     applyColorScheme(mediaQuery);
 
     // 當系統顏色模式發生改變時，自動更新樣式
-    mediaQuery.addListener(applyColorScheme);
+    mediaQuery.addEventListener('change', applyColorScheme); // 使用 addEventListener 替代已棄用的 addListener
 }
