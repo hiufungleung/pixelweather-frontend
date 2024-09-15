@@ -45,6 +45,8 @@ main {
     padding: 25px;
 }
 
+
+
 #api-doc {
     flex: 5;
     overflow-y: auto;
@@ -76,7 +78,7 @@ main {
 .api-link {
     font-size: 14px;
     line-height: 30px;
-    color: #444;
+    color: black;
     text-decoration: none;
     padding-left: 20px;
 }
@@ -194,4 +196,5 @@ img {
         background-color: darkgray;
         border-radius: 10px;
     }
+
 }

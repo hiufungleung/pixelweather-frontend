@@ -11,7 +11,11 @@ const apiDocumentationLink = 'api_doc.csv'
 const darkBackgroundColor = '#151515';
 const darkFontColor = '#eeeeee';
 const catalogue = document.getElementById('catalogue');
+const apiDoc = document.getElementById('api-doc');
 const erd = document.getElementById('erd');
+const highlightColorDark = '#fcc220';
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
 
 document.addEventListener('DOMContentLoaded', ready);
 
@@ -23,7 +27,9 @@ async function ready() {
     document.getElementById('title').addEventListener('click', e => {
         e.preventDefault();
         document.getElementById('api-0').scrollIntoView({behavior: 'smooth'});
-    })
+    });
+    apiDoc.addEventListener('scroll', getNearestSectionHighlight);
+
 }
 
 async function loadApiDocumentation(documentationLink) {
@@ -53,7 +59,46 @@ function handleMenuBtn() {
             catalogue.classList.remove("show");
         });
     });
-    document.getElementById('api-doc').addEventListener("click", () => catalogue.classList.remove("show"));
+    apiDoc.addEventListener("click", () => catalogue.classList.remove("show"));
+}
+
+function getNearestSectionHighlight() {
+    let nearestSection = null;
+    let minDistance = Infinity;
+    let apiBlocks = document.getElementsByClassName('api-block');
+    let apiLinks = document.getElementsByClassName('api-link');
+    let nearestIndex = 0;
+
+    for (let i = 0; i < apiBlocks.length; i++) {
+        const box = apiBlocks[i].getBoundingClientRect();
+        const distance = Math.abs(box.top);
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearestSection = apiBlocks[i];
+            nearestIndex = i;
+        }
+    }
+
+    for (let i = 0; i < apiLinks.length; i++) {
+        if (nearestIndex === i) {
+            if (mediaQuery.matches) {
+                apiLinks[i].style.color = highlightColorDark;
+            } else {
+                apiLinks[i].style.color = '#3ABEF9';
+            }
+            
+        } else {
+            if (mediaQuery.matches) {
+                apiLinks[i].style.color = highlightColorDark;
+            } else {
+                apiLinks[i].style.color = 'black';
+            }
+        }
+    }
+
+
+
+    // return nearestSection;
 }
 
 function loadPage(apiData) {
@@ -143,7 +188,7 @@ function loadPage(apiData) {
         copyRight.style.textAlign = 'center';
         fragment.appendChild(copyRight);
         // 最後將 API 文檔的 fragment 中的所有內容一次性添加到 DOM 中
-        document.getElementById('api-doc').appendChild(fragment);
+        apiDoc.appendChild(fragment);
 
         // 將目錄添加到 <div id='catalogue'>
         const navContainer = document.getElementById('catalogue');
@@ -154,39 +199,47 @@ function loadPage(apiData) {
 
 function listenToColorScheme() {
     // 使用 matchMedia 監聽 prefers-color-scheme 媒體查詢
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const catalogue = document.getElementById('catalogue');
-    const erd = document.getElementById('erd');
-    const darkBackgroundColor = 'black';
-    const darkFontColor = 'white';
-
-    // 根據系統的深色模式設置相應樣式
-    function applyColorScheme(event) {
-        if (event.matches) {
-            // 如果是深色模式
-            document.body.style.backgroundColor = darkBackgroundColor;
-            document.body.style.color = darkFontColor;
-            document.querySelectorAll('pre').forEach(item => { item.style.backgroundColor = '#202020'; });
-            document.querySelectorAll('.api-link').forEach(item => { item.style.color = darkFontColor; });
-            erd.setAttribute('src', 'db_structure_dark.svg');
-            catalogue.style.backgroundColor = 'rgba(0, 0, 0, 0.9)'; // 直接設置背景顏色
-            document.querySelector('header').style.backgroundColor = darkBackgroundColor;
-        } else {
-            // 如果是淺色模式
-            document.body.style.backgroundColor = 'white';
-            document.body.style.color = 'black';
-            document.querySelectorAll('pre').forEach(item => { item.style.backgroundColor = '#f5f5f5'; });
-            document.querySelectorAll('.api-link').forEach(item => { item.style.color = '#444'; });
-            erd.setAttribute('src', 'db_structure.svg');
-            catalogue.style.backgroundColor = 'rgba(255,255,255, 0.95)'; // 直接設置背景顏色
-            document.querySelector('header').style.backgroundColor = 'white';
-        }
-    }
 
     // 初次加載時應用顏色模式
     applyColorScheme(mediaQuery);
 
     // 當系統顏色模式發生改變時，自動更新樣式
     mediaQuery.addEventListener('change', applyColorScheme); // 使用 addEventListener 替代已棄用的 addListener
+}
+
+// 根據系統的深色模式設置相應樣式
+function applyColorScheme(event) {
+    const catalogue = document.getElementById('catalogue');
+    const erd = document.getElementById('erd');
+    const darkBackgroundColor = 'black';
+    const darkFontColor = 'white';
+    if (event.matches) {
+        // 如果是深色模式
+        document.body.style.backgroundColor = darkBackgroundColor;
+        document.body.style.color = darkFontColor;
+        document.querySelectorAll('pre').forEach(item => { item.style.backgroundColor = '#202020'; });
+        document.querySelectorAll('.api-link').forEach(item => { item.style.color = darkFontColor; });
+        erd.setAttribute('src', 'db_structure_dark.svg');
+
+        if (catalogue.classList.contains('show')) {
+            catalogue.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+        } else {
+            catalogue.style.backgroundColor = darkBackgroundColor;
+        }
+        document.querySelector('header').style.backgroundColor = darkBackgroundColor;
+    } else {
+        // 如果是淺色模式
+        document.body.style.backgroundColor = 'white';
+        document.body.style.color = 'black';
+        document.querySelectorAll('pre').forEach(item => { item.style.backgroundColor = '#f5f5f5'; });
+        document.querySelectorAll('.api-link').forEach(item => { item.style.color = '#444'; });
+        erd.setAttribute('src', 'db_structure.svg');
+
+        if (catalogue.classList.contains('show')) {
+            catalogue.style.backgroundColor = 'rgba(255,255,255, 0.95)';
+        } else {
+            catalogue.style.backgroundColor = 'white';
+        }
+        document.querySelector('header').style.backgroundColor = 'white';
+    }
 }
