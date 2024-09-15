@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Share } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // Helper function to format the time difference
@@ -32,6 +32,28 @@ const formatLikes = (likes) => {
 };
 
 export default function PostTemplate({ postId, icon, weatherCondition, location, postedTime, likes }) {
+
+    // Function to handle post sharing
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                message: `Beware of the weather in ${location}: It's ${weatherCondition}! Posted ${formatTimeDifference(postedTime)}.`
+            });
+
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    console.log('Shared with activity type:', result.activityType);
+                } else {
+                    console.log('Post shared successfully!');
+                }
+            } else if (result.action === Share.dismissedAction) {
+                console.log('Share dismissed');
+            }
+        } catch (error) {
+            console.error('Error sharing the post:', error.message);
+        }
+    };
+
     return (
         <View style={styles.postContainer}>
             {/* Weather Icon */}
@@ -64,7 +86,7 @@ export default function PostTemplate({ postId, icon, weatherCondition, location,
                             <Text style={styles.likeCount}>{formatLikes(likes)}</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.iconGroup}>
+                        <TouchableOpacity style={styles.iconGroup} onPress={onShare}>
                             <Icon name="share" size={24} color="black" />
                         </TouchableOpacity>
                     </View>
@@ -107,6 +129,7 @@ const styles = StyleSheet.create({
     infoContainer: {
         flexDirection: 'row',
         height: '20%',
+        alignItems: 'start'
     },
     statusContainer: {
         width: '70%',

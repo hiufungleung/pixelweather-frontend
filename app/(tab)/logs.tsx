@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Text, View, StyleSheet, SafeAreaView, ScrollView, FlatList } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, ScrollView, FlatList, RefreshControl } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import PostTemplate from '@/components/PostTemplate'
 import GradientTheme from '@/components/GradientTheme';
@@ -9,13 +9,13 @@ import * as ColorScheme from '@/constants/ColorScheme'
 const Tab = createMaterialTopTabNavigator();
 
 // Sample data for testing
-const data = [
+const initialData = [
     {
         postId: 1,
         icon: '☀️',
         weatherCondition: 'Sunny',
         location: '49-1 Boomerang Rd \nSt Lucia',
-        postedTime: '2024-09-13T04:00:00Z',
+        postedTime: '2024-09-13T05:00:00Z',
         likes: 20000,
     },
     {
@@ -62,6 +62,31 @@ const data = [
 
 // Viewed Screen
 function ViewedScreen() {
+    const [data, setData] = useState(initialData);  // This is your post data
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+
+        // Simulate fetching new data (e.g., making an API call)
+        setTimeout(() => {
+            // Assuming new data would replace or update the existing data
+            const newData = [
+                {
+                    postId: 7,
+                    icon: '🌧️',
+                    weatherCondition: 'Now it is Rainy',
+                    location: '25 Queen St \nBrisbane',
+                    postedTime: '2024-09-13T09:00:00Z',
+                    likes: 12000,
+                },
+            ];
+
+            setData(newData);  // Update the data
+            setRefreshing(false);  // Stop the refreshing indicator
+        }, 2000);  // Simulating a network request delay
+    }, []);
+
     const renderItem = ({ item }) => (
         <PostTemplate
             postId={item.postId}
@@ -76,10 +101,13 @@ function ViewedScreen() {
     return (
         <GradientTheme>
             <FlatList
-                data={data}
+                data={initialData}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.postId.toString()}
                 contentContainerStyle={styles.flatListContent}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
             />
         </GradientTheme>
     );
@@ -100,7 +128,7 @@ function PostedScreen() {
     return (
         <GradientTheme>
             <FlatList
-                data={data}
+                data={initialData}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.postId.toString()}
                 contentContainerStyle={styles.flatListContent}
@@ -111,33 +139,35 @@ function PostedScreen() {
 
 // Main Logs Component with Top Tabs
 export default function LogsScreen() {
-  return (
-      <GradientTheme>
-      <Tab.Navigator
-          initialRouteName="Viewed"
-          screenOptions={{
-            tabBarActiveTintColor: '#6200EE',
-            tabBarInactiveTintColor: '#AAA',
-            tabBarIndicatorStyle: { backgroundColor: '#6200EE' },
-            tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
-            tabBarStyle: {
-                backgroundColor: 'translucent',
-                elevation: 0,
-                paddingTop: 50},
-          }}>
-          <Tab.Screen
-            name="Viewed"
-            component={ViewedScreen}
-            options={{ tabBarLabel: 'VIEWED' }}
-          />
-          <Tab.Screen
-            name="Posted"
-            component={PostedScreen}
-            options={{ tabBarLabel: 'POSTED' }}
-          />
-      </Tab.Navigator>
-      </GradientTheme>
-  );
+
+    return (
+        <GradientTheme>
+            <Tab.Navigator
+                initialRouteName="Viewed"
+                screenOptions={{
+                    tabBarActiveTintColor: '#6200EE',
+                    tabBarInactiveTintColor: '#AAA',
+                    tabBarIndicatorStyle: { backgroundColor: '#6200EE' },
+                    tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
+                    tabBarStyle: {
+                        backgroundColor: 'translucent',
+                        elevation: 0,
+                        paddingTop: 50},
+                }}
+            >
+                <Tab.Screen
+                    name="Viewed"
+                    component={ViewedScreen}
+                    options={{ tabBarLabel: 'VIEWED' }}
+                />
+                <Tab.Screen
+                    name="Posted"
+                    component={PostedScreen}
+                    options={{ tabBarLabel: 'POSTED' }}
+                />
+            </Tab.Navigator>
+        </GradientTheme>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -148,7 +178,7 @@ const styles = StyleSheet.create({
     },
     flatListContent: {
         alignItems: 'center',
-        paddingTop: 10,
+        paddingVertical: 10,
     },
     text: {
         fontSize: 18,
