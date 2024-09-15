@@ -1,15 +1,18 @@
 html {
-    scroll-behavior: smooth;
     height: 100%;
 }
 
 body {
-    scroll-behavior: smooth;
     font-family: "Montserrat", monospace;
     color: black;
     height: 100%;
     padding: 0;
     margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -18,14 +21,15 @@ header {
     top: 0;
     font-size: 30px;
     text-align: center;
-    padding: 15px;
+    padding: 15px 0;
+    height: 70px;
 }
 
 main {
     display: flex;
     flex-direction: row;
     height: calc(100vh - 70px);
-    overflow: hidden;
+    width: 100%;
 }
 
 
@@ -45,7 +49,6 @@ main {
 
 .category-title {
     font-size: 30px;
-    /*font-weight: bold;*/
 }
 
 #api-doc .category-title {
@@ -101,6 +104,7 @@ pre {
     border-radius: 5px;
     font-size: 14px;
     font-family: "Source Code Pro", 'Courier New', monospace;
+    overflow-x: auto;
 }
 
 img {
@@ -110,10 +114,64 @@ img {
 @media (max-width: 1080px) {
     #catalogue {
         display: none;
+        position: fixed;
+        top: 70px; /* header 高度 */
+        left: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 1000;
+        height: calc(100vh - 70px);
+        overflow-y: auto;
+    }
+
+    /* 為 header 添加漢堡選單按鈕 */
+    #menuBtn::before {
+        content: '\2630'; /* 漢堡圖標 */
+        font-size: 40px;
+        position: fixed;
+        top: 5px;
+        left: 30px;
+        cursor: pointer;
+        display: block;
+    }
+
+    #api-doc {
+        margin-top: 0;
+    }
+
+    /* 顯示菜單時將其置於 api-doc 之上 */
+    #catalogue.show {
+        display: block;
+        background-color: rgba(15,15,15, 0.8);
+        width: 60%;
+
     }
 }
-@media (min-width: 1920px) {
+@media (min-width: 2160px) {
     img {
         width: 1476px;
+    }
+    main {
+        width: 2160px;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: black;
+        color: white;
+    }
+
+    #catalogue, #api-doc {
+        scrollbar-width: thin;
+        scrollbar-color: darkgray black; /* 黑色背景，灰色滑塊 */
+    }
+
+    #catalogue::-webkit-scrollbar-track, #api-doc::-webkit-scrollbar-track {
+        background: black;
+    }
+
+    #catalogue::-webkit-scrollbar-thumb, #api-doc::-webkit-scrollbar-thumb {
+        background-color: darkgray;
+        border-radius: 10px;
     }
 }

@@ -13,32 +13,10 @@
     <!-- 加載 PapaParse 庫 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="papaparse.js"></script>
-
-    <style id="scroll-bar-color-scheme">
-        /* 自定義滾動條的顏色和樣式（淺色模式） */
-        #catalogue, #api-doc {
-            scrollbar-width: thin; /* 設置 Firefox 滾動條的寬度 */
-            scrollbar-color: lightgray white; /* 設置滾動條的顏色 */
-        }
-
-        #catalogue::-webkit-scrollbar, #api-doc::-webkit-scrollbar {
-            width: 12px; /* 設置滾動條的寬度 */
-        }
-
-        #catalogue::-webkit-scrollbar-track, #api-doc::-webkit-scrollbar-track {
-            background: white; /* 滾動條軌道的背景色 */
-        }
-
-        #catalogue::-webkit-scrollbar-thumb, #api-doc::-webkit-scrollbar-thumb {
-            background-color: lightgray; /* 滾動條的顏色 */
-            border-radius: 10px; /* 滾動條圓角 */
-            border: 3px solid white; /* 滾動條周圍的邊框 */
-        }
-    </style>
-    <link rel="stylesheet", href="style.css"></link>
+    <link rel="stylesheet" href="style.css"></link>
 </head>
 <body>
-    <header>Pixel Weather Backend APIs</header>
+<header><div id="menuBtn"></div>Pixel Weather APIs</header>
     <main>
         <div id="catalogue">
             <ul>

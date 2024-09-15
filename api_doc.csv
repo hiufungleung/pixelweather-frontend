@@ -83,7 +83,7 @@ password: string (Password must meet security requirements, do not hash)","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-1,Log out,POST,/handle_logout,Let users to log out.,TRUE,N/A,logout_all:  boolean (Set it as false at this stage),"// Set it as false by default
+1,Log out,POST,/handle_logout,Let users to log out.,TRUE,N/A,logout_all: boolean (Set it as false at this stage),"// Set it as false by default
 {
     'logout_all': false
 }","// Status Code: 200, OK
@@ -112,7 +112,7 @@ password: string (Password must meet security requirements, do not hash)","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-1,Update email,PATCH,/handle_update_email,"Allows a user to update their email, requiring token.",TRUE,N/A,"email    : string, not null (must be email format)","{
+1,Update email,PATCH,/handle_update_email,"Allows a user to update their email, requiring token.",TRUE,N/A,"email: string, not null (must be email format)","{
     ""email"": ""newemail@example.com""
 }","// Status Code: 200, OK
 // Occurs when the email is updated successfully.
@@ -380,7 +380,7 @@ suburb_id: int, not null","{
 }
 
 // Status Code: 400 Bad Request
-// Occurs when required fields like suburb name, post code, or state code are missing.
+// Occurs when required fields are missing.
 {
   'error': 'Missing (part of) required data'
 }
@@ -395,6 +395,12 @@ suburb_id: int, not null","{
 // Occurs when the user has already saved this suburb.
 {
     'error': 'The label has been used by user'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the suburb_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error
@@ -442,12 +448,18 @@ label    : string, not null","{
     'error': 'The label has been used by user'
 }
 
+// Status Code: 422 Unprocessable Entity
+// Occurs when the id or suburb_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
+}
+
 // Status Code: 500 Internal Server Error
 // Occurs when there is a server-side error, such as a database connection failure.
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-4,Delete a saved suburb by providing the suburb ID.,DELETE,/user_saved_suburb,Delete a saved suburb by providing the saved ID.,TRUE,N/A,"id: int, not null",{'id': 14},"// Status Code: 200 OK
+4,Delete a saved suburb,DELETE,/user_saved_suburb,Delete a saved suburb by providing the saved ID.,TRUE,N/A,"id: int, not null",{'id': 14},"// Status Code: 200 OK
 // Occurs when the suburb is successfully deleted.
 {
   'message': 'Data deleted successfully'
@@ -456,10 +468,22 @@ label    : string, not null","{
   }
 }
 
+// Status Code: 400 Bad Request
+// Occurs when the id is missing.
+{
+  'error': 'Missing (part of) required data'
+}
+
 // Status Code: 401 Unauthorized
 // Occurs when the user token is invalid or missing.
 {
   'error': 'Invalid or expired token'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error
@@ -523,7 +547,7 @@ label    : string, not null","{
 }
 
 // Status Code: 400 Bad Request
-// Occurs when required fields like suburb ID or alert time ID are missing.
+// Occurs when required fields like suburb_id is missing.
 {
   'error': 'Missing (part of) required data'
 }
@@ -538,6 +562,12 @@ label    : string, not null","{
 // Occurs when the user has already saved this suburb.
 {
   'error': 'User has set this alert suburb'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the suburb_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error
@@ -566,7 +596,7 @@ suburb_id: int, not null","{
 }
 
 // Status Code: 400 Bad Request
-// Occurs when suburb ID or alert time ID is missing in the request body.
+// Occurs when id or suburb_id is missing in the request body.
 {
   'error': 'Missing (part of) required data'
 }
@@ -581,6 +611,12 @@ suburb_id: int, not null","{
 // Occurs when the user has already saved this suburb.
 {
   'error': 'User has set this alert suburb'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the id or suburb_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error
@@ -610,6 +646,12 @@ suburb_id: int, not null","{
 // Occurs when the user token is invalid or missing.
 {
   'error': 'Invalid or expired token'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error
@@ -688,7 +730,7 @@ Constraint: start_time < end_time","{
 }
 
 // Status Code: 422 Unprocessable Entity
-// Occurs when start_time is later than end_time
+// Occurs when start_time is later than end_time, or data is wrong format
 {
   ""error"": ""Invalid time range: start_time cannot be later than end_time""
 }
@@ -738,9 +780,9 @@ Constraint: start_time < end_time","{
 }
 
 // Status Code: 422 Unprocessable Entity
-// Occurs when start_time is later than end_time
+// Occurs when start_time is later than end_time, or id not exist, or data is wrong format
 {
-  ""error"": ""Invalid time range: start_time cannot be later than end_time""
+  ""error"": ""Invalid time range: start_time cannot be later than end_time, or The record with the corresponding foreign key does not exist""
 }
 
 // Status Code: 500 Internal Server Error
@@ -767,6 +809,12 @@ Constraint: start_time < end_time","{
 // Occurs when the user token is invalid or missing.
 {
   'error': 'Invalid or expired token'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error
@@ -833,6 +881,18 @@ Constraint: start_time < end_time","{
 // Occurs when the user has already saved this weather alert.
 {
   'error': 'User has already saved this weather alert'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the weather_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
+}
+
+// Status Code: 500 Internal Server Error
+// Occurs when there is a server-side error, such as a database connection failure.
+{
+  'error': 'An internal server error occurred. Please try again later.'
 }"
 5,Update user alert weather,PUT,/user_alert_weather,"Update the weather condition for which the user wants to receive alerts, identified by weather_id.",TRUE,N/A,"id        : int, not null
 weather_id: int, null","{
@@ -861,6 +921,18 @@ weather_id: int, null","{
 // Occurs when the user token is invalid or missing.
 {
   'error': 'Invalid or expired token'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the id or weather_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
+}
+
+// Status Code: 500 Internal Server Error
+// Occurs when there is a server-side error, such as a database connection failure.
+{
+  'error': 'An internal server error occurred. Please try again later.'
 }"
 5,Delete user alert weather,DELETE,/user_alert_weather,"Delete a weather alert for the user, identified by the alert's unique ID.",TRUE,N/A,"id: int, not null",{'id': 4},"// Status Code: 200 OK
 // Occurs when the weather alert is successfully deleted.
@@ -872,7 +944,7 @@ weather_id: int, null","{
 }
 
 // Status Code: 400 Bad Request
-// Occurs when the alert ID is missing or invalid.
+// Occurs when the alert ID is missing.
 {
   'error': 'Missing (part of) required data'
 }
@@ -881,6 +953,18 @@ weather_id: int, null","{
 // Occurs when the user token is invalid or missing.
 {
   'error': 'Invalid or expired token'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
+}
+
+// Status Code: 500 Internal Server Error
+// Occurs when there is a server-side error, such as a database connection failure.
+{
+  'error': 'An internal server error occurred. Please try again later.'
 }
 "
 6,Create post,POST,/posts,"Create a new post with latitude, longitude, and weather details. Suburb information will be fetched from a third-party geocoding API.",TRUE,N/A,"latitude  : float, not null
@@ -927,6 +1011,12 @@ comment   : string, optional","{
   'error': 'Invalid or expired token'
 }
 
+// Status Code: 422 Unprocessable Entity
+// Occurs when the weather_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
+}
+
 // Status Code: 500 Internal Server Error
 // Occurs when there is a server-side error, such as a database connection failure.
 {
@@ -942,7 +1032,7 @@ comment   : string, optional","{
 }
 
 // Status Code: 400 Bad Request
-// Occurs when post_id is missing or invalid.
+// Occurs when post_id is missing.
 {
   'error': 'Missing (part of) required data'
 }
@@ -951,6 +1041,12 @@ comment   : string, optional","{
 // Occurs when the user token is invalid or missing.
 {
   'error': 'Invalid or expired token'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error
@@ -1082,7 +1178,7 @@ comment   : string, optional","{
 
 // Status Code: 400 Bad Request
 {
-  'error': IMissing (part of) required data'
+  'error': 'Missing (part of) required data'
 }
 
 // Status Code: 401 Unauthorized
@@ -1175,7 +1271,13 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
 
 // Status Code: 400 Bad Request
 {
-  'error': 'Invalid request. Check the input parameters.'
+  'error': 'Missing (part of) required data'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the one of ids does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error
@@ -1199,11 +1301,22 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
   'error': 'Invalid or expired token'
 }
 
+// Status Code: 404 Not found
+// Occurs when the post_id is not found
+{
+    'error': 'Record is not found'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
+}
+
 // Status Code: 500 Internal Server Error
 {
   'error': 'An internal server error occurred. Please try again later.'
-}
-"
+}"
 6,Toggle post like,POST,/posts/like,Toggle the like status for a specific post,TRUE,N/A,"post_id: int, not null",{'post_id': 1},"// Status Code: 200 OK
 // Occurs when the like status for the post is successfully updated.
 {
@@ -1221,12 +1334,18 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
   'error': 'Invalid or expired token'
 }
 
+// Status Code: 422 Unprocessable Entity
+// Occurs when the post_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
+}
+
 // Status Code: 500 Internal Server Error
 {
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-6,Report post,POST,/posts/report,"Report a post identified by post_id, providing a comment. The created_at will be handled by the database.",TRUE,N/A,"post_id: int, not null
+6,Report post,POST,/posts/report,"Report a post identified by post_id, providing a comment. The created_at will be handled by the database.",TRUE,N/A,"post_id       : int, not null
 report_comment: text, not null","{
   'post_id': 4,
   'report_comment': 'This post contains offensive content'
@@ -1308,6 +1427,12 @@ report_comment: text, not null","{
 // Status Code: 401 Unauthorized
 {
   'error': 'Invalid or expired token'
+}
+
+// Status Code: 422 Unprocessable Entity
+// Occurs when the post_id does not exist, or data is wrong format
+{
+    'error': 'The record with the corresponding foreign key does not exist'
 }
 
 // Status Code: 500 Internal Server Error

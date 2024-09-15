@@ -17,6 +17,7 @@ async function ready() {
     const apiData = await loadApiDocumentation(apiDocumentationLink);
     loadPage(apiData);
     listenToColorScheme();
+    handleMenuBtn();
 }
 
 async function loadApiDocumentation(documentationLink) {
@@ -29,6 +30,25 @@ async function loadApiDocumentation(documentationLink) {
             error: (error) => reject(error),
         })
     })
+}
+
+function handleMenuBtn() {
+    const header = document.querySelector("#menuBtn");
+    const catalogue = document.querySelector("#catalogue");
+    const links = document.querySelectorAll("#catalogue a");
+
+    // 點擊漢堡按鈕時顯示或隱藏菜單
+    header.addEventListener("click", function () {
+        catalogue.classList.toggle("show");
+    });
+
+    // 點擊菜單中的鏈接時，隱藏菜單
+    links.forEach(link => {
+        link.addEventListener("click", function () {
+            catalogue.classList.remove("show");
+        });
+    });
+    document.getElementById('api-doc').addEventListener("click", () => catalogue.classList.toggle("show"));
 }
 
 function loadPage(apiData) {
@@ -142,27 +162,6 @@ function listenToColorScheme() {
             document.querySelectorAll('pre').forEach(item => {item.style.backgroundColor = '#202020';});
             document.querySelectorAll('.api-link').forEach(item => {item.style.color = darkFontColor;});
             document.getElementById('erd').setAttribute('src', 'db_structure_dark.svg');
-            style.innerHTML = `
-                /* 自定義滾動條的顏色和樣式（深色模式） */
-                #catalogue, #api-doc {
-                    scrollbar-width: thin; /* 設置 Firefox 滾動條的寬度 */
-                    scrollbar-color: darkgray ${darkBackgroundColor}; /* 設置 Firefox 滾動條的顏色 */
-                }
-
-                #catalogue::-webkit-scrollbar, #api-doc::-webkit-scrollbar {
-                    width: 12px; /* 設置滾動條的寬度 */
-                }
-
-                #catalogue::-webkit-scrollbar-track, #api-doc::-webkit-scrollbar-track {
-                    background: darkgray; /* 滾動條軌道的背景色 */
-                }
-
-                #catalogue::-webkit-scrollbar-thumb, #api-doc::-webkit-scrollbar-thumb {
-                    background-color: ${darkBackgroundColor}; /* 滾動條的顏色 */
-                    border-radius: 10px; /* 滾動條圓角 */
-                    border: 3px solid black; /* 滾動條周圍的邊框 */
-                }
-            `;
         } else {
             // 如果是淺色模式
             document.body.style.backgroundColor = 'white';
@@ -170,29 +169,6 @@ function listenToColorScheme() {
             document.querySelectorAll('pre').forEach(item => {item.style.backgroundColor = '#f5f5f5';});
             document.querySelectorAll('.api-link').forEach(item => {item.style.color = '#444';});
             document.getElementById('erd').setAttribute('src', 'db_structure.svg');
-
-
-            style.innerHTML = `
-                /* 自定義滾動條的顏色和樣式（淺色模式） */
-                #catalogue, #api-doc {
-                    scrollbar-width: thin; /* 設置 Firefox 滾動條的寬度 */
-                    scrollbar-color: lightgray white; /* 設置滾動條的顏色 */
-                }
-
-                #catalogue::-webkit-scrollbar, #api-doc::-webkit-scrollbar {
-                    width: 12px; /* 設置滾動條的寬度 */
-                }
-
-                #catalogue::-webkit-scrollbar-track, #api-doc::-webkit-scrollbar-track {
-                    background: white; /* 滾動條軌道的背景色 */
-                }
-
-                #catalogue::-webkit-scrollbar-thumb, #api-doc::-webkit-scrollbar-thumb {
-                    background-color: lightgray; /* 滾動條的顏色 */
-                    border-radius: 10px; /* 滾動條圓角 */
-                    border: 3px solid white; /* 滾動條周圍的邊框 */
-                }
-            `;
         }
     }
 
