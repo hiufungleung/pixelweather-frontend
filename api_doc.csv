@@ -112,12 +112,12 @@ password: string (Password must meet security requirements, do not hash)","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-1,Change email,PATCH,/handle_change_email,"Allows a user to change their email, requiring token.",TRUE,N/A,"email    : string, not null (must be email format)","{
+1,Update email,PATCH,/handle_update_email,"Allows a user to update their email, requiring token.",TRUE,N/A,"email    : string, not null (must be email format)","{
     ""email"": ""newemail@example.com""
 }","// Status Code: 200, OK
-// Occurs when the email is changed successfully.
+// Occurs when the email is updated successfully.
 {
-    'message': 'Email changed successfully',
+    'message': 'Email updated successfully',
     'data':  {
            'email':  'newemail@example.com'
     }
@@ -158,14 +158,14 @@ password: string (Password must meet security requirements, do not hash)","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-1,Change password,PATCH,/handle_change_password,Allows a user to change their password. Requires current password and new password.,TRUE,N/A,"current_password: string, not null
+1,Update password,PATCH,/handle_update_password,Allows a user to update their password. Requires current password and new password.,TRUE,N/A,"current_password: string, not null
 new_password    : string, not null (Password must meet security requirements, do not hash)","{
     'current_password': '30624700',
     'new_password': '30624770'
 }","// Status Code: 200, OK
-// Occurs when the password is changed successfully.
+// Occurs when the password is updated successfully.
 {
-    'message': 'Password changed successfully'
+    'message': 'Password updated successfully'
 }
 
 // Status Code: 400, Bad Request
@@ -197,12 +197,12 @@ new_password    : string, not null (Password must meet security requirements, do
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-1,Change user name,PATCH,/handle_change_username,Allows a user to change their username.,TRUE,N/A,"username: string, not null","{
+1,Update user name,PATCH,/handle_update_username,Allows a user to update their username.,TRUE,N/A,"username: string, not null","{
     'username': 'chantaiman'
 }","// Status Code: 200, OK
-// Occurs when the username is changed successfully.
+// Occurs when the username is updated successfully.
 {
-    'message': 'Username changed successfully',
+    'message': 'Username updated successfully',
     'data':  {
             'username': 'chantaiman'
     }
