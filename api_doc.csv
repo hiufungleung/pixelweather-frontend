@@ -400,7 +400,7 @@ suburb_id: int, not null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the suburb_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -451,7 +451,7 @@ label    : string, not null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the id or suburb_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -483,7 +483,7 @@ label    : string, not null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -567,7 +567,7 @@ label    : string, not null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the suburb_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -616,7 +616,7 @@ suburb_id: int, not null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the id or suburb_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -651,7 +651,7 @@ suburb_id: int, not null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -782,7 +782,7 @@ Constraint: start_time < end_time","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when start_time is later than end_time, or id not exist, or data is wrong format
 {
-  ""error"": ""Invalid time range: start_time cannot be later than end_time, or The record with the corresponding foreign key does not exist""
+  ""error"": ""Invalid time range: start_time cannot be later than end_time, or The record with the corresponding PK or FK does not exist, or format is incorrect""
 }
 
 // Status Code: 500 Internal Server Error
@@ -814,7 +814,7 @@ Constraint: start_time < end_time","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -886,7 +886,7 @@ Constraint: start_time < end_time","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the weather_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -926,7 +926,7 @@ weather_id: int, null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the id or weather_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -958,7 +958,7 @@ weather_id: int, null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -1014,7 +1014,7 @@ comment   : string, optional","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the weather_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -1046,7 +1046,7 @@ comment   : string, optional","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -1277,7 +1277,7 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
 // Status Code: 422 Unprocessable Entity
 // Occurs when the one of ids does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -1310,7 +1310,7 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
 // Status Code: 422 Unprocessable Entity
 // Occurs when data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -1337,7 +1337,7 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
 // Status Code: 422 Unprocessable Entity
 // Occurs when the post_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
@@ -1432,7 +1432,7 @@ report_comment: text, not null","{
 // Status Code: 422 Unprocessable Entity
 // Occurs when the post_id does not exist, or data is wrong format
 {
-    'error': 'The record with the corresponding foreign key does not exist'
+    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
 }
 
 // Status Code: 500 Internal Server Error
