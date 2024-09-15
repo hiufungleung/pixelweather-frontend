@@ -142,7 +142,6 @@ img {
     /* 顯示菜單時將其置於 api-doc 之上 */
     #catalogue.show {
         display: block;
-        background-color: rgba(15,15,15, 0.8);
         width: 60%;
 
     }

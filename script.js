@@ -10,6 +10,8 @@ const apiDocumentationLink = 'api_doc.csv'
 
 const darkBackgroundColor = '#151515';
 const darkFontColor = '#eeeeee';
+const catalogue = document.getElementById('catalogue');
+const erd = document.getElementById('erd');
 
 document.addEventListener('DOMContentLoaded', ready);
 
@@ -18,6 +20,10 @@ async function ready() {
     loadPage(apiData);
     listenToColorScheme();
     handleMenuBtn();
+    document.querySelector('header').addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('api-0').scrollIntoView({behavior: 'smooth'});
+    })
 }
 
 async function loadApiDocumentation(documentationLink) {
@@ -34,7 +40,6 @@ async function loadApiDocumentation(documentationLink) {
 
 function handleMenuBtn() {
     const menuBtn = document.querySelector("#menuBtn");
-    const catalogue = document.querySelector("#catalogue");
     const links = document.querySelectorAll("#catalogue a");
 
     // 點擊漢堡按鈕時顯示或隱藏菜單
@@ -161,14 +166,20 @@ function listenToColorScheme() {
             document.body.style.color = darkFontColor;
             document.querySelectorAll('pre').forEach(item => {item.style.backgroundColor = '#202020';});
             document.querySelectorAll('.api-link').forEach(item => {item.style.color = darkFontColor;});
-            document.getElementById('erd').setAttribute('src', 'db_structure_dark.svg');
+            erd.setAttribute('src', 'db_structure_dark.svg');
+            if (catalogue.classList.contains('show')) {
+                catalogue.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+            }
         } else {
             // 如果是淺色模式
             document.body.style.backgroundColor = 'white';
             document.body.style.color = 'black';
             document.querySelectorAll('pre').forEach(item => {item.style.backgroundColor = '#f5f5f5';});
             document.querySelectorAll('.api-link').forEach(item => {item.style.color = '#444';});
-            document.getElementById('erd').setAttribute('src', 'db_structure.svg');
+            erd.setAttribute('src', 'db_structure.svg');
+            if (catalogue.classList.contains('show')) {
+                catalogue.style.backgroundColor = 'rgba(255,255,255, 0.95)';
+            }
         }
     }
 
