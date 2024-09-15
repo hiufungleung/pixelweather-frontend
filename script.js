@@ -8,6 +8,9 @@ const categoryNames = {
 };
 const apiDocumentationLink = 'api_doc.csv'
 
+const darkBackgroundColor = '#151515';
+const darkFontColor = '#eeeeee';
+
 document.addEventListener('DOMContentLoaded', ready);
 
 async function ready() {
@@ -31,6 +34,8 @@ async function loadApiDocumentation(documentationLink) {
 function loadPage(apiData) {
         const fragment = document.createDocumentFragment(); // 創建一個 DocumentFragment 用來放 API 文檔
         const navFragment = document.createDocumentFragment(); // 用來生成目錄的 fragment
+
+
 
         let currentCategoryId = null;  // 跟踪當前的 category
         let categoryContainer = null;  // 當前 category 的 div 容器
@@ -117,7 +122,7 @@ function loadPage(apiData) {
 
         // 將目錄添加到 <div id='catalogue'>
         const navContainer = document.getElementById('catalogue');
-        const navList = document.createElement('ul');
+        const navList = document.querySelector('#catalogue ul');
         navList.appendChild(navFragment);
         navContainer.appendChild(navList);
 }
@@ -129,15 +134,14 @@ function listenToColorScheme() {
     // 根據系統的深色模式設置相應樣式
     function applyColorScheme(event) {
         const style = document.getElementById('scroll-bar-color-scheme');
-        const darkBackgroundColor = '#151515';
-        const darkFontColor = '#eeeeee';
+
         if (event.matches) {
             // 如果是深色模式
             document.body.style.backgroundColor = darkBackgroundColor;
             document.body.style.color = darkFontColor;
             document.querySelectorAll('pre').forEach(item => {item.style.backgroundColor = '#202020';});
             document.querySelectorAll('.api-link').forEach(item => {item.style.color = darkFontColor;});
-
+            document.getElementById('erd').setAttribute('src', 'db_structure_dark.svg');
             style.innerHTML = `
                 /* 自定義滾動條的顏色和樣式（深色模式） */
                 #catalogue, #api-doc {
@@ -165,6 +169,8 @@ function listenToColorScheme() {
             document.body.style.color = 'black';
             document.querySelectorAll('pre').forEach(item => {item.style.backgroundColor = '#f5f5f5';});
             document.querySelectorAll('.api-link').forEach(item => {item.style.color = '#444';});
+            document.getElementById('erd').setAttribute('src', 'db_structure.svg');
+
 
             style.innerHTML = `
                 /* 自定義滾動條的顏色和樣式（淺色模式） */

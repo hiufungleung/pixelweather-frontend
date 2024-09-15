@@ -8,9 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap"
         rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
     <!-- 加載 PapaParse 庫 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="papaparse.js"></script>
+
     <style id="scroll-bar-color-scheme">
         /* 自定義滾動條的顏色和樣式（淺色模式） */
         #catalogue, #api-doc {
@@ -37,8 +40,29 @@
 <body>
     <header>Pixel Weather Backend APIs</header>
     <main>
-        <div id="catalogue"></div>
-        <div id="api-doc"></div>
+        <div id="catalogue">
+            <ul>
+                <li><h2 class="category-title">0. Database Structure</h2></li>
+                <li><a href="#api-0" class="api-link">0.1 ER Diagram</a></li>
+            </ul>
+        </div>
+        <div id="api-doc">
+            <div id="api-0">
+                <h2 class="category-title">0. Database Structure</h2>
+                <h3 class="api-title">0.1 Entity Relationship Diagram</h3>
+                <img id="erd" src="./db_structure.svg" alt="db_structure">
+                <h3 class="api-title">0.2 Notable Unique Key</h3>
+                <ul>
+                    <li><strong>users</strong>: email</li>
+                    <li><strong>suburbs</strong>: (suburb_name, postcode)</li>
+                    <li><strong>user_alert_time</strong>:(user_id, start_time, end_time)</li>
+                    <li><strong>weathers</strong>: (weather, weather_code)</li>
+                    <li><strong>user_alert_weather</strong>: (user_id, weather_id)</li>
+                    <li><strong>user_alert_suburb</strong>: (user_id, suburb_id)</li>
+                    <li><strong>user_saved_suburb</strong>: (user_id, label)</li>
+                </ul>
+            </div>
+        </div>
     </main>
     <script src="script.js"></script>
 </body>
