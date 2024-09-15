@@ -171,6 +171,7 @@ function listenToColorScheme() {
             document.querySelectorAll('.api-link').forEach(item => { item.style.color = darkFontColor; });
             erd.setAttribute('src', 'db_structure_dark.svg');
             catalogue.style.backgroundColor = 'rgba(0, 0, 0, 0.9)'; // 直接設置背景顏色
+            document.querySelector('header').style.backgroundColor = darkBackgroundColor;
         } else {
             // 如果是淺色模式
             document.body.style.backgroundColor = 'white';
@@ -179,6 +180,7 @@ function listenToColorScheme() {
             document.querySelectorAll('.api-link').forEach(item => { item.style.color = '#444'; });
             erd.setAttribute('src', 'db_structure.svg');
             catalogue.style.backgroundColor = 'rgba(255,255,255, 0.95)'; // 直接設置背景顏色
+            document.querySelector('header').style.backgroundColor = 'white';
         }
     }
 

@@ -23,6 +23,12 @@ header {
     text-align: center;
     padding: 15px 0;
     height: 70px;
+    width: 100%;
+}
+
+#title {
+    padding: 0;
+    display: inline-block;
 }
 
 main {
@@ -111,11 +117,15 @@ img {
     width: 100%;
 }
 
+
+
 @media (max-width: 1080px) {
+
+
     #catalogue {
         display: none;
         position: fixed;
-        top: 70px; /* header 高度 */
+        top: 55px; /* header 高度 */
         left: 0;
         width: 100%;
         background-color: white;
@@ -145,6 +155,18 @@ img {
         width: 60%;
     }
 }
+
+@media (max-width: 480px) {
+    header {
+        font-size: 6vw;
+    }
+
+    #menuBtn::before {
+        font-size: 8vw;
+    }
+}
+
+
 @media (min-width: 2160px) {
     img {
         width: 1476px;
