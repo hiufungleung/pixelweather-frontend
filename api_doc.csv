@@ -112,14 +112,14 @@ password: string (Password must meet security requirements, do not hash)","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-1,Change email,PATCH,/handle_change_email,"Allows a user to change their email, requiring token.",TRUE,N/A,"new_email    : string, not null (must be email format)","{
+1,Change email,PATCH,/handle_change_email,"Allows a user to change their email, requiring token.",TRUE,N/A,"email    : string, not null (must be email format)","{
     ""email"": ""newemail@example.com""
 }","// Status Code: 200, OK
 // Occurs when the email is changed successfully.
 {
     'message': 'Email changed successfully',
     'data':  {
-            'newemail@example.com'
+           'email':  'newemail@example.com'
     }
 }
 
@@ -197,8 +197,8 @@ new_password    : string, not null (Password must meet security requirements, do
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-1,Change user name,PATCH,/handle_change_username,Allows a user to change their username.,TRUE,N/A,"new_username: string, not null","{
-    'new_username': 'chantaiman'
+1,Change user name,PATCH,/handle_change_username,Allows a user to change their username.,TRUE,N/A,"username: string, not null","{
+    'username': 'chantaiman'
 }","// Status Code: 200, OK
 // Occurs when the username is changed successfully.
 {
@@ -225,7 +225,7 @@ new_password    : string, not null (Password must meet security requirements, do
 {
     'error': 'Invalid username format',
     'message': {
-        'new_username': false,
+        'username': false,
 	'error': 'Username must contain no more than 31 characters'
     }
 }
@@ -266,7 +266,7 @@ new_password    : string, not null (Password must meet security requirements, do
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-2,Get Suburbs,GET,/suburbs,"Retrieve all suburb details including suburb name, postcode, latitude, longitude, and state code.",FALSE,N/A,N/A,{},"// Status Code: 200 OK
+2,Get suburbs,GET,/suburbs,"Retrieve all suburb details including suburb name, postcode, latitude, longitude, and state code.",FALSE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the suburbs are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -295,7 +295,7 @@ new_password    : string, not null (Password must meet security requirements, do
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-3,Get Weathers,GET,/weathers,"Retrieve all weather information including weather category, weather description, and weather code.",FALSE,N/A,N/A,{},"// Status Code: 200 OK
+3,Get weathers,GET,/weathers,"Retrieve all weather information including weather category, weather description, and weather code.",FALSE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the weather data is successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -402,7 +402,7 @@ suburb_id: int, not null","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-4,Update User Saved Suburb,PUT,/user_saved_suburb,"Update the label of a saved suburb, with the suburb ID specified in the route.",TRUE,N/A,"id       : int, not null
+4,Update user saved suburb,PUT,/user_saved_suburb,"Update the label of a saved suburb, with the suburb ID specified in the route.",TRUE,N/A,"id       : int, not null
 suburb_id: int, not null
 label    : string, not null","{
   'id': 14,
@@ -467,7 +467,7 @@ label    : string, not null","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-4,Get User Alert Suburbs,GET,/user_alert_suburb,"Retrieve the list of suburbs for which the user receives alerts, including suburb details and alert time information.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
+4,Get user alert suburbs,GET,/user_alert_suburb,"Retrieve the list of suburbs for which the user receives alerts, including suburb details and alert time information.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's alert suburbs are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -505,7 +505,7 @@ label    : string, not null","{
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-4,Add User Alert Suburb,POST,/user_alert_suburb,Add a suburb to the user's alert suburbs.,TRUE,N/A,"suburb_id: int, not null","{
+4,Add user alert suburb,POST,/user_alert_suburb,Add a suburb to the user's alert suburbs.,TRUE,N/A,"suburb_id: int, not null","{
   'suburb_id': 3
 }","// Status Code: 201 Created
 // Occurs when the suburb is successfully added to alert list.
@@ -546,7 +546,7 @@ label    : string, not null","{
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-4,Update User Alert Suburb,PUT,/user_alert_suburb,Update the suburb for which the user receives alerts.,TRUE,N/A,"id       : int, not null
+4,Update user alert suburb,PUT,/user_alert_suburb,Update the suburb for which the user receives alerts.,TRUE,N/A,"id       : int, not null
 suburb_id: int, not null","{
   'id': 104,
   'suburb_id': 4
@@ -589,7 +589,7 @@ suburb_id: int, not null","{
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-4,Delete User Alert Suburb,DELETE,/user_alert_suburb,Delete a suburb from the user's alert suburbs.,TRUE,N/A,"id: int, not null","{
+4,Delete user alert suburb,DELETE,/user_alert_suburb,Delete a suburb from the user's alert suburbs.,TRUE,N/A,"id: int, not null","{
   'id': 104
 }","// Status Code: 200 OK
 // Occurs when the alert suburb is successfully deleted.
@@ -618,7 +618,7 @@ suburb_id: int, not null","{
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-4,Get User Alert Times,GET,/user_alert_time,"Retrieve all alert times for the user, including all alert time columns.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
+4,Get user alert times,GET,/user_alert_time,"Retrieve all alert times for the user, including all alert time columns.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's alert times are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -650,7 +650,7 @@ suburb_id: int, not null","{
     'error': 'An internal server error occurred. Please try again later.'
 }
 "
-4,Add User Alert Time,POST,/user_alert_time,"Add a new alert time for the user, user_id is identified through the token.",TRUE,N/A,"start_time: string, not null, 'HH:MM:SS'
+4,Add user alert time,POST,/user_alert_time,"Add a new alert time for the user, user_id is identified through the token.",TRUE,N/A,"start_time: string, not null, 'HH:MM:SS'
 end_time  : string, not null, 'HH:MM:SS'
 is_active : bool, not null
 Constraint: start_time < end_time","{
@@ -698,7 +698,7 @@ Constraint: start_time < end_time","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-4,Update User Alert Time,PUT,/user_alert_time,"Update an existing alert time, identified by alert_time_id.",TRUE,N/A,"id        : int, not null
+4,Update user alert time,PUT,/user_alert_time,"Update an existing alert time, identified by alert_time_id.",TRUE,N/A,"id        : int, not null
 start_time: string, not null, 'HH:MM:SS'
 end_time  : string, not null, 'HH:MM:SS'
 is_active : bool, not null
@@ -748,7 +748,7 @@ Constraint: start_time < end_time","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-4,Delete User Alert Time,DELETE,/user_alert_time,"Delete an existing alert time, requires alert_time_id.",TRUE,N/A,"id: int, not null",{'id': 103},"// Status Code: 200 OK
+4,Delete user alert time,DELETE,/user_alert_time,"Delete an existing alert time, requires alert_time_id.",TRUE,N/A,"id: int, not null",{'id': 103},"// Status Code: 200 OK
 // Occurs when the alert time is successfully deleted.
 {
   'message': 'Data deleted Successfully',
@@ -774,7 +774,7 @@ Constraint: start_time < end_time","{
 {
     'error': 'An internal server error occurred. Please try again later.'
 }"
-5,Get User Alert Weathers,GET,/user_alert_weather,"Retrieve all weather alerts set by the user, including category, weather description, and weather code.",TRUE,N/A,N/A,{},"""// Status Code: 200 OK
+5,Get user alert weathers,GET,/user_alert_weather,"Retrieve all weather alerts set by the user, including category, weather description, and weather code.",TRUE,N/A,N/A,{},"""// Status Code: 200 OK
 // Occurs when the user's weather alerts are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -802,7 +802,7 @@ Constraint: start_time < end_time","{
   'error': 'An internal server error occurred. Please try again later.'
 }
 """
-5,Add User Alert Weather,POST,/user_alert_weather,"Add a weather condition for which the user wants to receive alerts, identified by weather_id.",TRUE,N/A,"weather_id: int, not null","{
+5,Add user alert weather,POST,/user_alert_weather,"Add a weather condition for which the user wants to receive alerts, identified by weather_id.",TRUE,N/A,"weather_id: int, not null","{
   'weather_id': 3
 }","// Status Code: 201 Created
 // Occurs when the weather alert is successfully created.
@@ -834,7 +834,7 @@ Constraint: start_time < end_time","{
 {
   'error': 'User has already saved this weather alert'
 }"
-5,Update User Alert Weather,PUT,/user_alert_weather,"Update the weather condition for which the user wants to receive alerts, identified by weather_id.",TRUE,N/A,"id        : int, not null
+5,Update user alert weather,PUT,/user_alert_weather,"Update the weather condition for which the user wants to receive alerts, identified by weather_id.",TRUE,N/A,"id        : int, not null
 weather_id: int, null","{
   'id': 4,
   'weather_id': 4
@@ -862,7 +862,7 @@ weather_id: int, null","{
 {
   'error': 'Invalid or expired token'
 }"
-5,Delete User Alert Weather,DELETE,/user_alert_weather,"Delete a weather alert for the user, identified by the alert's unique ID.",TRUE,N/A,"id: int, not null",{'id': 4},"// Status Code: 200 OK
+5,Delete user alert weather,DELETE,/user_alert_weather,"Delete a weather alert for the user, identified by the alert's unique ID.",TRUE,N/A,"id: int, not null",{'id': 4},"// Status Code: 200 OK
 // Occurs when the weather alert is successfully deleted.
 {
   'message': 'Data deleted Successfully',
@@ -883,7 +883,7 @@ weather_id: int, null","{
   'error': 'Invalid or expired token'
 }
 "
-6,Create Post,POST,/posts,"Create a new post with latitude, longitude, and weather details. Suburb information will be fetched from a third-party geocoding API.",TRUE,N/A,"latitude  : float, not null
+6,Create post,POST,/posts,"Create a new post with latitude, longitude, and weather details. Suburb information will be fetched from a third-party geocoding API.",TRUE,N/A,"latitude  : float, not null
 longitude : float, not null
 weather_id: int, not null
 comment   : string, optional","{
@@ -932,7 +932,7 @@ comment   : string, optional","{
 {
   'error': 'An internal server error occurred. Please try again later.'
 }"
-6,Delete Post,DELETE,/posts,"Delete an existing post created by the user, identified by post_id.",TRUE,N/A,"id: int, not null",{id: 1},"// Status Code: 200 OK
+6,Delete post,DELETE,/posts,"Delete an existing post created by the user, identified by post_id.",TRUE,N/A,"id: int, not null",{id: 1},"// Status Code: 200 OK
 // Occurs when the post is successfully deleted.
 {
   'message': 'Data deleted Successfully',
@@ -959,7 +959,7 @@ comment   : string, optional","{
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-6,Get User Posts,GET,/posts,Retrieve all posts created by the user.,TRUE,N/A,N/A,{},"// Status Code: 200 OK
+6,Get user posts,GET,/posts,Retrieve all posts created by the user.,TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's posts are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -1015,7 +1015,7 @@ comment   : string, optional","{
 {
   'error': 'An internal server error occurred. Please try again later.'
 }"
-6,Get Viewed Posts,GET,/posts/view,Retrieve all posts viewed by the user,TRUE,N/A,N/A,{},"// Status Code: 200 OK
+6,Get viewed posts,GET,/posts/view,Retrieve all posts viewed by the user,TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's viewed posts are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -1055,7 +1055,7 @@ comment   : string, optional","{
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-6,Get Liked Posts,GET,/posts/like,"Retrieve all posts liked by the user, stored in user_like_post table.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
+6,Get liked posts,GET,/posts/like,"Retrieve all posts liked by the user, stored in user_like_post table.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's liked posts are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -1095,7 +1095,7 @@ comment   : string, optional","{
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-6,Get Reported Posts,GET,/posts/report,"Retrieve all posts reported by the user, stored in user_report_post table.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
+6,Get reported posts,GET,/posts/report,"Retrieve all posts reported by the user, stored in user_report_post table.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's reported posts are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
@@ -1136,7 +1136,7 @@ comment   : string, optional","{
 {
   'error': 'An internal server error occurred. Please try again later.'
 }"
-6,Get Filtered Posts,GET,/get_posts,Retrieve filtered posts using URL parameters.,FALSE,"URL Query Parameters: ?para1=2&para2=35
+6,Get filtered posts,GET,/get_posts,Retrieve filtered posts using URL parameters.,FALSE,"URL Query Parameters: ?para1=2&para2=35
 id        : int
 latitude  : float
 longitude : float
@@ -1182,7 +1182,7 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
 {
   'error': 'An internal server error occurred. Please try again later.'
 }"
-6,Check If User Liked Post,GET,/posts/like/{post_id},"Check if the user has liked a specific post, identified by post_id.",TRUE,"post_id: int, not null",N/A,{},"// Status Code: 200 OK
+6,Check if user liked post,GET,/posts/like/{post_id},"Check if the user has liked a specific post, identified by post_id.",TRUE,"post_id: int, not null",N/A,{},"// Status Code: 200 OK
 // Occurs when the post like status is successfully retrieved.
 {
   'post_id': 1,
@@ -1204,7 +1204,7 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-6,Toggle Post Like,POST,/posts/like,Toggle the like status for a specific post,TRUE,N/A,"post_id: int, not null",{'post_id': 1},"// Status Code: 200 OK
+6,Toggle post like,POST,/posts/like,Toggle the like status for a specific post,TRUE,N/A,"post_id: int, not null",{'post_id': 1},"// Status Code: 200 OK
 // Occurs when the like status for the post is successfully updated.
 {
   'post_id': 1,
@@ -1226,7 +1226,7 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
   'error': 'An internal server error occurred. Please try again later.'
 }
 "
-6,Report Post,POST,/posts/report,"Report a post identified by post_id, providing a comment. The created_at will be handled by the database.",TRUE,N/A,"post_id: int, not null
+6,Report post,POST,/posts/report,"Report a post identified by post_id, providing a comment. The created_at will be handled by the database.",TRUE,N/A,"post_id: int, not null
 report_comment: text, not null","{
   'post_id': 4,
   'report_comment': 'This post contains offensive content'
