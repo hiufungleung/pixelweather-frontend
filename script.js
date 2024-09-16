@@ -89,7 +89,7 @@ function getNearestSectionHighlight() {
             
         } else {
             if (mediaQuery.matches) {
-                apiLinks[i].style.color = highlightColorDark;
+                apiLinks[i].style.color = 'white';
             } else {
                 apiLinks[i].style.color = 'black';
             }
