@@ -1,90 +1,116 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, View, Text, Switch, StyleSheet, ScrollView } from 'react-native';
+import { TouchableOpacity, View, Text, Alert, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import GradientTheme from '@/components/GradientTheme';
 import AlertButton from '@/components/AlertButton';
 import TimingBar from '@/components/TimingBar';
 
 // Edit Button Component for editing Alert Type and Areas
-function EditButton() {
+function EditButton({ onPress, section }) {
     return (
-        <TouchableOpacity style={styles.editButton}>
+        <TouchableOpacity style={styles.editButton} onPress={() => onPress(section)}>
             <FontAwesome name="edit" size={24} color="black" />
         </TouchableOpacity>
     );
 }
 
-function renderAlertButtons(data) {
-    return data.map((item, index) => (
-        <AlertButton alertText={item.weather || item.suburb_name} key={index}/>
-    ))
-}
-
-const alertLocations = [
-    { "suburb_name": 'Woolloongabba' },
-    { "suburb_name": 'Brisbane City' },
-    { "suburb_name": 'Sunnybank' },
-    { "suburb_name": 'Greenslopes' },
-    { "suburb_name": 'St. Lucia' },
-]
-
-const alertTypes = [
-    { "weather": 'Thunderstorm' },
-    { "weather": 'Rain' },
-    { "weather": 'Drizzle' },
-    { "weather": 'Hail' },
-    { "weather": 'Squalls' },
-]
-
 // Main component
 export default function AlertsScreen() {
-    const [isEditMode, setIsEditMode] = useState(false); // Track edit mode state
+    const [editingSection, setEditingSection] = useState(null); // Track the section being edited
 
-    // Toggle the edit mode
-    const toggleEditMode = () => {
-        setIsEditMode(!isEditMode);
+    // Toggle edit mode for a specific section
+    const toggleEditMode = (section) => {
+        if (editingSection === section) {
+            setEditingSection(null); // Exit edit mode for this section
+        } else {
+            setEditingSection(section); // Enter edit mode for this section
+        }
+    };
+
+    // Render Alert Buttons with or without delete button based on edit mode
+    function renderAlertButtons(data, isEditMode) {
+        return data.map((item, index) => (
+            <View key={index} style={styles.alertButtonContainer}>
+                {isEditMode && (
+                    <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item)}>
+                        <FontAwesome name="minus-circle" size={20} color="red" />
+                    </TouchableOpacity>
+                )}
+                <AlertButton alertText={item.category || item.suburb_name} />
+            </View>
+        ));
+    }
+
+    // Handle Delete button press
+    const handleDelete = (item) => {
+        Alert.alert(
+            "Confirm Deletion",
+            `Are you sure you want to delete ${item.category || item.suburb_name}?`,
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    onPress: () => {
+                        // Implement the delete logic here
+                    }
+                }
+            ]
+        );
+    };
+
+    const alertLocations = {
+        'message': 'Data retrieved Successfully',
+        'data': [
+            { 'id': 101, 'suburb_name': 'Brisbane City' },
+            { 'id': 102, 'suburb_name': 'St. Lucia' }
+        ]
+    };
+
+    const alertTypes = {
+        'message': 'Data retrieved Successfully',
+        'data': [
+            { 'id': 1, 'category': 'Rainy' },
+            { 'id': 2, 'category': 'Sunny' }
+        ]
     };
 
     return (
         <GradientTheme>
             <ScrollView style={styles.container}>
-                <View>
+                {/* Alert Type Section */}
+                <View style={styles.section}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.header}>Alert Type</Text>
-                        <EditButton />
+                        <EditButton onPress={toggleEditMode} section="alertType" />
                     </View>
                     <View style={styles.buttonContainer}>
-
-                        {renderAlertButtons(alertTypes)}
-
+                        {renderAlertButtons(alertTypes.data, editingSection === 'alertType')}
                         <AlertButton alertText="+" />
                     </View>
                 </View>
+
+                {/* Alert Area Section */}
                 <View>
                     <View style={styles.headerContainer}>
                         <Text style={styles.header}>Areas</Text>
-                        <EditButton />
+                        <EditButton onPress={toggleEditMode} section="alertArea" />
                     </View>
                     <View style={styles.buttonContainer}>
-
-                        {renderAlertButtons(alertLocations)}
-
+                        {renderAlertButtons(alertLocations.data, editingSection === 'alertArea')}
                         <AlertButton alertText="+" />
                     </View>
                 </View>
+
+                {/* Alert Timing Section */}
                 <View style={{ paddingBottom: 30 }}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.header}>Alert Timing</Text>
-                        <EditButton />
+                        <EditButton onPress={toggleEditMode} section="alertTiming" />
                     </View>
                     <View style={styles.timingBarContainer}>
-                        <TimingBar></TimingBar>
-                        <TimingBar startTime="07:00" endTime="19:00"></TimingBar>
-                        <TimingBar startTime="16:00" endTime="17:00"></TimingBar>
-                        <TimingBar startTime="07:00" endTime="19:00"></TimingBar>
-                        <TimingBar startTime="16:00" endTime="17:00"></TimingBar>
-                        <TimingBar startTime="07:00" endTime="19:00"></TimingBar>
-                        <TimingBar startTime="16:00" endTime="17:00"></TimingBar>
+                        <TimingBar />
+                        <TimingBar startTime="07:00" endTime="19:00" />
+                        <TimingBar startTime="16:00" endTime="17:00" />
                     </View>
                 </View>
             </ScrollView>
@@ -109,15 +135,23 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginVertical: 10,
-        alignSelf: 'flex-start', // Aligns the header to the left
+        alignSelf: 'flex-start',
     },
     buttonContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        width: '100%', // Adjust width to fit buttons better
-    },
-    timingBarContainer: {
         width: '100%',
+        left: 7,
+    },
+    alertButtonContainer: {
+        marginBottom: 10,
+        width: '100%',
+    },
+    deleteButton: {
+        position: 'absolute',
+        left: -5, // Position the delete button near the alert button
+        top: -5,
+        zIndex: 10,
     },
 });

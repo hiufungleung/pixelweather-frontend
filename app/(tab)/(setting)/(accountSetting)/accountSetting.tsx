@@ -48,7 +48,7 @@ export default function AccountSettingScreen() {
                     </View>
                 </View>
 
-                <TouchableOpacity style={styles.deleteButton}>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => router.push('/deleteAccount')}>
                     <Text style={styles.deleteText}>Delete Account</Text>
                 </TouchableOpacity>
             </View>

@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 
 const data = [
     { id: '1', title: 'Account Center', icon: 'arrow-right', route: '/(accountSetting)/accountSetting' },
-    { id: '2', title: 'Saved Location', icon: 'arrow-right', action: () => alert('Saved Location') },
+    { id: '2', title: 'Saved Location', icon: 'arrow-right', route: '/savedLocation' },
     { id: '3', title: 'Help Center', icon: 'arrow-right', route: '/helpCenter' },
     { id: '4', title: 'Privacy', icon: 'arrow-right', route: '/privacy' },
 ];
