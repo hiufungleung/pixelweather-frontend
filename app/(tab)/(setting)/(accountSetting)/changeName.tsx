@@ -6,8 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function ChangeNameScreen() {
 
-    const [firstName, setFirstName] = useState('Ivy');
-    const [lastName, setLastName] = useState('Lee');
+    const [userName, setUserName] = useState('IamIvyLeeeeeeee');
     const router = useRouter();
     const navigation = useNavigation();
 
@@ -18,23 +17,17 @@ export default function ChangeNameScreen() {
                     <Text style={styles.backButton}>←</Text>
                 </TouchableOpacity>
                 <View style={styles.card}>
-                    <Text style={styles.label}>First Name</Text>
+                    <Text style={styles.label}>Username</Text>
                     <TextInput
-                        value={firstName}
-                        onChangeText={setFirstName}
-                        style={styles.input}
-                    />
-                    <Text style={styles.label}>Last Name</Text>
-                    <TextInput
-                        value={lastName}
-                        onChangeText={setLastName}
+                        value={userName}
+                        onChangeText={setUserName}
                         style={styles.input}
                     />
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {/* Save Email Logic */ }} style={styles.saveButton}>
+                        <TouchableOpacity onPress={() => {/* Save Name Logic */ }} style={styles.saveButton}>
                             <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>

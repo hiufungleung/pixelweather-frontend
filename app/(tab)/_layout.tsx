@@ -4,18 +4,19 @@ import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
+import * as ColorScheme from '@/constants/ColorScheme';
 
 export default function TabLayout() {
   return (
     <GradientTheme>
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: 'white',
-            tabBarInactiveTintColor: '#4600DB',
-            tabBarActiveBackgroundColor: '#4600DB',
+            tabBarActiveTintColor: ColorScheme.SECOND_BTN,
+            tabBarInactiveTintColor: ColorScheme.BTN_BACKGROUND,
+            tabBarActiveBackgroundColor: ColorScheme.BTN_BACKGROUND,
             tabBarInactiveBackgroundColor: 'transparent',
             tabBarStyle: {
-              backgroundColor: '#FFFFFF',
+              backgroundColor: ColorScheme.SECOND_BTN,
               bottom: 0,
               elevation: 0,
             },
@@ -23,12 +24,12 @@ export default function TabLayout() {
             headerStyle: {
                backgroundColor: '#363EFF',
             },
-            headerTintColor: '#FFFFFF',
+            headerTintColor: ColorScheme.SECOND_BTN,
             headerShown: false,
           }}
         >
           <Tabs.Screen
-            name="index"
+            name="(index)"
             options={{
               title: 'Home',
               tabBarIcon: ({ color }) => <FontAwesome6 size={28} name="location-dot" color={color} />,

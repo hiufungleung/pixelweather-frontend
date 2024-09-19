@@ -9,60 +9,50 @@ import * as ColorScheme from '@/constants/ColorScheme'
 const Tab = createMaterialTopTabNavigator();
 
 // Sample data for testing
-const initialData = [
+const initialData =
     {
-        postId: 1,
-        icon: '☀️',
-        weatherCondition: 'Sunny',
-        location: '49-1 Boomerang Rd \nSt Lucia',
-        postedTime: '2024-09-13T05:00:00Z',
-        likes: 20000,
-    },
-    {
-        postId: 2,
-        icon: '🌧️',
-        weatherCondition: 'Rainy',
-        location: '12 James St \nFortitude Valley',
-        postedTime: '2024-09-12T11:30:00Z',
-        likes: 1350,
-    },
-    {
-        postId: 3,
-        icon: '⛅',
-        weatherCondition: 'Cloudy',
-        location: '25 Main St \nSouth Bank',
-        postedTime: '2024-09-12T09:15:00Z',
-        likes: 999,
-    },
-    {
-        postId: 4,
-        icon: '🌩️',
-        weatherCondition: 'Stormy',
-        location: '500 Queen St \nBrisbane',
-        postedTime: '2024-09-11T23:00:00Z',
-        likes: 3005,
-    },
-    {
-        postId: 5,
-        icon: '❄️',
-        weatherCondition: 'Snowy',
-        location: '10 Beach Ave \nGold Coast',
-        postedTime: '2024-09-10T05:00:00Z',
-        likes: 150,
-    },
-    {
-        postId: 6,
-        icon: '🌤️',
-        weatherCondition: 'Clear',
-        location: '35 Park Rd \nToowong',
-        postedTime: '2024-09-12T07:45:00Z',
-        likes: 9500,
-    },
-];
+      'message': 'Data retrieved Successfully',
+      'data': [
+        {
+          'post_id': 1,
+          'latitude': -33.8688,
+          'longitude': 151.2093,
+          'suburb_id': 101,
+          'suburb_name': 'Brisbane City',
+          'weather_id': 1,
+          'weather_category': 'Clear Sky',
+          'weather': 'Clear Sky',
+          'weather_code': 100,
+          'created_at': '2024-09-16T10:00:00Z',
+          'likes': 10,
+          'views': 100,
+          'reports': 1,
+          'is_active': true,
+          'comment': 'It is a sunny day!'
+        },
+        {
+          'post_id': 2,
+          'latitude': -34.9285,
+          'longitude': 138.6007,
+          'suburb_id': 102,
+          'suburb_name': 'St. Lucia',
+          'weather_id': 2,
+          'weather_category': 'Rainy',
+          'weather': 'Light Rain',
+          'weather_code': 200,
+          'created_at': '2024-09-16T11:00:00Z',
+          'likes': 5,
+          'views': 50,
+          'reports': 0,
+          'is_active': true,
+          'comment': 'It is raining heavily!'
+        }
+      ]
+    };
 
 // Viewed Screen
 function ViewedScreen() {
-    const [data, setData] = useState(initialData);  // This is your post data
+    const [data, setData] = useState(initialData.data);  // This is your post data
     const [refreshing, setRefreshing] = React.useState(false);
 
     const onRefresh = useCallback(() => {
@@ -89,21 +79,22 @@ function ViewedScreen() {
 
     const renderItem = ({ item }) => (
         <PostTemplate
-            postId={item.postId}
-            icon={item.icon}
-            weatherCondition={item.weatherCondition}
-            location={item.location}
-            postedTime={item.postedTime}
+            postId={item.post_id}
+            weatherCondition={item.weather_category}
+            comment={item.comment}
+            location={item.suburb_name}
+            postedTime={item.created_at}
             likes={item.likes}
+            isSelfPost={false}
         />
     );
 
     return (
         <GradientTheme>
             <FlatList
-                data={initialData}
+                data={initialData.data}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.postId.toString()}
+                keyExtractor={(item) => item.post_id.toString()}
                 contentContainerStyle={styles.flatListContent}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -117,20 +108,21 @@ function ViewedScreen() {
 function PostedScreen() {
     const renderItem = ({ item }) => (
         <PostTemplate
-            postId={item.postId}
-            icon={item.icon}
-            weatherCondition={item.weatherCondition}
-            location={item.location}
-            postedTime={item.postedTime}
+            postId={item.post_id}
+            weatherCondition={item.weather_category}
+            comment={item.comment}
+            location={item.suburb_name}
+            postedTime={item.created_at}
             likes={item.likes}
+            isSelfPost={true}
         />
     );
     return (
         <GradientTheme>
             <FlatList
-                data={initialData}
+                data={initialData.data}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.postId.toString()}
+                keyExtractor={(item) => item.post_id.toString()}
                 contentContainerStyle={styles.flatListContent}
             />
         </GradientTheme>

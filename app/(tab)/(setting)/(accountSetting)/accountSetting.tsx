@@ -29,8 +29,8 @@ export default function AccountSettingScreen() {
 
                     <View style={styles.infoContainer}>
                         <View>
-                            <Text style={styles.label}>Name:</Text>
-                            <Text style={styles.info}>Ivy Lee</Text>
+                            <Text style={styles.label}>Username:</Text>
+                            <Text style={styles.info}>IamIvyLeeeeeeee</Text>
                         </View>
                         <TouchableOpacity onPress={() => router.push('/changeName')}>
                             <Text style={styles.editIcon}>✏️</Text>

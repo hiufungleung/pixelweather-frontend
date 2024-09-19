@@ -19,7 +19,7 @@ export default function AlertButton({ alertText }) {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: '#FFFFFFB3',
-        width: '48%',
+        width: '100%',
         height: 50,
         padding: 10,
         borderRadius: 20,

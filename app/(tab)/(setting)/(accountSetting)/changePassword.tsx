@@ -41,7 +41,7 @@ export default function ChangePasswordScreen() {
                         <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {/* Save Email Logic */ }} style={styles.saveButton}>
+                        <TouchableOpacity onPress={() => {/* Save Password Logic */ }} style={styles.saveButton}>
                             <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>

@@ -141,12 +141,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        width: '100%',
+        width: '96%',
         left: 7,
     },
     alertButtonContainer: {
         marginBottom: 10,
-        width: '100%',
+        width: '48%',
     },
     deleteButton: {
         position: 'absolute',

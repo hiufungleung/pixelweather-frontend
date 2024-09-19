@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Share } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import * as WeatherIcons from '@/constants/WeatherIcons';
 
 // Helper function to format the time difference
 const formatTimeDifference = (postedTime) => {
@@ -31,13 +33,13 @@ const formatLikes = (likes) => {
     }
 };
 
-export default function PostTemplate({ postId, icon, weatherCondition, location, postedTime, likes }) {
+export default function PostTemplate({ postId, weatherCondition, comment, location, postedTime, likes, isSelfPost }) {
 
     // Function to handle post sharing
     const onShare = async () => {
         try {
             const result = await Share.share({
-                message: `Beware of the weather in ${location}: It's ${weatherCondition}! Posted ${formatTimeDifference(postedTime)}.`
+                message: `Beware of the weather in ${location}: It's ${weatherCondition}! \n ${comment} \n Posted ${formatTimeDifference(postedTime)}.`
             });
 
             if (result.action === Share.sharedAction) {
@@ -58,7 +60,7 @@ export default function PostTemplate({ postId, icon, weatherCondition, location,
         <View style={styles.postContainer}>
             {/* Weather Icon */}
             <View style={styles.postIcon}>
-                <Text>{icon}</Text>
+                <Image source={WeatherIcons.weatherIconMap[weatherCondition]} style={styles.postImage}/>
             </View>
 
             {/* Weather Information */}
@@ -92,9 +94,15 @@ export default function PostTemplate({ postId, icon, weatherCondition, location,
                     </View>
 
                     <View>
-                        <TouchableOpacity>
-                            <Text style={styles.reportText}>Report</Text>
-                        </TouchableOpacity>
+                        {isSelfPost ? (
+                            <TouchableOpacity>
+                                <FontAwesome name="trash" size={24} color="black" />
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity>
+                                <Text style={styles.reportText}>Report</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </View>
             </View>
@@ -121,6 +129,13 @@ const styles = StyleSheet.create({
     postIcon: {
         width: '30%',
         height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: '3%',
+    },
+    postImage: {
+        width: '80%',
+        height: '70%',
     },
     postInfo: {
         width: '70%',
@@ -128,19 +143,22 @@ const styles = StyleSheet.create({
     },
     infoContainer: {
         flexDirection: 'row',
+        justifyContent: 'space-between', // Spread the status and time apart
+        alignItems: 'center',  // Center vertically
         height: '20%',
-        alignItems: 'start'
+        flexWrap: 'nowrap',  // Prevent wrapping
     },
     statusContainer: {
-        width: '70%',
+        flex: 1,  // Allow statusContainer to take up remaining space
     },
     statusText: {
         fontSize: 20,
         fontWeight: 'bold',
         color: '#333',
+        flexWrap: 'wrap',  // Enable wrapping if needed
     },
     timeContainer: {
-        width: '30%',
+        width: 'auto',  // Let time take only the required width
     },
     timeText: {
         fontSize: 12,
