@@ -30,10 +30,15 @@ export default function NewPostScreen() {
 
     const handleNextPress = () => {
         // Navigate to postConfirm with query params
-        router.push({
-            pathname: 'postConfirm',
-            params: { weather, preparationText },
-        });
+        if (weather) {
+            router.push({
+                pathname: 'postConfirm',
+                params: { weather, preparationText },
+            })
+        } else {
+            alert("You must select a weather condition!")
+        }
+        ;
     };
 
     return (
@@ -44,7 +49,10 @@ export default function NewPostScreen() {
                 </TouchableOpacity>
                 <View style={styles.card}>
                     <Text style={styles.header}>New Post</Text>
-                    <Text style={styles.label}>Now it's...</Text>
+                    <View style={{flexDirection: 'row', justifyContent:'space-between',}}>
+                        <Text style={styles.label}>Now it's...</Text>
+                        <Text style={{color: 'red',}}>*required</Text>
+                    </View>
                     {/* Dropdown Menu */}
                     <DropDownPicker
                         open={open}
@@ -60,13 +68,12 @@ export default function NewPostScreen() {
                         style={styles.input}
                         dropDownContainerStyle={styles.dropdownContainer}
                     />
-                    <Text style={styles.label}>To prepare...</Text>
+                    <Text style={styles.label}>Comment</Text>
                     <TextInput
                         value={preparationText}
                         onChangeText={setPreparationText}
                         style={styles.input}
                         placeholder="Enter preparation notes"
-                        multiline
                     />
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>

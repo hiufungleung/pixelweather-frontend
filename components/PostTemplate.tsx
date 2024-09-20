@@ -39,7 +39,9 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
     const onShare = async () => {
         try {
             const result = await Share.share({
-                message: `Beware of the weather in ${location}: It's ${weatherCondition}! \n ${comment} \n Posted ${formatTimeDifference(postedTime)}.`
+                message: `Beware of the weather in ${location}: It's ${weatherCondition}! \n
+                ${comment} \n
+                Posted ${formatTimeDifference(postedTime)}.`
             });
 
             if (result.action === Share.sharedAction) {
