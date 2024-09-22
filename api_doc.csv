@@ -38,6 +38,10 @@ password: string, not null (Password must meet security requirements, do not has
             ""valid"": false,
             ""error"": ""Must be an email format""
         },
+        ""username"": {
+            ""valid"": false,
+            ""error"": ""Username must contain no more than 31 characters""
+        },
         ""password"": {
             ""valid"": false,
             ""error"": ""Password must be at least 8 characters, include an uppercase letter, a number, and a special character""
@@ -175,9 +179,15 @@ new_password    : string, not null (Password must meet security requirements, do
 }
 
 // Status Code: 401, Unauthorized
-// Occurs when the current password is incorrect or the user is not authenticated.
+// Occurs when the the token is invalid.
 {
-    'error': 'Incorrect current password or unauthorized user.'
+    'error': 'Invalid or expired token'
+}
+
+// Status Code: 403, Forbidden
+// Occurs when the the current password is not correct.
+{
+    'error': 'Incorrect password'
 }
 
 // Status Code: 422, Unprocessable Entity
