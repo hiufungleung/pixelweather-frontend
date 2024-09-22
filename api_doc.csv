@@ -17,9 +17,9 @@ password: string, not null (Password must meet security requirements, do not has
 }
 
 // Status Code: 400, Bad Request
-// Occurs when missing email or password
+// Occurs when missing email, username or password
 {
-    'error': 'Missing email or password.'
+    'error': 'Missing email, username or password.'
 }
 
 // Status Code: 409, Conflict
