@@ -1,9 +1,9 @@
 CREATE TABLE `users` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `user_name` varchar(31) NOT NULL,
+  `username` varchar(31) NOT NULL,
   `email` varchar(255) UNIQUE NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `suburbs` (
@@ -42,12 +42,12 @@ CREATE TABLE `posts` (
   `longitude` decimal(9,6) NOT NULL,
   `suburb_id` int NOT NULL,
   `weather_id` int NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT (now()),
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `likes` int NOT NULL DEFAULT 0,
   `views` int NOT NULL DEFAULT 0,
   `reports` int NOT NULL DEFAULT 0,
   `is_active` bool NOT NULL DEFAULT true,
-  `comment` text DEFAULT ''
+  `comment` text
 );
 
 CREATE TABLE `user_like_post` (
@@ -66,7 +66,7 @@ CREATE TABLE `user_report_post` (
   `user_id` int NOT NULL,
   `post_id` int NOT NULL,
   `report_comment` text NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT (now()),
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`, `post_id`)
 );
 
@@ -134,3 +134,4 @@ ALTER TABLE `user_alert_suburb` ADD FOREIGN KEY (`suburb_id`) REFERENCES `suburb
 ALTER TABLE `user_saved_suburb` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `user_saved_suburb` ADD FOREIGN KEY (`suburb_id`) REFERENCES `suburbs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
