@@ -1,5 +1,5 @@
 # Successful Responses
-# 200 O2
+# 200 OK
 SUCCESS_LOGIN = "Login Successfully"
 SUCCESS_LOGOUT = "Logout Successfully"
 SUCCESS_EMAIL_CHANGED = "Email Changed Successfully"
