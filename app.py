@@ -67,6 +67,8 @@ def generate_token(user_id: int) -> str:
         + datetime.timedelta(days=TOKEN_VALID_DURATION),
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+    if isinstance(token, bytes):
+        token = token.decode('utf-8')
     return token
 
 
