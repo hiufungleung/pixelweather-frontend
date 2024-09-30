@@ -64,6 +64,7 @@ password: string (Password must meet security requirements, do not hash)","{
     'message': 'Login successful',
     'data': {
         'email': 'chantaiman@gmail.com',
+        'username': 'chantaiman',
         'token': '9p843chty9432tf8474983ru8owyt84525y53'
     }
 }
