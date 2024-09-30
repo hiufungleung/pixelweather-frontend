@@ -23,6 +23,7 @@ connection = mysql.connector.connect(
 cursor = connection.cursor(dictionary=True)
 
 NO_TOKEN_NEEDED_APIs = [
+    "hello_world",
     "handle_signup",
     "handle_login",
     "suburbs",
