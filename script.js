@@ -211,8 +211,10 @@ function listenToColorScheme() {
 function applyColorScheme(event) {
     const catalogue = document.getElementById('catalogue');
     const erd = document.getElementById('erd');
-    const darkBackgroundColor = 'black';
+    const darkBackgroundColor = '#060606';
     const darkFontColor = 'white';
+    const lightBackgroundColor = '#f6f6f6';
+    const lightFontColor = 'black';
     if (event.matches) {
         // 如果是深色模式
         document.body.style.backgroundColor = darkBackgroundColor;
@@ -221,25 +223,17 @@ function applyColorScheme(event) {
         document.querySelectorAll('.api-link').forEach(item => { item.style.color = darkFontColor; });
         erd.setAttribute('src', 'db_structure_dark.svg');
 
-        if (catalogue.classList.contains('show')) {
-            catalogue.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-        } else {
-            catalogue.style.backgroundColor = darkBackgroundColor;
-        }
+        catalogue.style.backgroundColor = darkBackgroundColor;
         document.querySelector('header').style.backgroundColor = darkBackgroundColor;
     } else {
         // 如果是淺色模式
-        document.body.style.backgroundColor = 'white';
+        document.body.style.backgroundColor = lightBackgroundColor;
         document.body.style.color = 'black';
-        document.querySelectorAll('pre').forEach(item => { item.style.backgroundColor = '#f5f5f5'; });
+        document.querySelectorAll('pre').forEach(item => { item.style.backgroundColor = '#eeeeee'; });
         document.querySelectorAll('.api-link').forEach(item => { item.style.color = '#444'; });
         erd.setAttribute('src', 'db_structure.svg');
 
-        if (catalogue.classList.contains('show')) {
-            catalogue.style.backgroundColor = 'rgba(255,255,255, 0.95)';
-        } else {
-            catalogue.style.backgroundColor = 'white';
-        }
-        document.querySelector('header').style.backgroundColor = 'white';
+        catalogue.style.backgroundColor = lightBackgroundColor;
+        document.querySelector('header').style.backgroundColor = lightBackgroundColor;
     }
 }
