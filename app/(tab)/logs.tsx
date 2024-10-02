@@ -8,6 +8,8 @@ import * as ColorScheme from '@/constants/ColorScheme'
 // Top Tab Navigator
 const Tab = createMaterialTopTabNavigator();
 
+// API calls to fetch viewed posts here
+
 // Sample data for testing
 const initialData =
     {
@@ -50,6 +52,19 @@ const initialData =
       ]
     };
 
+// function to render post items
+const renderItem = ({ item }) => (
+        <PostTemplate
+            postId={item.post_id}
+            weatherCondition={item.weather_category}
+            comment={item.comment}
+            location={item.suburb_name}
+            postedTime={item.created_at}
+            likes={item.likes}
+            isSelfPost={false}
+        />
+);
+
 // Viewed Screen
 function ViewedScreen() {
     const [data, setData] = useState(initialData.data);  // This is your post data
@@ -77,18 +92,6 @@ function ViewedScreen() {
         }, 2000);  // Simulating a network request delay
     }, []);
 
-    const renderItem = ({ item }) => (
-        <PostTemplate
-            postId={item.post_id}
-            weatherCondition={item.weather_category}
-            comment={item.comment}
-            location={item.suburb_name}
-            postedTime={item.created_at}
-            likes={item.likes}
-            isSelfPost={false}
-        />
-    );
-
     return (
         <GradientTheme>
             <FlatList
@@ -104,23 +107,55 @@ function ViewedScreen() {
     );
 }
 
+// API calls to fetch posted posts here
+
+const postData =
+{
+  'message': 'Data retrieved Successfully',
+  'data': [
+    {
+      'post_id': 1,
+      'latitude': -33.8688,
+      'longitude': 151.2093,
+      'suburb_id': 101,
+      'suburb_name': 'Brisbane City',
+      'weather_id': 1,
+      'weather_category': 'Clear Sky',
+      'weather': 'Clear Sky',
+      'weather_code': 100,
+      'created_at': '2024-09-16T10:00:00Z',
+      'likes': 10,
+      'views': 100,
+      'reports': 1,
+      'is_active': false,
+      'comment': 'It is a sunny day!'
+    },
+    {
+      'post_id': 2,
+      'latitude': -33.8688,
+      'longitude': 151.2093,
+      'suburb_id': 103,
+      'suburb_name': 'Sunnybank',
+      'weather_id': 1,
+      'weather_category': 'Storm',
+      'weather': 'Clear Sky',
+      'weather_code': 100,
+      'created_at': '2024-09-16T10:00:00Z',
+      'likes': 10,
+      'views': 100,
+      'reports': 1,
+      'is_active': false,
+      'comment': 'It is a sunny day!'
+    }
+  ]
+}
+
 // Posted Screen
 function PostedScreen() {
-    const renderItem = ({ item }) => (
-        <PostTemplate
-            postId={item.post_id}
-            weatherCondition={item.weather_category}
-            comment={item.comment}
-            location={item.suburb_name}
-            postedTime={item.created_at}
-            likes={item.likes}
-            isSelfPost={true}
-        />
-    );
     return (
         <GradientTheme>
             <FlatList
-                data={initialData.data}
+                data={postData.data}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.post_id.toString()}
                 contentContainerStyle={styles.flatListContent}

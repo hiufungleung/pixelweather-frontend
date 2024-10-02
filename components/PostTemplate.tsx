@@ -33,15 +33,18 @@ const formatLikes = (likes) => {
     }
 };
 
+// Helper function to handle post report
+
+
+// Helper function to toggle like and unlike
+
 export default function PostTemplate({ postId, weatherCondition, comment, location, postedTime, likes, isSelfPost }) {
 
     // Function to handle post sharing
     const onShare = async () => {
         try {
             const result = await Share.share({
-                message: `Beware of the weather in ${location}: It's ${weatherCondition}! \n
-                ${comment} \n
-                Posted ${formatTimeDifference(postedTime)}.`
+                message: `Beware of the weather in ${location}: It's ${weatherCondition}! \n\n ${comment} \n\n Posted ${formatTimeDifference(postedTime)}.`
             });
 
             if (result.action === Share.sharedAction) {
@@ -62,7 +65,11 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
         <View style={styles.postContainer}>
             {/* Weather Icon */}
             <View style={styles.postIcon}>
-                <Image source={WeatherIcons.weatherIconMap[weatherCondition]} style={styles.postImage}/>
+                <Image
+                    source={WeatherIcons.weatherIconMap[weatherCondition]}
+                    style={styles.postImage}
+                    resizeMode="contain"
+                />
             </View>
 
             {/* Weather Information */}
@@ -71,7 +78,12 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
                 {/* Weather Info */}
                 <View style={styles.infoContainer}>
                     <View style={styles.statusContainer}>
-                        <Text style={styles.statusText}>Now it is {weatherCondition}</Text>
+                        <Text style={styles.statusText}
+                            adjustsFontSizeToFit
+                            numberOfLines={1}
+                        >
+                            Now it is {weatherCondition}
+                        </Text>
                     </View>
                     <View style={styles.timeContainer}>
                         <Text style={styles.timeText}>{formatTimeDifference(postedTime)}</Text>
@@ -154,7 +166,6 @@ const styles = StyleSheet.create({
         flex: 1,  // Allow statusContainer to take up remaining space
     },
     statusText: {
-        fontSize: 20,
         fontWeight: 'bold',
         color: '#333',
         flexWrap: 'wrap',  // Enable wrapping if needed

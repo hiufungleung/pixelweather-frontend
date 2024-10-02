@@ -13,7 +13,7 @@ export default function AccountSettingScreen() {
         <GradientTheme>
 
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.backButton}>←</Text>
                 </TouchableOpacity>
                 <View style={styles.card}>

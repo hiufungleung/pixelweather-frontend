@@ -43,7 +43,7 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
-            name="alert"
+            name="(alert)"
             options={{
               title: 'Alerts',
               tabBarIcon: ({ color }) => <FontAwesome size={28} name="bell" color={color} />,
