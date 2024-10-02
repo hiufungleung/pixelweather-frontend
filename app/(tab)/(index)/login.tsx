@@ -1,5 +1,15 @@
-import React, { useState } from 'react';
-import {View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity} from 'react-native';
+import React, { useState, useRef } from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    Button,
+    StyleSheet,
+    Alert,
+    TouchableOpacity,
+    KeyboardAvoidingView,
+    ScrollView, Platform
+} from 'react-native';
 import {showAlert} from "@/components/alertMsg";
 import { useRouter } from 'expo-router';
 import GradientTheme from "@/components/GradientTheme";
@@ -12,6 +22,7 @@ export default function LogInScreen() {
     const [password, setPassword] = useState('');
     const router = useRouter(); // 初始化 useRouter 來使用導航
     const { login, isLoggedIn } = useAuth();
+    const passwordRef = useRef(null);
 
     const handleLogIn = async () => {
         if (!email || !password) {
@@ -40,7 +51,7 @@ export default function LogInScreen() {
 
             // 如果回傳內容包含 '<'，表示是 HTML 內容
             if (rawResponse.includes('<')) {
-                // console.error('伺服器回傳了 HTML 而非 JSON:', rawResponse);
+                console.error('伺服器回傳了 HTML 而非 JSON:', rawResponse);
                 Alert.alert('Server Error', 'Received unexpected response from server.');
                 return;
             }
@@ -63,40 +74,52 @@ export default function LogInScreen() {
     };
 
     return (
-        <GradientTheme>
-            <View style={styles.container}>
-                <Text style={styles.title}>Log In</Text>
-                <View style={styles.loginContainer}>
-                    <View style={{width: '85%'}}>
-                        <Text>Email</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="email@example.com"
-                            value={email}
-                            onChangeText={setEmail}
-                        />
-                        <Text>Password</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Password"
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry
-                        />
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+                <GradientTheme>
+                    <View style={styles.container}>
+                        <Text style={styles.title}>Log In</Text>
+                        <View style={styles.loginContainer}>
+                            <View style={{width: '85%'}}>
+                                <Text>Email</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="email@example.com"
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => passwordRef.current.focus()}
+                                />
+                                <Text>Password</Text>
+                                <TextInput
+                                    ref={passwordRef}
+                                    style={styles.input}
+                                    placeholder="Password"
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry
+                                    returnKeyType="done"
+                                    onSubmitEditing={() => handleLogIn()}
+                                />
 
-                        {/* 測試按鈕 */}
-                        <TouchableOpacity style={styles.loginButton} onPress={handleLogIn}>
-                            <Text style={styles.loginButtonText}>Log in</Text>
-                        </TouchableOpacity>
+                                {/* 測試按鈕 */}
+                                <TouchableOpacity style={styles.loginButton} onPress={handleLogIn}>
+                                    <Text style={styles.loginButtonText}>Log in</Text>
+                                </TouchableOpacity>
 
-                        <Text style={styles.forgotPasswordText} onPress={() => router.push('')}>Forgot password?</Text>
-                        <Text style={styles.linkText} onPress={() => router.push('/')}>
-                            Don't have an account? Sign Up
-                        </Text>
+                                <Text style={styles.forgotPasswordText} onPress={() => router.push('')}>Forgot password?</Text>
+                                <Text style={styles.linkText} onPress={() => router.push('/')}>
+                                    Don't have an account? Sign Up
+                                </Text>
+                            </View>
+                        </View>
                     </View>
-                </View>
-            </View>
-        </GradientTheme>
+                </GradientTheme>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 

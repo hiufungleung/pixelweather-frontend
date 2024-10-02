@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet, TextInput } from 'react-native';
+import {TouchableOpacity, View, Text, StyleSheet, TextInput, Alert} from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@/components/accAuth';
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import {API_LINK} from "@/constants/API_link";
+import {handleUpdateRequest} from "@/components/handleUpdate";
 
 export default function ChangeEmailScreen() {
-    const { userData } = useAuth();
+    const { userData, userToken, login} = useAuth();
     const [email, setEmail] = useState(userData?.email || '')
     const router = useRouter();
     const navigation = useNavigation();
+
+    const handleChangeEmail = async () => {
+        if (!email) {
+            Alert.alert('Error', 'Please enter your new email address.');
+            return;
+        }
+        const requestBody = {email}
+        const response = await handleUpdateRequest('/handle_update_email', 'PATCH', requestBody, userToken);
+
+        if (response) {
+            // 更新 `useAuth` 中的資料並返回 AccountSetting
+            const updatedUserData = { ...userData, email: response.data.email };
+            login(userToken, updatedUserData); // 更新 useAuth 內的狀態
+            navigation.goBack(); // 導航回到 AccountSetting 頁面
+        }
+    };
 
     return (
         <GradientTheme>
@@ -32,7 +48,7 @@ export default function ChangeEmailScreen() {
                         <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {/* Save Email Logic */ }} style={styles.saveButton}>
+                        <TouchableOpacity onPress={handleChangeEmail} style={styles.saveButton}>
                             <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>

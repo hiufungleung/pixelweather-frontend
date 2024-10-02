@@ -1,9 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
-import UnderDevelopmentScreen from "@/components/alertMsg";
+import React, {useRef, useState} from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    Button,
+    StyleSheet,
+    TouchableOpacity,
+    Alert,
+    Image,
+    KeyboardAvoidingView, ScrollView, Platform
+} from 'react-native';
 import { useRouter } from 'expo-router';
-import GradientTheme from "@/components/GradientTheme";  // 使用 `expo-router` 進行導航
-import * as ColorScheme from '@/constants/ColorScheme'
+import GradientTheme from "@/components/GradientTheme";
+import * as ColorScheme from '@/constants/ColorScheme';
 import {API_LINK} from '@/constants/API_link';
 
 export default function SignUpScreen() {
@@ -11,6 +20,8 @@ export default function SignUpScreen() {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const router = useRouter(); // 使用 `useRouter` 來控制導航
+    const usernameRef = useRef(null);
+    const passwordRef = useRef(null);
 
     const handleGuestLogin = () => {
         Alert.alert('Guest Mode', 'You have entered the app as a guest.');
@@ -90,66 +101,81 @@ export default function SignUpScreen() {
     };
 
     return (
-        <GradientTheme>
-            <View style={styles.container}>
-                {/* 標題區域 */}
-                <Text style={styles.title}>Welcome</Text>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+                <GradientTheme>
+                    <View style={styles.container}>
+                        {/* 標題區域 */}
+                        <Text style={styles.title}>Welcome</Text>
 
-                {/* 繼續訪客模式按鈕 */}
-                <View style={styles.signupContainer}>
-                    <View style={{width: '85%'}}>
-                        <TouchableOpacity style={styles.guestButton} onPress={handleGuestLogin}>
-                            <Text style={styles.guestButtonText}>Continue as a guest!</Text>
-                        </TouchableOpacity>
+                        {/* 繼續訪客模式按鈕 */}
+                        <View style={styles.signupContainer}>
+                            <View style={{width: '85%'}}>
+                                <TouchableOpacity style={styles.guestButton} onPress={handleGuestLogin}>
+                                    <Text style={styles.guestButtonText}>Continue as a guest!</Text>
+                                </TouchableOpacity>
 
-                        {/* 分隔線 */}
-                        <View style={styles.dividerContainer}>
-                            <View style={styles.line} />
-                            <Text style={styles.dividerText}> Or create an account </Text>
-                            <View style={styles.line} />
+                                {/* 分隔線 */}
+                                <View style={styles.dividerContainer}>
+                                    <View style={styles.line} />
+                                    <Text style={styles.dividerText}> Or create an account </Text>
+                                    <View style={styles.line} />
+                                </View>
+
+                                {/* 輸入框區域 */}
+                                <Text>Email</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="email@example.com"
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => usernameRef.current.focus()}
+                                />
+                                <Text>Username</Text>
+                                <TextInput
+                                    ref={usernameRef}
+                                    style={styles.input}
+                                    placeholder="username"
+                                    value={username}
+                                    onChangeText={setUsername}
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => passwordRef.current.focus()}
+                                />
+                                <Text>Password</Text>
+                                <TextInput
+                                    ref={passwordRef}
+                                    style={styles.input}
+                                    placeholder="Password"
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    returnKeyType="done"
+                                    onSubmitEditing={() => handleSignUp()}
+                                    secureTextEntry
+                                />
+
+                                {/* 註冊按鈕 */}
+                                <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
+                                    <Text style={styles.signUpButtonText}>Join our community!</Text>
+                                </TouchableOpacity>
+                            </View>
+                            {/* 登入連結 */}
+                            <Text style={styles.loginLink} onPress={handleLogin}>
+                                Already have an account? Login
+                            </Text>
+
+                            {/* 使用條款與隱私政策 */}
+                            <View style={styles.termsContainer}>
+                                <Text style={styles.termsText} onPress={() => router.push('/(setting)/privacy')}>Terms of Use | Privacy Policy</Text>
+                            </View>
                         </View>
-
-                        {/* 輸入框區域 */}
-                        <Text>Email</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="email@example.com"
-                            value={email}
-                            onChangeText={setEmail}
-                        />
-                        <Text>Username</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="username"
-                            value={username}
-                            onChangeText={setUsername}
-                        />
-                        <Text>Password</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Password"
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry
-                        />
-
-                        {/* 註冊按鈕 */}
-                        <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
-                            <Text style={styles.signUpButtonText}>Join our community!</Text>
-                        </TouchableOpacity>
                     </View>
-                    {/* 登入連結 */}
-                    <Text style={styles.loginLink} onPress={handleLogin}>
-                        Already have an account? Login
-                    </Text>
-
-                    {/* 使用條款與隱私政策 */}
-                    <View style={styles.termsContainer}>
-                        <Text style={styles.termsText} onPress={() => router.push('/(setting)/privacy')}>Terms of Use | Privacy Policy</Text>
-                    </View>
-                </View>
-            </View>
-        </GradientTheme>
+                </GradientTheme>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
