@@ -103,14 +103,14 @@ export default function AlertsScreen() {
     }
 
     // error message
-    if (error) {
+    /*  if (error) {
                 return (
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
                         <Text style={{margin: '2%',}}>Error: {error}</Text>
                         <Button title="Back"/>
                     </View>
                 );
-            }
+            } */
 
     // Toggle edit mode for a specific section
     const toggleEditMode = (section) => {
