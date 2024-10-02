@@ -199,11 +199,11 @@ class RNSSearchBarEventEmitter : public ViewEventEmitter {
  public:
   using ViewEventEmitter::ViewEventEmitter;
 
-  struct OnSearchFocus {
+  struct OnFocus {
       
     };
 
-  struct OnSearchBlur {
+  struct OnBlur {
       
     };
 
@@ -226,9 +226,9 @@ class RNSSearchBarEventEmitter : public ViewEventEmitter {
   struct OnOpen {
       
     };
-  void onSearchFocus(OnSearchFocus value) const;
+  void onFocus(OnFocus value) const;
 
-  void onSearchBlur(OnSearchBlur value) const;
+  void onBlur(OnBlur value) const;
 
   void onSearchButtonPress(OnSearchButtonPress value) const;
 

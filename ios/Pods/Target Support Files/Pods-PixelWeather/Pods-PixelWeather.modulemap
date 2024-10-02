@@ -1,5 +1,5 @@
-module Pods_PixelWeather {
-  umbrella header "Pods-PixelWeather-umbrella.h"
+module Pods_pixelweather {
+  umbrella header "Pods-pixelweather-umbrella.h"
 
   export *
   module * { export * }

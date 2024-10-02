@@ -14,13 +14,7 @@
     "git": "https://github.com/zoontek/react-native-permissions.git",
     "tag": "4.1.5"
   },
-  "source_files": [
-    "ios/*.{h,mm}",
-    "ios/LocationAlways/*.{h,mm}",
-    "ios/LocationWhenInUse/*.{h,mm}",
-    "ios/LocationAccuracy/*.{h,mm}"
-  ],
-  "frameworks": "CoreLocation",
+  "source_files": "ios/*.{h,mm}",
   "dependencies": {
     "React-Core": [
 

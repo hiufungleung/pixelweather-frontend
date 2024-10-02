@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_PixelWeatherVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_PixelWeatherVersionString[];
+FOUNDATION_EXPORT double Pods_pixelweatherVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_pixelweatherVersionString[];
 
