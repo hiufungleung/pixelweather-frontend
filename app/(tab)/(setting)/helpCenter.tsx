@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import { useNavigation } from '@react-navigation/native';
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 // Data for Help Center
 const gettingStarted = [
@@ -66,7 +67,7 @@ export default function PrivacyScreen() {
             <View style={styles.container}>
                 <View>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Text style={styles.backButton}>←</Text>
+                        <Text style={styles.backButton}><FontAwesome6 size={28} name="arrow-left"/></Text>
                     </TouchableOpacity>
                     <Text style={styles.header}>{"\n"}Pixel Weather {"\n"}Help Center</Text>
                 </View>

@@ -1,33 +1,56 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet, TextInput } from 'react-native';
+import {TouchableOpacity, View, Text, StyleSheet, TextInput, Alert} from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '@/components/accAuth';
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import {handleUpdateRequest} from "@/components/handleUpdate";
+import {email} from "@sideway/address";
 
 export default function ChangeNameScreen() {
-
-    const [userName, setUserName] = useState('IamIvyLeeeeeeee');
+    const { login, userData, userToken } = useAuth();
+    const [username, setUserName] = useState(userData?.username || '');
     const router = useRouter();
     const navigation = useNavigation();
+
+    const handleChangeUsername = async() => {
+        if (!username) {
+            Alert.alert('Error', 'Please enter your new username.');
+            return;
+        }
+        const requestBody = { username: username};
+        console.log(requestBody);
+        const response = await handleUpdateRequest('/handle_update_username', 'PATCH', requestBody, userToken);
+
+        if (response) {
+            // 合併更新的 username 到現有的 userData 中，而不覆蓋其他屬性
+            const updatedUserData = { ...userData, username: response.data.username };
+            login(userToken, updatedUserData); // 使用更新後的完整 userData
+            navigation.goBack(); // 返回到 AccountSetting 頁面
+        }
+    };
 
     return (
         <GradientTheme>
             <View style={styles.container}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backButton}>←</Text>
+                    <Text style={styles.backButton}><FontAwesome6 size={28} name="arrow-left"/></Text>
                 </TouchableOpacity>
                 <View style={styles.card}>
                     <Text style={styles.label}>Username</Text>
                     <TextInput
-                        value={userName}
-                        onChangeText={setUserName}
                         style={styles.input}
+                        value={username}
+                        onChangeText={(text) => setUserName(text)}
+                        editable={true}
+                        placeholder="Enter your name."
                     />
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {/* Save Name Logic */ }} style={styles.saveButton}>
+                        <TouchableOpacity onPress={handleChangeUsername} style={styles.saveButton}>
                             <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>

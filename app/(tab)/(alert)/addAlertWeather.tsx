@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, View, Text, Alert, StyleSheet, ScrollView, ActivityIndicator, Button } from 'react-native';
+import React, { useState } from 'react';
+import { TouchableOpacity, View, Text, Alert, StyleSheet } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import * as ColorScheme from '@/constants/ColorScheme';
 import RNPickerSelect from 'react-native-picker-select';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/components/accAuth'
+import { API_LINK } from '@/constants/API_link';
 
 export default function AddAlertWeather() {
 
     const router = useRouter();
+    const [selectedValue, setSelectedValue] = useState(null);
 
+    // Placeholder for the picker
     const placeholder = {
         label: 'Select an alert weather type',
         value: null,
     };
 
-    const [selectedValue, setSelectedValue] = useState(null);
-
+    // Options for the weather types
     const options = [
         { label: 'Clear Sky', value: '40' },
         { label: 'Rainy', value: '20' },
@@ -29,14 +32,64 @@ export default function AddAlertWeather() {
         { label: 'Cold', value: '49' },
     ];
 
+    const { userToken } = useAuth();
+
+    // Function to handle adding the alert weather type
+    const handleAddAlertWeather = async () => {
+        // Check if a weather type is selected
+        if (!selectedValue) {
+            Alert.alert('Error', 'Please select a weather type.');
+            return;
+        }
+
+        // Define the body of the POST request
+        const requestBody = {
+            weather_id: selectedValue
+        };
+
+        try {
+            // Send the POST request
+            const response = await fetch(`${API_LINK}/user_alert_weather`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}` // Token required in the header
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            // Handle the response
+            const data = await response.json();
+            if (response.status === 201) {
+                Alert.alert('Success', 'Weather alert added successfully');
+                // Handle successful creation, e.g., navigate back or update UI
+                router.back(); // Navigate back after success
+            } else if (response.status === 400) {
+                Alert.alert('Error', 'Missing or invalid weather ID.');
+            } else if (response.status === 401) {
+                Alert.alert('Error', 'Invalid or expired token.');
+            } else if (response.status === 409) {
+                Alert.alert('Error', 'You have already saved this weather alert.');
+            } else if (response.status === 422) {
+                Alert.alert('Error', 'The record does not exist or is in the wrong format.');
+            } else if (response.status === 500) {
+                Alert.alert('Error', 'An internal server error occurred. Please try again later.');
+            } else {
+                Alert.alert('Error', 'An unknown error occurred.');
+            }
+        } catch (error) {
+            // Handle any network or unexpected errors
+            Alert.alert('Error', 'Failed to connect to the server. Please try again.');
+        }
+    };
+
     return (
         <GradientTheme>
-            {/* Add Alert Weather Type Section */}
-            <View style={{justifyContent: 'center', alignItems: 'center', flex: 1,}}>
+            <View style={styles.container}>
                 <View style={styles.popUp}>
                     <Text style={styles.popUpHeader}>Add Alert Weather Type</Text>
                     <Text style={styles.popUpText}>Select alert type</Text>
-                    <View style={{ borderColor: 'black', borderWidth: 1, borderRadius: 5 }}>
+                    <View style={styles.pickerContainer}>
                         <RNPickerSelect
                             placeholder={placeholder}
                             items={options}
@@ -45,93 +98,68 @@ export default function AddAlertWeather() {
                         />
                     </View>
                     <View style={styles.popUpBtnContainer}>
-                        <TouchableOpacity style={styles.popUpBtn}>
-                            <Text style={styles.popUpBtnText}>Add Type</Text>
-                        </TouchableOpacity>
                         <TouchableOpacity style={styles.popUpBtn} onPress={() => router.back()}>
                             <Text style={styles.popUpBtnText}>Back</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.popUpBtn} onPress={handleAddAlertWeather}>
+                            <Text style={styles.popUpBtnText}>Add Type</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </View>
         </GradientTheme>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         paddingHorizontal: '5%',
-        marginTop: '15%',
-    },
-    headerContainer: {
-        flexDirection: 'row', // Puts the text and icon in a row
-        justifyContent: 'space-between', // Aligns text to the left and icon to the right
-        alignItems: 'center', // Vertically centers the text and icon
-        marginBottom: '2%',
-        width: '100%',
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginVertical: '3%',
-        alignSelf: 'flex-start',
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        width: '96%',
-        left: 7,
-    },
-    alertButtonContainer: {
-        marginBottom: '1%',
-        width: '48%',
-    },
-    deleteButton: {
-        position: 'absolute',
-        top: -5,
-        zIndex: 10,
-    },
-    alertTimingContainer: {
-        width: '96%',
     },
     popUp: {
         backgroundColor: '#FFFFFFB3',
-        padding: '6%',
-        margin: '3%',
-        borderRadius: 10,
+        padding: '8%',
+        width: '100%',
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     popUpHeader: {
         fontWeight: 'bold',
-        fontSize: 15,
-        marginVertical: '3%',
+        fontSize: 18,
+        marginBottom: '5%',
+        color: ColorScheme.BTN_BACKGROUND,
+        textAlign: 'center',
     },
     popUpText: {
-        color: ColorScheme.BTN_BACKGROUND,
+        fontSize: 14,
+        color: '#7f8c8d',
         marginBottom: '5%',
+        textAlign: 'center',
     },
-    input: {
+    pickerContainer: {
+        borderColor: 'black',
         borderWidth: 1,
-        borderColor: 'gray',
-        padding: '4%',
         borderRadius: 5,
-        marginBottom: '8%',
-        backgroundColor: 'white',
+        width: '100%',
+        marginBottom: '10%',
     },
     popUpBtnContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginVertical: '5%',
+        width: '100%',
     },
     popUpBtn: {
         backgroundColor: ColorScheme.BTN_BACKGROUND,
-        padding: '4%',
+        paddingVertical: '4%',
         borderRadius: 10,
         width: '45%',
     },
     popUpBtnText: {
-        color: 'white',
+        color: '#FFFFFF',
         textAlign: 'center',
-    }
+        fontSize: 16,
+    },
 });

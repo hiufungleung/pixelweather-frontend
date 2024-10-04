@@ -9,12 +9,92 @@ import SuburbSearch from '@/components/SuburbSearch';
 import DropDownPicker from 'react-native-dropdown-picker';
 import RNPickerSelect from 'react-native-picker-select';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/components/accAuth';
+import { API_LINK } from '@/constants/API_link';
 
-// Edit Button Component for editing Alert Type and Areas
+// Edit button component for editing Alert Type and Areas
 function EditButton({ onPress, section }) {
     return (
         <TouchableOpacity style={styles.editButton} onPress={() => onPress(section)}>
             <FontAwesome name="edit" size={24} color="black" />
+        </TouchableOpacity>
+    );
+}
+
+// Add button component for add alert type, location and timing
+function AddButton({ onPress }) {
+    return (
+        <TouchableOpacity style={styles.editButton} onPress={onPress}>
+            <FontAwesome name="plus" size={24} color="black" />
+        </TouchableOpacity>
+    );
+}
+
+// Delete button component to delete alert type and location
+function DeleteButton({ item, section, token }) {
+
+    // Handle Delete button press
+    const handleDelete = async (item, section, token) => {
+        const url =
+            section === "alertType"
+                ? `${API_LINK}/user_alert_weather` // DELETE weather alert
+                : `${API_LINK}/user_alert_suburb`; // DELETE alert location
+
+        // Confirm deletion
+        Alert.alert(
+            "Confirm Deletion",
+            `Are you sure you want to delete ${item.category || item.suburb_name}?`,
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    onPress: async () => {
+                        try {
+                            const response = await fetch(url, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`, // Add your auth token here
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ id: item.id }), // Send the id in the request body
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok) {
+                                Alert.alert('Success', `Successfully deleted ${item.category || item.suburb_name}`);
+
+                                // Remove the item from the state after successful deletion
+                                if (section === "alertType") {
+                                    setWeatherAlerts((prevAlerts) => prevAlerts.filter(alert => alert.id !== item.id));
+                                } else if (section === "alertArea") {
+                                    setAlertLocations((prevLocations) => prevLocations.filter(location => location.id !== item.id));
+                                }
+                            } else {
+                                if (response.status === 400) {
+                                    Alert.alert('Error', 'Missing or invalid ID.');
+                                } else if (response.status === 401) {
+                                    Alert.alert('Error', 'Invalid or expired token.');
+                                } else if (response.status === 422) {
+                                    Alert.alert('Error', 'Record does not exist or wrong format.');
+                                } else if (response.status === 500) {
+                                    Alert.alert('Error', 'Internal server error. Please try again later.');
+                                } else {
+                                    Alert.alert('Error', 'An unknown error occurred.');
+                                }
+                            }
+                        } catch (error) {
+                            Alert.alert('Error', 'Failed to connect to the server. Please try again.');
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
+    return (
+        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item, section)}>
+            <FontAwesome name="minus-circle" size={20} color="red" />
         </TouchableOpacity>
     );
 }
@@ -24,10 +104,11 @@ export default function AlertsScreen() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
 
-    // session token when the user is logged in
-    const token = 'your-auth-token-here';
+    // Track the section being edited
+    const [editingSection, setEditingSection] = useState(null);
 
-    // if the user is not logged in, login screen is displayed
+    // error use state
+    const [error, setError] = useState(null);
 
     // alert weather types use state
     const [weatherAlerts, setWeatherAlerts] = useState([
@@ -59,14 +140,21 @@ export default function AlertsScreen() {
         { 'id': 13, 'start_time': '19:00:00', 'end_time': '20:00:00', 'is_active': false },
     ])
 
+    // if the user is not logged in, login screen is displayed
+    const { userToken, isLoggedIn } = useAuth();
 
-    // Track the section being edited
-    const [editingSection, setEditingSection] = useState(null);
-
-    const [isAddingType, setIsAddingType] = useState(false); // Track if user is adding a new alert type
-
-    // error use state
-    const [error, setError] = useState(null);
+/*     if (!isLoggedIn) {
+        return (
+            <GradientTheme>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+                    <Text style={{fontSize: 15, marginBottom: '3%'}}>Please log in to customize your weather alert</Text>
+                    <TouchableOpacity style={styles.popUpBtn} onPress={() => router.push('/login')}>
+                        <Text style={styles.popUpBtnText}>Sign up or log in</Text>
+                    </TouchableOpacity>
+                </View>
+            </GradientTheme>
+        );
+    } */
 
     // Generalized fetch function
     const fetchData = async (url, setState) => {
@@ -74,11 +162,10 @@ export default function AlertsScreen() {
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${userToken}`,
                     'Content-Type': 'application/json',
                 },
             });
-
             if (response.ok) {
                 const jsonResponse = await response.json();
                 setState(jsonResponse.data);
@@ -93,9 +180,9 @@ export default function AlertsScreen() {
     };
 
     useEffect(() => {
-        fetchData('https://149.28.188.65:5050/user_alert_weather', setWeatherAlerts);
-        fetchData('https://149.28.188.65:5050/user_alert_suburb', setAlertLocations);
-        fetchData('https://149.28.188.65:5050/user_alert_time', setAlertTiming);
+        fetchData(`${API_LINK}/user_alert_weather`, setWeatherAlerts);
+        fetchData(`${API_LINK}/user_alert_suburb`, setAlertLocations);
+        fetchData(`${API_LINK}/user_alert_time`, setAlertTiming);
     }, []);
 
     if (loading) {
@@ -103,14 +190,14 @@ export default function AlertsScreen() {
     }
 
     // error message
-    /*  if (error) {
-                return (
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
-                        <Text style={{margin: '2%',}}>Error: {error}</Text>
-                        <Button title="Back"/>
-                    </View>
-                );
-            } */
+    /*     if (error) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+                    <Text style={{margin: '2%',}}>Error: {error}</Text>
+                    <Button title="Back"/>
+                </View>
+            );
+        } */
 
     // Toggle edit mode for a specific section
     const toggleEditMode = (section) => {
@@ -122,7 +209,7 @@ export default function AlertsScreen() {
     };
 
     // Render Alert Buttons with or without delete button based on edit mode
-    function renderAlertButtons(data, isEditMode) {
+    function renderAlertButtons(data, isEditMode, section) {
         return data
             .sort((a, b) => {
                 // Check if suburb_name is defined for both
@@ -136,9 +223,7 @@ export default function AlertsScreen() {
             .map((item, index) => (
                 <View key={index} style={styles.alertButtonContainer}>
                     {isEditMode && (
-                        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item)}>
-                            <FontAwesome name="minus-circle" size={20} color="red" />
-                        </TouchableOpacity>
+                        <DeleteButton item={item} section={section} token={userToken}/>
                     )}
                     <AlertButton alertText={item.category || item.suburb_name} />
                 </View>
@@ -147,7 +232,7 @@ export default function AlertsScreen() {
 
     function renderAlertTiming(data, isEditMode) {
         return data
-            .sort((a, b) => { return a.start_time.localeCompare(b.start_time); })
+            .sort((a, b) => a.start_time.localeCompare(b.start_time))
             .map((item, index) => (
                 <View key={index} style={styles.alertTimingContainer}>
                     {isEditMode && (
@@ -155,33 +240,64 @@ export default function AlertsScreen() {
                             <FontAwesome name="minus-circle" size={20} color="red" />
                         </TouchableOpacity>
                     )}
-                    <TimingBar startTime={item.start_time} endTime={item.end_time} isActive={item.is_active} />
+                    <TimingBar
+                        startTime={item.start_time}
+                        endTime={item.end_time}
+                        isActive={item.is_active}
+                        onToggle={() => toggleTiming(item)}
+                    />
                 </View>
             ));
     }
 
-    // Handle Delete button press
-    const handleDelete = (item) => {
-        Alert.alert(
-            "Confirm Deletion",
-            `Are you sure you want to delete ${item.category || item.suburb_name}?`,
-            [
-                { text: "Cancel", style: "cancel" },
-                {
-                    text: "Delete",
-                    onPress: () => {
-                        // Implement the delete logic here
-                    }
-                }
-            ]
-        );
-    };
-
     // Toggle active alert timing
-    const toggleTiming = (item) => {
+    const toggleTiming = async (item) => {
+        const updatedIsActive = !item.is_active; // Toggle the current status of `is_active`
 
+        const requestBody = {
+            id: item.id,
+            start_time: item.start_time,
+            end_time: item.end_time,
+            is_active: updatedIsActive
+        };
 
-    }
+        try {
+            const response = await fetch(`${API_LINK}/user_alert_time`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${userToken}`, // Replace with actual token
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody), // Send the updated time info
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Update the state locally to reflect the change
+                setAlertTiming(prevTimings =>
+                    prevTimings.map(alert =>
+                        alert.id === item.id ? { ...alert, is_active: updatedIsActive } : alert
+                    )
+                );
+            } else {
+                // Handle errors
+                if (response.status === 400) {
+                    Alert.alert('Error', 'Missing or invalid data.');
+                } else if (response.status === 401) {
+                    Alert.alert('Error', 'Invalid or expired token.');
+                } else if (response.status === 422) {
+                    Alert.alert('Error', 'Invalid time range or data format.');
+                } else if (response.status === 500) {
+                    Alert.alert('Error', 'Server error. Please try again later.');
+                } else {
+                    Alert.alert('Error', 'An unknown error occurred.');
+                }
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to connect to the server. Please try again.');
+        }
+    };
 
     return (
         <GradientTheme>
@@ -189,28 +305,29 @@ export default function AlertsScreen() {
                 {/* Alert Type Section */}
                 <View>
                     <View style={styles.headerContainer}>
-                        <Text style={styles.header}>Alert Type</Text>
-                        <EditButton onPress={toggleEditMode} section="alertType" />
+                        <Text style={styles.header}>Active Alert Type</Text>
+                        <View style={styles.headerActionBtns}>
+                            <AddButton onPress={() => router.push('/addAlertWeather')} />
+                            <EditButton onPress={toggleEditMode} section="alertType" />
+                        </View>
+
                     </View>
                     <View style={styles.buttonContainer}>
-                        {renderAlertButtons(weatherAlerts, editingSection === 'alertType')}
-                        <View style={styles.alertButtonContainer}>
-                            <AlertButton alertText="+" onPress={() => router.push('/addAlertWeather')}/>
-                        </View>
+                        {renderAlertButtons(weatherAlerts, editingSection === 'alertType', 'alertType')}
                     </View>
                 </View>
 
                 {/* Alert Location Section */}
                 <View>
                     <View style={styles.headerContainer}>
-                        <Text style={styles.header}>Areas</Text>
-                        <EditButton onPress={toggleEditMode} section="alertArea" />
+                        <Text style={styles.header}>Active Alert Areas</Text>
+                        <View style={styles.headerActionBtns}>
+                            <AddButton onPress={() => router.push('/addAlertLocation')} />
+                            <EditButton onPress={toggleEditMode} section="alertArea" />
+                        </View>
                     </View>
                     <View style={styles.buttonContainer}>
-                        {renderAlertButtons(alertLocations, editingSection === 'alertArea')}
-                        <View style={styles.alertButtonContainer}>
-                            <AlertButton alertText="+" onPress={() => router.push('/addAlertLocation')}/>
-                        </View>
+                        {renderAlertButtons(alertLocations, editingSection === 'alertArea', 'alertArea')}
                     </View>
                 </View>
 
@@ -218,7 +335,10 @@ export default function AlertsScreen() {
                 <View style={{ paddingBottom: 30 }}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.header}>Alert Timing</Text>
-                        <EditButton onPress={toggleEditMode} section="alertTiming" />
+                        <View style={styles.headerActionBtns}>
+                            <AddButton onPress={() => router.push('/addAlertTiming')} />
+                            <EditButton onPress={toggleEditMode} section="alertTiming" />
+                        </View>
                     </View>
                     <View style={styles.timingBarContainer}>
                         <View key="0" style={styles.alertTimingContainer}>
@@ -250,6 +370,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginVertical: '3%',
         alignSelf: 'flex-start',
+    },
+    headerActionBtns: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '20%',
     },
     buttonContainer: {
         flexDirection: 'row',

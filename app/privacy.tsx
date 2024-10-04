@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import { useNavigation } from '@react-navigation/native';
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 // Data for Terms of Use and Privacy Policy
 const termsOfUse = [
@@ -44,8 +45,8 @@ export default function PrivacyScreen() {
         <GradientTheme>
             <View style={styles.container}>
                 <View>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Text style={styles.backButton}>←</Text>
+                    <TouchableOpacity style={{marginBottom: '3%', }} onPress={() => navigation.goBack()}>
+                        <Text style={styles.backButton}><FontAwesome6 size={28} name="arrow-left"/></Text>
                     </TouchableOpacity>
                     <Text style={styles.header}>Pixel Weather {"\n"}Terms of Use and Privacy Policy</Text>
                 </View>
@@ -81,7 +82,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: '5%',
         marginTop: '15%',
         paddingBottom: '15%',
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
     },
     header: {
         fontSize: 24,

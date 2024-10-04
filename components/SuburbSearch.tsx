@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, FlatList, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TextInput, FlatList, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_LINK } from '@/constants/API_link';
 
-export default function SuburbSearch() {
-    const [query, setQuery] = useState(''); // Input value
-    const [filteredSuburbs, setFilteredSuburbs] = useState([]); // Filtered results
-    const [selectedSuburb, setSelectedSuburb] = useState(null); // Selected suburb
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+export default function SuburbSearch({ onSuburbSelect }) {
+    const [query, setQuery] = useState('');
+    const [filteredSuburbs, setFilteredSuburbs] = useState([]);
+    const [selectedSuburb, setSelectedSuburb] = useState(null);
     const [suburbData, setSuburbData] = useState([
         { id: 1, name: "Brisbane City", postcode: "4000" },
         { id: 2, name: "Brisbane Adelaide Street", postcode: "4000" },
         { id: 3, name: "Brisbane", postcode: "4000" },
         { id: 4, name: "Petrie Terrace", postcode: "4000" },
         { id: 5, name: "Spring Hill", postcode: "4000" },
+        { id: 11, name: "Brisbane CBD", postcode: "4000" },
+        { id: 12, name: "Fortitude Valley", postcode: "4000" },
+        { id: 13, name: "Greenslopes", postcode: "4120" },
         { id: 6, name: "Fortitude Valley", postcode: "4006" },
         { id: 7, name: "New Farm", postcode: "4005" },
         { id: 8, name: "Herston", postcode: "4006" },
@@ -20,32 +23,46 @@ export default function SuburbSearch() {
         { id: 10, name: "Bowen Hills", postcode: "4006" },
     ]);
 
-    // Generalized fetch function
-    const fetchData = async (url, setState) => {
+    // Function to fetch suburbs from the API
+    const fetchSuburbs = async () => {
         try {
-            const response = await fetch(url, {
+            const response = await fetch(`${API_LINK}/suburbs`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
 
-            if (response.ok) {
-                const jsonResponse = await response.json();
-                setState(jsonResponse.data);
-                setLoading(false);
+            const data = await response.json();
+
+            if (response.status === 200) {
+                setSuburbData(data.data); // Update state with fetched suburb data
+                await AsyncStorage.setItem('suburbData', JSON.stringify(data.data)); // Cache the suburb data
             } else {
-                throw new Error('Failed to fetch data');
+                Alert.alert('Error', 'Failed to retrieve suburb data. Please try again later.');
             }
         } catch (error) {
-            setError(error.message);
-            setLoading(false);
+            Alert.alert('Error', 'Failed to connect to the server. Please try again later.');
         }
     };
 
+    // Function to load suburb data from cache
+    const loadCachedSuburbs = async () => {
+        try {
+            const cachedSuburbs = await AsyncStorage.getItem('suburbData');
+            if (cachedSuburbs !== null) {
+                setSuburbData(JSON.parse(cachedSuburbs)); // Load cached data
+            } else {
+                fetchSuburbs(); // If no cache, fetch from the API
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to load cached data.');
+        }
+    };
+
+    // Fetch or load cached data when the component mounts
     useEffect(() => {
-        fetchData('https://149.28.188.65//suburbs', setSuburbData);
+        loadCachedSuburbs();
     }, []);
 
     // Function to filter suburbs based on input (either name or postal code)
@@ -74,10 +91,11 @@ export default function SuburbSearch() {
         setSelectedSuburb(suburb);
         setQuery(suburb.name + ', ' + suburb.postcode); // Set the selected suburb in the input field
         setFilteredSuburbs([]); // Hide the dropdown
+        onSuburbSelect(suburb.id); // Call the parent function with selected suburb_id
     };
 
     return (
-        <View>
+        <View style={styles.container}>
             <TextInput
                 style={styles.input}
                 value={query}
@@ -89,7 +107,7 @@ export default function SuburbSearch() {
                 <View style={styles.dropdown}>
                     <FlatList
                         data={filteredSuburbs}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 style={styles.dropdownItem}
@@ -107,27 +125,33 @@ export default function SuburbSearch() {
                     Selected Suburb: {selectedSuburb.name}, {selectedSuburb.postcode}
                 </Text>
             )}
-
-            {/* Add additional logic like "Add Location" button */}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        width: '100%',
+        alignItems: 'center',
+    },
     input: {
         borderWidth: 1,
         borderColor: 'black',
-        padding: 10,
+        padding: '3%',
         borderRadius: 5,
+        width: '100%',
     },
     dropdown: {
         borderWidth: 1,
         borderColor: 'gray',
         borderRadius: 5,
-        marginTop: 5,
+        marginTop: '1%',
+        maxHeight: 200,
+        width: '100%',
+        backgroundColor: 'white',
     },
     dropdownItem: {
-        padding: 10,
+        padding: '3%',
         backgroundColor: 'white',
         borderBottomWidth: 1,
         borderBottomColor: 'gray',
@@ -136,9 +160,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     selectedSuburb: {
-        marginTop: 10,
+        marginTop: '3%',
         fontSize: 16,
         color: 'green',
     },
 });
-

@@ -3,37 +3,44 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView } from '
 import GradientTheme from '@/components/GradientTheme';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/components/accAuth';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import * as ColorScheme from '@/constants/ColorScheme';
+import {BTN_BACKGROUND} from "@/constants/ColorScheme";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 export default function AccountSettingScreen() {
-
     const router = useRouter();
     const navigation = useNavigation();
+    const { userData, isLoggedIn } = useAuth();
+
 
     return (
         <GradientTheme>
-
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Text style={styles.backButton}>←</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Text style={styles.backButton}>
+                        <FontAwesome6 size={28} name="arrow-left"/>
+                    </Text>
                 </TouchableOpacity>
                 <View style={styles.card}>
                     <View style={styles.infoContainer}>
                         <View>
                              <Text style={styles.label}>Email:</Text>
-                             <Text style={styles.info}>xxxx@google.com</Text>
+                             <Text style={styles.info}>{userData.email}</Text>
                         </View>
                         <TouchableOpacity onPress={() => router.push('/changeEmail')}>
-                            <Text style={styles.editIcon}>✏️</Text>
+                            <Text style={styles.editIcon}><FontAwesome6 size={20} name="pencil"/></Text>
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.infoContainer}>
                         <View>
                             <Text style={styles.label}>Username:</Text>
-                            <Text style={styles.info}>IamIvyLeeeeeeee</Text>
+                            <Text style={styles.info}>{userData.username}</Text>
                         </View>
                         <TouchableOpacity onPress={() => router.push('/changeName')}>
-                            <Text style={styles.editIcon}>✏️</Text>
+                            <Text style={styles.editIcon}><FontAwesome6 size={20} name="pencil"/></Text>
                         </TouchableOpacity>
                     </View>
 
@@ -43,7 +50,7 @@ export default function AccountSettingScreen() {
                             <Text style={styles.info}>********</Text>
                         </View>
                         <TouchableOpacity onPress={() => router.push('/changePassword')}>
-                            <Text style={styles.editIcon}>✏️</Text>
+                            <Text style={styles.editIcon}><FontAwesome6 size={20} name="pencil"/></Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -59,11 +66,14 @@ export default function AccountSettingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        padding: '5%',
+        justifyContent: 'space-between',
+        marginTop: '20%',
+        marginBottom: '10%',
+        paddingHorizontal: '5%',
     },
     card: {
-        backgroundColor: 'white',
+        height: '38%',
+        backgroundColor: '#FFFFFF95',
         padding: '7%',
         borderRadius: 10,
     },
@@ -71,6 +81,7 @@ const styles = StyleSheet.create({
         fontSize: 40,
         color: 'black',
         marginBottom: '3%',
+
     },
     infoContainer: {
         flexDirection: 'row',
@@ -90,6 +101,8 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     deleteButton: {
+
+        justifyContent: 'flex-end',
         backgroundColor: 'red',
         marginTop: '10%',
         padding: '4%',

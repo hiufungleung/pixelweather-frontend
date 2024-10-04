@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Share } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Share, Alert, Modal, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as WeatherIcons from '@/constants/WeatherIcons';
+import * as ColorScheme from '@/constants/ColorScheme';
+import { useAuth } from '@/components/accAuth'
+import { API_LINK } from '@/constants/API_link';
 
 // Helper function to format the time difference
 const formatTimeDifference = (postedTime) => {
@@ -33,12 +36,11 @@ const formatLikes = (likes) => {
     }
 };
 
-// Helper function to handle post report
-
-
-// Helper function to toggle like and unlike
-
-export default function PostTemplate({ postId, weatherCondition, comment, location, postedTime, likes, isSelfPost }) {
+// Main PostTemplate function component
+export default function PostTemplate({ postId, weatherCondition, comment, location, postedTime, likes, isSelfPost, onDelete, token }) {
+    const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+    const [reportComment, setReportComment] = useState('');  // State to store the report comment
+    const { userToken } = useAuth();
 
     // Function to handle post sharing
     const onShare = async () => {
@@ -48,16 +50,53 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
             });
 
             if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    console.log('Shared with activity type:', result.activityType);
-                } else {
-                    console.log('Post shared successfully!');
-                }
+                console.log('Post shared successfully!');
             } else if (result.action === Share.dismissedAction) {
                 console.log('Share dismissed');
             }
         } catch (error) {
             console.error('Error sharing the post:', error.message);
+        }
+    };
+
+    // Function to confirm deletion
+    const confirmDelete = () => {
+        Alert.alert(
+            "Delete Post",
+            "Are you sure you want to delete this post?",
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Delete", style: "destructive", onPress: () => onDelete(postId) }
+            ]
+        );
+    };
+
+    // Function to handle the report submission
+    const handleReportPost = async () => {
+        if (!reportComment.trim()) {
+            Alert.alert('Error', 'Report comment cannot be empty.');
+            return;
+        }
+        try {
+            const response = await fetch(`${API_LINK}/posts/report`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${userToken}`,  // Token passed as a prop
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ post_id: postId, report_comment: reportComment }),  // Send post_id and report_comment
+            });
+
+            if (response.ok) {
+                Alert.alert('Success', 'Post reported successfully.');
+                setModalVisible(false);  // Close the modal after successful submission
+                setReportComment('');    // Clear the comment input field
+            } else {
+                const errorResponse = await response.json();
+                Alert.alert('Error', errorResponse.error || 'Failed to report the post.');
+            }
+        } catch (err) {
+            Alert.alert('Error', 'Failed to connect to the server.');
         }
     };
 
@@ -74,14 +113,10 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
 
             {/* Weather Information */}
             <View style={styles.postInfo}>
-
                 {/* Weather Info */}
                 <View style={styles.infoContainer}>
                     <View style={styles.statusContainer}>
-                        <Text style={styles.statusText}
-                            adjustsFontSizeToFit
-                            numberOfLines={1}
-                        >
+                        <Text style={styles.statusText} adjustsFontSizeToFit numberOfLines={1}>
                             Now it is {weatherCondition}
                         </Text>
                     </View>
@@ -109,17 +144,63 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
 
                     <View>
                         {isSelfPost ? (
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={confirmDelete}>
                                 <FontAwesome name="trash" size={24} color="black" />
                             </TouchableOpacity>
                         ) : (
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => setModalVisible(true)}>
                                 <Text style={styles.reportText}>Report</Text>
                             </TouchableOpacity>
                         )}
                     </View>
                 </View>
             </View>
+
+            {/* Report Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                    setReportComment('');
+                }}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Report Post</Text>
+                        <Text style={styles.modalSubTitle}>Why are you reporting this post?</Text>
+
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter report comment"
+                            value={reportComment}
+                            onChangeText={setReportComment}
+                            multiline
+                            numberOfLines={3}
+                        />
+
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={[styles.modalButton, styles.cancelButton]}
+                                onPress={() => {
+                                    setModalVisible(false);
+                                    setReportComment('');
+                                }}
+                            >
+                                <Text style={styles.modalButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={[styles.modalButton, styles.submitButton]}
+                                onPress={handleReportPost}
+                            >
+                                <Text style={styles.modalButtonText}>Submit</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -157,21 +238,19 @@ const styles = StyleSheet.create({
     },
     infoContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between', // Spread the status and time apart
-        alignItems: 'center',  // Center vertically
+        justifyContent: 'space-between',
+        alignItems: 'center',
         height: '20%',
-        flexWrap: 'nowrap',  // Prevent wrapping
     },
     statusContainer: {
-        flex: 1,  // Allow statusContainer to take up remaining space
+        flex: 1,
     },
     statusText: {
         fontWeight: 'bold',
         color: '#333',
-        flexWrap: 'wrap',  // Enable wrapping if needed
     },
     timeContainer: {
-        width: 'auto',  // Let time take only the required width
+        width: 'auto',
     },
     timeText: {
         fontSize: 12,
@@ -210,6 +289,64 @@ const styles = StyleSheet.create({
     reportText: {
         color: '#007BFF',
         fontSize: 12,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        padding: 20,
+        width: '80%',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 10,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalSubTitle: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 10,
+    },
+    input: {
+        width: '100%',
+        height: 80,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 20,
+        textAlignVertical: 'top',
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    modalButton: {
+        width: '48%',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    cancelButton: {
+        backgroundColor: ColorScheme.BTN_BACKGROUND,
+    },
+    submitButton: {
+        backgroundColor: ColorScheme.BTN_BACKGROUND,
+    },
+    modalButtonText: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
     },
 });

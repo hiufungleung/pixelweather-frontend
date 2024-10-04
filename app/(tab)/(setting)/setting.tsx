@@ -1,37 +1,66 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity, Alert} from 'react-native';
+import { FontAwesome6 } from '@expo/vector-icons';
 import GradientTheme from '@/components/GradientTheme';
 import { useRouter } from 'expo-router';
+import {useAuth} from '@/components/accAuth'
 
 const data = [
-    { id: '1', title: 'Account Center', icon: 'arrow-right', route: '/(accountSetting)/accountSetting' },
-    { id: '2', title: 'Saved Location', icon: 'arrow-right', route: '/savedLocation' },
-    { id: '3', title: 'Help Center', icon: 'arrow-right', route: '/helpCenter' },
-    { id: '4', title: 'Privacy', icon: 'arrow-right', route: '/privacy' },
+    { id: '1', title: 'Account Center', icon: 'arrow-right', route: '/(accountSetting)/accountSetting', requireLogin: true },
+    { id: '2', title: 'Saved Location', icon: 'arrow-right', route: '/savedLocation', requireLogin: true },
+    { id: '3', title: 'Help Center', icon: 'arrow-right', route: '/helpCenter', requireLogin: false },
+    { id: '4', title: 'Privacy', icon: 'arrow-right', route: '/privacy', requireLogin: false },
 ];
 
 export default function SettingScreen() {
   const router = useRouter();
+    const { isLoggedIn, login, logout } = useAuth();
+
+    const filteredData = data.filter((item) => (isLoggedIn || !item.requireLogin));
+
+    const handlePress = () => {
+        if (isLoggedIn) {
+            // 當前為已登入狀態
+            Alert.alert(
+                'Warning',
+                "You're about to log out",
+                [
+                    {
+                        text: 'Confirm',
+                        onPress: () => {
+                            logout(); // 執行登出
+                            Alert.alert('Success', 'You have been logged out successfully.');
+                        },
+                    },
+                    { text: 'Cancel', style: 'cancel' },
+                ],
+                { cancelable: true }
+            );
+        } else {
+            // 當前為未登入狀態，跳轉到登入畫面
+            router.push('/login'); // 根據你的路由結構，這裡設定跳轉路徑
+        }
+    };
+
 
   return (
       <GradientTheme>
           <View style={styles.container}>
           {/* List */}
           <FlatList
-              data={data}
+              data={filteredData}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.listItem} onPress={() => router.push(item.route)}>
                   <Text style={styles.itemText}>{item.title}</Text>
-                  <FontAwesome name={item.icon} size={24} color="black" />
+                  <FontAwesome6 name={item.icon} size={24} color="black" />
                 </TouchableOpacity>
               )}
               style={styles.list}
             />
             {/* Log Out Button */}
-            <TouchableOpacity style={styles.logoutButton} onPress={() => alert('Log Out')}>
-              <Text style={styles.logoutText}>LOG OUT</Text>
+            <TouchableOpacity style={styles.logoutButton} onPress={handlePress}>
+              <Text style={styles.logoutText}>{isLoggedIn ? 'Log Out' : 'Log In'}</Text>
             </TouchableOpacity>
           </View>
       </GradientTheme>
