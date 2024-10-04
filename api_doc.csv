@@ -1258,16 +1258,17 @@ comment   : string, optional","{
   'error': 'An internal server error occurred. Please try again later.'
 }"
 6,Get filtered posts,GET,/get_posts,Retrieve filtered posts using URL parameters.,"FALSE (if PROVIDED, trigger insert a record to user_view_post)","URL Query Parameters: ?para1=2&amppara2=35
-id        : int
-latitude  : float
-longitude : float
-suburb_id : int
-weather_id: int
-likes     : return records that greater than or equal to
-views     : return records that greater than or equal to
-reports   : return records that greater than or equal to
-is_active : true / false
-limit     : optional, default 50
+id           : int
+latitude     : float
+longitude    : float
+suburb_id    : int
+weather_id   : int
+likes        : return records that greater than or equal to
+views        : return records that greater than or equal to
+reports      : return records that greater than or equal to
+is_active    : true / false
+time_interval: int (unit: minute)
+limit        : optional, default 50
 
 Constraint: latitude and longitude can only be both inclusive or not exclusive.",N/A,{},"// Status Code: 200 OK
 // Occurs when the filtered posts are successfully retrieved.
