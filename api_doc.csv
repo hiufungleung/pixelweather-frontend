@@ -986,50 +986,61 @@ comment   : string, optional","{
   'longitude': 151.2093,
   'weather_id': 1,
   'comment': 'It iss a sunny day!'
-}","// Status Code: 201 Created
-// Occurs when the post is successfully created.
+}","// Status Code: 200 OK
+// Occurs when the user's posts are successfully retrieved.
 {
-  'message': 'Data created Successfully',
-  'data': {
-    'id': 1
-    'latitude': -33.8688,
-    'longitude': 151.2093,
-    'suburb_id': 2,
-    'suburb_name': 'Brisbane City',
-    'postcode': 4000,
-    'state_code': 'QLD',
-    'weather_id': 1,
-    'weather': 'Sunny',
-    'weather_code': 100,
-    'created_at': '2024-09-16T10:00:00Z',
-    'likes': 0,
-    'views': 0,
-    'reports': 0,
-    'is_active': true,
-    'comment': 'It iss a sunny day!'
-  }
+  'message': 'Data retrieved Successfully',
+  'data': [
+    {
+      'post_id': 1,
+      'latitude': -33.8688,
+      'longitude': 151.2093,
+      'suburb_id': 101,
+      'suburb_name': 'Brisbane City',
+      'address': '67 Billyham Street, Brisbane City QLD 4000',
+      'weather_id': 1,
+      'weather_category': 'Sunny',
+      'weather': 'Clear Sky',
+      'weather_code': 100,
+      'created_at': '2024-09-16T10:00:00Z',
+      'likes': 10,
+      'views': 100,
+      'reports': 1,
+      'is_active': true,
+      'comment': 'It is a sunny day!'
+    },
+    {
+      'post_id': 2,
+      'latitude': -34.9285,
+      'longitude': 138.6007,
+      'suburb_id': 102,
+      'suburb_name': 'St. Lucia',
+      'address': '67 Billyham Street, Brisbane City QLD 4067',
+      'weather_id': 2,
+      'weather_category': 'Rainy',
+      'weather': 'Light Rain',
+      'weather_code': 200,
+      'created_at': '2024-09-16T11:00:00Z',
+      'likes': 5,
+      'views': 50,
+      'reports': 0,
+      'is_active': true,
+      'comment': 'It is raining heavily!'
+    }
+  ]
 }
 
 // Status Code: 400 Bad Request
-// Occurs when required fields like latitude, longitude, or weather_id are missing.
 {
-  'error': 'Missing (part of) required data'
+  'error': 'Invalid request. Check the input parameters.'
 }
 
 // Status Code: 401 Unauthorized
-// Occurs when the user token is invalid or missing.
 {
   'error': 'Invalid or expired token'
 }
 
-// Status Code: 422 Unprocessable Entity
-// Occurs when the weather_id does not exist, or data is wrong format
-{
-    'error': 'The record with the corresponding PK or FK does not exist, or format is incorrect'
-}
-
 // Status Code: 500 Internal Server Error
-// Occurs when there is a server-side error, such as a database connection failure.
 {
   'error': 'An internal server error occurred. Please try again later.'
 }"
@@ -1077,6 +1088,7 @@ comment   : string, optional","{
       'longitude': 151.2093,
       'suburb_id': 101,
       'suburb_name': 'Brisbane City',
+      'address': '67 Billyham Street, Brisbane City QLD 4000',
       'weather_id': 1,
       'weather_category': 'Sunny',
       'weather': 'Clear Sky',
@@ -1094,6 +1106,7 @@ comment   : string, optional","{
       'longitude': 138.6007,
       'suburb_id': 102,
       'suburb_name': 'St. Lucia',
+      'address': '67 Billyham Street, Brisbane City QLD 4067',
       'weather_id': 2,
       'weather_category': 'Rainy',
       'weather': 'Light Rain',
@@ -1133,6 +1146,7 @@ comment   : string, optional","{
       'longitude': 151.2093,
       'suburb_id': 101,
       'suburb_name': 'Brisbane City',
+      'address': '67 Billyham Street, Brisbane City QLD 4000',
       'weather_id': 1,
       'weather_category': 'Sunny',
       'weather': 'Clear Sky',
@@ -1160,8 +1174,7 @@ comment   : string, optional","{
 // Status Code: 500 Internal Server Error
 {
   'error': 'An internal server error occurred. Please try again later.'
-}
-"
+}"
 6,Get liked posts,GET,/posts/like,"Retrieve all posts liked by the user, stored in user_like_post table.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's liked posts are successfully retrieved.
 {
@@ -1173,6 +1186,7 @@ comment   : string, optional","{
       'longitude': 138.6007,
       'suburb_id': 102,
       'suburb_name': 'St. Lucia',
+      'address': '67 Billyham Street, Brisbane City QLD 4000',
       'weather_id': 2,
       'weather_category': 'Rainy',
       'weather': 'Light Rain',
@@ -1200,8 +1214,7 @@ comment   : string, optional","{
 // Status Code: 500 Internal Server Error
 {
   'error': 'An internal server error occurred. Please try again later.'
-}
-"
+}"
 6,Get reported posts,GET,/posts/report,"Retrieve all posts reported by the user, stored in user_report_post table.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's reported posts are successfully retrieved.
 {
@@ -1215,6 +1228,7 @@ comment   : string, optional","{
       'longitude': 151.2093,
       'suburb_id': '101,
       'suburb_name': 'Brisbane City',
+      'address': '67 Billyham Street, Brisbane City QLD 4000',
       'weather_id': 1,
       'weather_category': 'Sunny'
       'weather': 'Clear Sky',
@@ -1243,7 +1257,7 @@ comment   : string, optional","{
 {
   'error': 'An internal server error occurred. Please try again later.'
 }"
-6,Get filtered posts,GET,/get_posts,Retrieve filtered posts using URL parameters.,FALSE,"URL Query Parameters: ?para1=2&para2=35
+6,Get filtered posts,GET,/get_posts,Retrieve filtered posts using URL parameters.,"FALSE (if PROVIDED, trigger insert a record to user_view_post)","URL Query Parameters: ?para1=2&amppara2=35
 id        : int
 latitude  : float
 longitude : float
@@ -1266,6 +1280,7 @@ Constraint: latitude and longitude can only be both inclusive or not exclusive."
       'longitude': 151.2093,
       'suburb_id': 101,
       'suburb_name': 'Brisbane City',
+      'address': '67 Billyham Street, Brisbane City QLD 4000',
       'weather_id': 1,
       'weather_category': 'Sunny',
       'weather': 'Clear Sky',
@@ -1376,6 +1391,7 @@ report_comment: text, not null","{
       'longitude': 151.2093,
       'suburb_id': '101,
       'suburb_name': 'Brisbane City',
+      'address': '67 Billyham Street, Brisbane City QLD 4000',
       'weather_id': 1,
       'weather_category': 'Sunny'
       'weather': 'Clear Sky',
@@ -1450,3 +1466,55 @@ report_comment: text, not null","{
 {
   'error': 'An internal server error occurred. Please try again later.'
 }"
+7,Register FCM Token,POST,/register_fcm_token,"Register or update the FCM token for the current user, required to send push notifications.",TRUE,N/A,"fcm_token: string, not null","{
+    'fcm_token': 'agqwergerwqf'
+}","// Status Code: 200 OK
+// Occurs when the FCM token is successfully registered or updated.
+{
+    'message': 'Data created Successfully'
+}
+
+// Status Code: 400 Bad Request
+// Occurs when the FCM token is missing.
+{
+    'error': 'Missing required data'
+}
+
+// Status Code: 500 Internal Server Error
+// Occurs when there is a server-side error, such as a database connection failure.
+{
+    'error': 'An internal server error occurred. Please try again later.'
+}
+"
+7,Handle Periodical Submitted Location,POST,/handle_periodical_submitted_location,"This endpoint processes the periodically submitted geolocation from the client and checks if the user is within an alert time. If the user is in the alert time and there are posts within their saved suburbs or based on current location, it sends notifications.",TRUE,N/A,,"{
+    'latitude': '51.217096',
+    'longitude': '6.778288',
+    'fcm_token': 'fadgarwgrw'
+}","// Status Code: 201 Created
+// Occurs when notifications are triggered due to relevant posts being found.
+
+{
+    'message': 'Data created Successfully'
+}
+
+// Status Code: 204 No Content
+// Occurs when no posts match the criteria or the user is not within alert time.
+
+{
+    'message': 'Not in user's alert time'
+}
+
+// Status Code: 400 Bad Request
+// Occurs when the FCM token or geolocation data is missing.
+
+{
+    'error': 'Missing required data'
+}
+
+// Status Code: 500 Internal Server Error
+// Occurs when there is a server-side error, such as a database connection failure.
+
+{
+    'error': 'An internal server error occurred. Please try again later.'
+}
+"
