@@ -4,7 +4,8 @@ const categoryNames = {
     3: 'Weather',
     4: 'User & Suburb, Save & Alert',
     5: 'User & Weather Alert',
-    6: 'Post Related'
+    6: 'Post Related',
+    7: 'Notification Related'
 };
 const apiDocumentationLink = 'api_doc.csv'
 
@@ -157,7 +158,8 @@ function loadPage(apiData) {
                 <p><strong>Method: </strong><span>${item.method}</span></p>
                 <p><strong>Route: </strong><span>${item.route}</span></p>
                 <p><strong>Requires Header Token: </strong><span>${item.requires_token}</span></p>
-                <p><strong>Route Parameters: </strong><span>${item.route_parameters}</span></p>
+                <p><strong>Route Parameters: </strong></p>
+                <pre>${item.route_parameters}</pre>
                 <p><strong>Post Body Parameters: </strong></p>
                 <pre>${item.post_body}</pre>
                 <h4>Example</h4>
