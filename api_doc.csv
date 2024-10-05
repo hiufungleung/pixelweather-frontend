@@ -1265,12 +1265,14 @@ suburb_id    : int
 weather_id   : int
 likes        : return records that greater than or equal to
 views        : return records that greater than or equal to
-reports      : return records that greater than or equal to
+reports_le   : return records that less than or equal to
+reports_ge   : return records that greater than or equal to
 is_active    : true / false
 time_interval: int (unit: minute)
 limit        : optional, default 50
 
-Constraint: latitude and longitude can only be both inclusive or not exclusive.",N/A,{},"// Status Code: 200 OK
+Constraint: 
+    latitude and longitude can only be both inclusive or not exclusive.",N/A,{},"// Status Code: 200 OK
 // Occurs when the filtered posts are successfully retrieved.
 {
   'message': 'Data retrieved Successfully',
