@@ -986,10 +986,10 @@ comment   : string, optional","{
   'longitude': 151.2093,
   'weather_id': 1,
   'comment': 'It iss a sunny day!'
-}","// Status Code: 200 OK
-// Occurs when the user's posts are successfully retrieved.
+}","// Status Code: 201 Created
+// Occurs when the user's posts are successfully created.
 {
-  'message': 'Data retrieved Successfully',
+  'message': 'Data Created Successfully',
   'data': [
     {
       'post_id': 1,
@@ -1487,7 +1487,9 @@ report_comment: text, not null","{
     'error': 'An internal server error occurred. Please try again later.'
 }
 "
-7,Handle Periodical Submitted Location,POST,/handle_periodical_submitted_location,"This endpoint processes the periodically submitted geolocation from the client and checks if the user is within an alert time. If the user is in the alert time and there are posts within their saved suburbs or based on current location, it sends notifications.",TRUE,N/A,,"{
+7,Handle Periodical Submitted Location,POST,/handle_periodical_submitted_location,"This endpoint processes the periodically submitted geolocation from the client and checks if the user is within an alert time. If the user is in the alert time and there are posts within their saved suburbs or based on current location, it sends notifications.",TRUE,N/A,"latitude : string, not null
+longitude: string, not null
+fcm_token: string, not null","{
     'latitude': '51.217096',
     'longitude': '6.778288',
     'fcm_token': 'fadgarwgrw'
