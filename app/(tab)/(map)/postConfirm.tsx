@@ -1,50 +1,88 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet, TextInput, Image } from 'react-native';
+import { TouchableOpacity, View, Text, StyleSheet, TextInput, Image, Alert } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import GradientTheme from '@/components/GradientTheme';
 import * as ColorScheme from '@/constants/ColorScheme';
-import * as WeatherIcons from '@/constants/WeatherIcons';
+import * as Mappings from '@/constants/Mappings';
 import { useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
+import { API_LINK } from '@/constants/API_link';
+import { useAuth } from '@/components/accAuth'; // Import authentication hook
 
-// simulation of successfully posted data
-const returnData =
-    {
-      'message': 'Data created Successfully',
-      'data': {
-        'id': 1,
-        'latitude': -33.8688,
-        'longitude': 151.2093,
-        'suburb_id': 2,
-        'suburb_name': 'Brisbane City',
-        'postcode': 4000,
-        'state_code': 'QLD',
-        'weather_id': 1,
-        'weather': 'Sunny',
-        'weather_code': 100,
-        'created_at': '2024-09-16T10:00:00Z',
-        'likes': 0,
-        'views': 0,
-        'reports': 0,
-        'is_active': true,
-        'comment': 'It iss a sunny day!'
-      }
-    }
+const weatherId = {
+    'Clear Sky': 40,
+    'Rainy': 21,
+    'Cloudy': 43,
+    'Thunderstorm': 5,
+    'Windy': 45,
+    'Storm': 46,
+    'Fog': 34,
+    'Hail': 47,
+    'Hot': 48,
+    'Cold': 49,
+};
 
 export default function PostConfirm() {
-    const { weather, preparationText } = useLocalSearchParams(); // Get the query params
+    const { weather, preparationText, location } = useLocalSearchParams(); // Get the query params
     const router = useRouter();
-    const { postData, setPostData } = useState(null);
+    const { userToken } = useAuth(); // Get the auth token from the useAuth hook
 
-    const weatherIcon = WeatherIcons.weatherIconMap[weather];
+    const weatherIcon = Mappings.weatherIconMap[weather];
 
-    const handlePostPress = () => {
-            // Navigate to postConfirm with query params
-            router.push({
-                pathname: 'postCompleted',
-                params:  { returnData: JSON.stringify(returnData) },
+    const handlePostPress = async () => {
+
+        try {
+            // Make sure the required fields are available
+            if (!weather) {
+                Alert.alert('Error', 'Missing weather information');
+                return;
+            }
+
+            // Construct the post body as per API documentation
+            const requestBody = {
+                latitude: JSON.parse(location).coords.latitude,
+                longitude: JSON.parse(location).coords.longitude,
+                weather_id: weatherId[weather],
+                comment: preparationText || '',
+            };
+
+            // Send the POST request
+            const response = await fetch(`${API_LINK}/posts`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`, // Include the user token in the headers
+                },
+                body: JSON.stringify(requestBody),
             });
-        };
+
+            // Parse the response data
+            const data = await response.json();
+
+            if (response.status === 201) {
+                // Successful post, navigate to the post completed screen
+                console.log('posted data: ' + JSON.stringify(data.data));
+                router.push({
+                    pathname: 'postCompleted',
+                    params: { returnData: JSON.stringify(data.data) }, // Pass the returned data
+                });
+            } else if (response.status === 400) {
+                Alert.alert('Error', data.error || 'Invalid request. Check the input parameters.');
+            } else if (response.status === 401) {
+                Alert.alert('Error', data.error || 'Invalid or expired token');
+            } else if (response.status === 500) {
+                Alert.alert('Error', 'An internal server error occurred. Please try again later.');
+                console.log('Error Code: ' + response.status + '. ');
+                console.log('Response: ' + JSON.stringify(response));
+            } else {
+                console.log('Error Code: ' + response.status + '. ');
+                console.log('Response: ' + JSON.stringify(response));
+                Alert.alert('Error', 'An unknown error occurred.');
+            }
+        } catch (error) {
+            console.error('Error posting data:', error);
+            Alert.alert('Error', 'Failed to connect to the server. Please try again.');
+        }
+    };
 
     return (
         <GradientTheme>
@@ -56,7 +94,7 @@ export default function PostConfirm() {
                     <Text style={styles.header}>Post Confirm</Text>
 
                     {weatherIcon && (
-                        <Image source={weatherIcon} style={styles.icon} />
+                        <Image source={weatherIcon} style={styles.icon} resizeMode="contain"/>
                     )}
 
                     <Text style={styles.label}>Now it's {weather}</Text>

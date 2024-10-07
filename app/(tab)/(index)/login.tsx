@@ -33,7 +33,6 @@ export default function LogInScreen() {
         }
 
         try {
-            console.log('testing 123');
             const response = await fetch(`${API_LINK}/handle_login`, {
                 method: 'POST',
                 headers: {
@@ -61,7 +60,6 @@ export default function LogInScreen() {
 
             // 嘗試解析 JSON 格式的資料
             const data = JSON.parse(rawResponse);
-            // console.log('Parsed Response Data:', data);
 
             if (response.status === 200) {
                 login(data.data.token, { email: data.data.email, username: data.data.username });  // 傳遞 `token` 和 `userData`

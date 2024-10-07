@@ -7,7 +7,7 @@ import Icon from '@expo/vector-icons/Entypo';
 import GradientTheme from '@/components/GradientTheme';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/components/accAuth';
-import * as WeatherIcons from "@/constants/WeatherIcons";
+import * as WeatherIcons from "@/constants/Mappings";
 import { weatherIconById } from '@/constants/weatherCode';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;  // 取得螢幕高度

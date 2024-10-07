@@ -42,7 +42,12 @@ export default function AddAlertLocation() {
             // Handle the response status
             if (response.status === 201) {
                 Alert.alert('Success', 'Suburb alert added successfully.');
-                router.back(); // Navigate back after success
+                const newLocation = { id: data.data.id, suburb_name: data.suburb_name };
+                // Handle successful creation, e.g., navigate back or update UI
+                router.push({
+                    pathname: '/alert', // The path to the Alerts screen
+                    params: { newLocation }, // Pass the new alert data as params
+                });
             } else if (response.status === 400) {
                 Alert.alert('Error', 'Missing or invalid suburb ID.');
             } else if (response.status === 401) {
@@ -71,7 +76,7 @@ export default function AddAlertLocation() {
                     <Text style={styles.popUpText}>Search suburb name in Queensland</Text>
 
                     {/* SuburbSearch component should return suburb_id */}
-                    <SuburbSearch onSuburbSelect={(id) => setSelectedSuburbId(id)} />
+                    <SuburbSearch onSuburbSelect={(id) => setSelectedSuburbId(id)} token={userToken} />
 
                     <View style={styles.popUpBtnContainer}>
                         <TouchableOpacity style={styles.popUpBtn} onPress={() => router.back()}>

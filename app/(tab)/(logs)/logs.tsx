@@ -12,11 +12,10 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function LogsScreen() {
     const router = useRouter();
-
     // if the user is not logged in, login screen is displayed
         const { isLoggedIn } = useAuth();
 
-/*         if (!isLoggedIn) {
+        if (!isLoggedIn) {
             return (
                 <GradientTheme>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', }}>
@@ -27,7 +26,7 @@ export default function LogsScreen() {
                     </View>
                 </GradientTheme>
             );
-        } */
+        }
 
     return (
         <GradientTheme>

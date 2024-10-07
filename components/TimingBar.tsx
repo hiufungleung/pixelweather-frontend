@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Switch, StyleSheet } from 'react-native';
+import { View, Text, Switch, StyleSheet, Platform } from 'react-native';
 
 // Timing Component
 export default function TimingBar({ startTime, endTime, isActive, onToggle }) {
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         borderRadius: 20,
-        padding: 5,
+        padding: Platform.OS === 'ios' ? '3.5%' : '1.5%',
         marginBottom: 10,
     },
     timingBarText: {

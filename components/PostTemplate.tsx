@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Share, Alert, Modal, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import * as WeatherIcons from '@/constants/WeatherIcons';
+import * as Mappings from '@/constants/Mappings';
 import * as ColorScheme from '@/constants/ColorScheme';
 import { useAuth } from '@/components/accAuth'
 import { API_LINK } from '@/constants/API_link';
@@ -37,16 +37,34 @@ const formatLikes = (likes) => {
 };
 
 // Main PostTemplate function component
-export default function PostTemplate({ postId, weatherCondition, comment, location, postedTime, likes, isSelfPost, onDelete, token }) {
+export default function PostTemplate({ item, isSelfPost, onDelete, onReport, isReported, onToggleLike, isLiked, likes }) {
     const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
     const [reportComment, setReportComment] = useState('');  // State to store the report comment
     const { userToken } = useAuth();
+    const convertedWeather = Mappings.WeatherNamesMapping[item.weather];
+
+    // Use effect to synchronize local likes count with the props
+    useEffect(() => {
+        setLocalLikes(likes);
+    }, [likes]);
+
+    // Manage local likes count and liked status in state
+    const [localLikes, setLocalLikes] = useState(likes);  // Track local likes count
+    const [liked, setLiked] = useState(isLiked); // Whether the post is liked by the user
+
+    // Handle toggling the like status
+    const handleToggleLike = () => {
+        const newLikedStatus = !liked;
+        setLiked(newLikedStatus); // Toggle liked state locally
+        setLocalLikes(prevLikes => newLikedStatus ? prevLikes + 1 : prevLikes - 1); // Update likes count locally
+        onToggleLike(item.post_id);  // Notify parent component of the change
+    };
 
     // Function to handle post sharing
     const onShare = async () => {
         try {
             const result = await Share.share({
-                message: `Beware of the weather in ${location}: It's ${weatherCondition}! \n\n ${comment} \n\n Posted ${formatTimeDifference(postedTime)}.`
+                message: `Beware of the weather in ${item.suburb_name}: It's ${convertedWeather}! \n\n ${item.comment} \n\n Posted ${formatTimeDifference(item.created_at)}.`
             });
 
             if (result.action === Share.sharedAction) {
@@ -66,38 +84,17 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
             "Are you sure you want to delete this post?",
             [
                 { text: "Cancel", style: "cancel" },
-                { text: "Delete", style: "destructive", onPress: () => onDelete(postId) }
+                { text: "Delete", style: "destructive", onPress: () => onDelete(item.post_id) }
             ]
         );
     };
 
     // Function to handle the report submission
-    const handleReportPost = async () => {
-        if (!reportComment.trim()) {
-            Alert.alert('Error', 'Report comment cannot be empty.');
-            return;
-        }
-        try {
-            const response = await fetch(`${API_LINK}/posts/report`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${userToken}`,  // Token passed as a prop
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ post_id: postId, report_comment: reportComment }),  // Send post_id and report_comment
-            });
-
-            if (response.ok) {
-                Alert.alert('Success', 'Post reported successfully.');
-                setModalVisible(false);  // Close the modal after successful submission
-                setReportComment('');    // Clear the comment input field
-            } else {
-                const errorResponse = await response.json();
-                Alert.alert('Error', errorResponse.error || 'Failed to report the post.');
-            }
-        } catch (err) {
-            Alert.alert('Error', 'Failed to connect to the server.');
-        }
+    const handleReportPost = () => {
+        onReport(item, reportComment, () => {
+            setModalVisible(false);  // Close the modal after successful submission
+            setReportComment('');    // Clear the comment input field
+        });
     };
 
     return (
@@ -105,7 +102,7 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
             {/* Weather Icon */}
             <View style={styles.postIcon}>
                 <Image
-                    source={WeatherIcons.weatherIconMap[weatherCondition]}
+                    source={Mappings.weatherIconMap[convertedWeather]}
                     style={styles.postImage}
                     resizeMode="contain"
                 />
@@ -117,26 +114,35 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
                 <View style={styles.infoContainer}>
                     <View style={styles.statusContainer}>
                         <Text style={styles.statusText} adjustsFontSizeToFit numberOfLines={1}>
-                            Now it is {weatherCondition}
+                            Now it is {convertedWeather}
                         </Text>
                     </View>
                     <View style={styles.timeContainer}>
-                        <Text style={styles.timeText}>{formatTimeDifference(postedTime)}</Text>
+                        <Text style={styles.timeText}>{formatTimeDifference(item.created_at)}</Text>
                     </View>
                 </View>
 
                 <View style={styles.locationContainer}>
-                    <Text style={styles.locationText}>{location}</Text>
+                    <Text style={styles.locationText}>{item.suburb_name}</Text>
                 </View>
 
                 {/* Action Icons */}
                 <View style={styles.footer}>
                     <View style={styles.actionIcons}>
-                        <TouchableOpacity style={styles.iconGroup}>
-                            <Icon name="favorite-border" size={24} color="black" />
-                            <Text style={styles.likeCount}>{formatLikes(likes)}</Text>
+                        {/* Like Button */}
+                        <TouchableOpacity
+                            style={styles.iconGroup}
+                            onPress={() => handleToggleLike(item)}
+                        >
+                            <Icon
+                                name={isLiked ? "favorite" : "favorite-border"}
+                                size={24}
+                                color={isLiked ? "red" : "black"} // Red when liked
+                            />
+                            <Text style={styles.likeCount}>{formatLikes(item.likes)}</Text>
                         </TouchableOpacity>
 
+                        {/* Share Button */}
                         <TouchableOpacity style={styles.iconGroup} onPress={onShare}>
                             <Icon name="share" size={24} color="black" />
                         </TouchableOpacity>
@@ -144,12 +150,12 @@ export default function PostTemplate({ postId, weatherCondition, comment, locati
 
                     <View>
                         {isSelfPost ? (
-                            <TouchableOpacity onPress={confirmDelete}>
-                                <FontAwesome name="trash" size={24} color="black" />
+                            <TouchableOpacity onPress={() => confirmDelete()}>
+                                <FontAwesome name="trash" size={24} />
                             </TouchableOpacity>
                         ) : (
-                            <TouchableOpacity onPress={() => setModalVisible(true)}>
-                                <Text style={styles.reportText}>Report</Text>
+                            <TouchableOpacity onPress={() => setModalVisible(true)} disabled={isReported}>
+                                <Text style={{ color: isReported ? "gray" : "blue" }}>{isReported ? "Reported" : "Report"}</Text>
                             </TouchableOpacity>
                         )}
                     </View>

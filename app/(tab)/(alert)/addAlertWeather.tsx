@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, View, Text, Alert, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, Text, Alert, StyleSheet, Platform } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import * as ColorScheme from '@/constants/ColorScheme';
+import * as Mappings from '@/constants/Mappings';
 import RNPickerSelect from 'react-native-picker-select';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/components/accAuth'
@@ -11,6 +12,7 @@ export default function AddAlertWeather() {
 
     const router = useRouter();
     const [selectedValue, setSelectedValue] = useState(null);
+    const { userToken } = useAuth();
 
     // Placeholder for the picker
     const placeholder = {
@@ -19,20 +21,11 @@ export default function AddAlertWeather() {
     };
 
     // Options for the weather types
-    const options = [
-        { label: 'Clear Sky', value: '40' },
-        { label: 'Rainy', value: '20' },
-        { label: 'Cloudy', value: '43' },
-        { label: 'Thunderstorm', value: '1' },
-        { label: 'Windy', value: '45' },
-        { label: 'Storm', value: '46' },
-        { label: 'Fog', value: '34' },
-        { label: 'Hail', value: '47' },
-        { label: 'Hot', value: '48' },
-        { label: 'Cold', value: '49' },
-    ];
+    const options = [];
 
-    const { userToken } = useAuth();
+    Object.entries(Mappings.WeatherIdMapping).forEach(([label, value]) => {
+        options.push({ label: label, value: value });
+    });
 
     // Function to handle adding the alert weather type
     const handleAddAlertWeather = async () => {
@@ -62,8 +55,12 @@ export default function AddAlertWeather() {
             const data = await response.json();
             if (response.status === 201) {
                 Alert.alert('Success', 'Weather alert added successfully');
+                const newAlert = { id: data.data.id, category: selectedValue };
                 // Handle successful creation, e.g., navigate back or update UI
-                router.back(); // Navigate back after success
+                router.push({
+                    pathname: '/alert', // The path to the Alerts screen
+                    params: { newAlert }, // Pass the new alert data as params
+                });
             } else if (response.status === 400) {
                 Alert.alert('Error', 'Missing or invalid weather ID.');
             } else if (response.status === 401) {
@@ -95,6 +92,7 @@ export default function AddAlertWeather() {
                             items={options}
                             onValueChange={(value) => setSelectedValue(value)}
                             value={selectedValue}
+                            style={styles.RNPicker}
                         />
                     </View>
                     <View style={styles.popUpBtnContainer}>
@@ -145,6 +143,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         width: '100%',
         marginBottom: '10%',
+        padding: Platform.OS === 'ios' ? '5%' : 0,
     },
     popUpBtnContainer: {
         flexDirection: 'row',

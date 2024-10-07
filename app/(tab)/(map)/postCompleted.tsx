@@ -3,18 +3,24 @@ import { TouchableOpacity, View, Text, StyleSheet, TextInput, Image, Share } fro
 import { useNavigation } from '@react-navigation/native';
 import GradientTheme from '@/components/GradientTheme';
 import * as ColorScheme from '@/constants/ColorScheme';
+import * as Mappings from '@/constants/Mappings';
 import { useRouter } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
+import { useAuth } from '@/components/accAuth'
 
 export default function PostCompletedScreen() {
-    const { returnData, setReturnData } = useLocalSearchParams();
+    const { returnData } = useLocalSearchParams();
     const navigation = useNavigation();
+    const router = useRouter();
+
     const handleViewPost = () => {
                 // Navigate to postConfirm with query params
-                navigation.navigate('logs', { screen: 'Posted' });
+                navigation.navigate('logs', { screen: 'Posted', params: { refresh: true } });
             };
 
+    console.log('returnData: ' + returnData);
     const parsedReturnData = returnData ? JSON.parse(returnData) : null;
+    console.log('parsedReturnData: ' + parsedReturnData);
 
     // Function to handle post sharing
         const onShare = async () => {
@@ -23,10 +29,10 @@ export default function PostCompletedScreen() {
                     return;
                 }
             try {
-                const { suburb_name, weather, comment, created_at } = parsedReturnData.data;
+                const { suburb_name, weather, comment, created_at } = parsedReturnData;
 
                 const result = await Share.share({
-                    message: `Beware of the weather in ${suburb_name}: It's ${weather}! \n\n${comment} \n\nPosted on: ${new Date(created_at).toLocaleString()}`,
+                    message: `Beware of the weather in ${suburb_name}: It's ${Mappings.WeatherNamesMapping[weather]}! \n\n${comment} \n\nPosted on: ${new Date(created_at).toLocaleString()}`,
                 });
 
                 if (result.action === Share.sharedAction) {
@@ -46,8 +52,11 @@ export default function PostCompletedScreen() {
     return (
         <GradientTheme>
             <View style={styles.container}>
+                <TouchableOpacity onPress={() => router.push('/(map)/map')}>
+                    <Text style={styles.backButton}>←</Text>
+                </TouchableOpacity>
                 <View style={styles.card}>
-                    <Image source={require('@/assets/icons/16.png')} style={styles.icon} />
+                    <Image source={require('@/assets/icons/16.png')} style={styles.icon} resizeMode="contain"/>
                     <Text style={styles.header}>Successful!</Text>
                     <Text style={styles.label}>Thank you for your sharing!</Text>
                     <View style={styles.buttonContainer}>
@@ -82,6 +91,10 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginBottom: '10%',
         color: ColorScheme.BTN_BACKGROUND,
+    },
+    backButton: {
+        fontSize: 40,
+        color: 'black',
     },
     icon: {
         width: '70%',

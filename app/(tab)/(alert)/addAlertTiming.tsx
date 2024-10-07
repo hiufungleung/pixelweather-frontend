@@ -58,7 +58,16 @@ export default function AddTimingScreen({ navigation }) {
 
             if (response.status === 201) {
                 Alert.alert('Success', 'Alert timing added successfully.');
-                router.back(); // Navigate back to the main screen
+                const newAlertTiming = {
+                    id: data.data.id,
+                    start_time: data.start_time,
+                    end_time: data.end_time,
+                    is_active: data.is_active,
+                };
+                router.push({
+                    pathname: '/alert', // The path to the Alerts screen
+                    params: { newAlertTiming }, // Pass the new alert data as params
+                });
             } else if (response.status === 400) {
                 Alert.alert('Error', 'Missing required data. Please try again.');
             } else if (response.status === 401) {
