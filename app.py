@@ -1942,6 +1942,57 @@ def get_viewed_posts():
     except mysql.connector.Error as err:
         print(f"Database error: {err}")
         return jsonify({'error': INTERNAL_SERVER_ERROR}), 500
+    
+@app.route("/posts/view", methods=["POST"])
+def add_viewed_post():
+    decoded_token = g.decoded_token
+    user_id = decoded_token.get("user_id")
+
+    data = request.get_json()
+    post_id = data.get("post_id")
+
+    # Check if required field is present
+    if not post_id:
+        return jsonify({"error": MISSING_DATA}), 400
+
+    try:
+        # Check if the post exists
+        cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
+        post = cursor.fetchone()
+        if not post:
+            return jsonify({"error": NOT_EXIST_FK}), 422
+
+        # Check if the view record already exists
+        cursor.execute(
+            "SELECT * FROM user_view_post WHERE user_id = %s AND post_id = %s",
+            (user_id, post_id)
+        )
+        existing_view = cursor.fetchone()
+
+        if not existing_view:
+            # Insert new view record
+            cursor.execute(
+                "INSERT INTO user_view_post (user_id, post_id) VALUES (%s, %s)",
+                (user_id, post_id)
+            )
+            
+            # Increment the views count in the posts table
+            cursor.execute(
+                "UPDATE posts SET views = views + 1 WHERE id = %s",
+                (post_id,)
+            )
+            
+            connection.commit()
+
+        return jsonify({
+            'message': SUCCESS_DATA_CREATED,
+            'data': {
+                'post_id': post_id
+            }
+        }), 201
+
+    except mysql.connector.Error as err:
+        raise err
 
 @app.route("/posts/like", methods=["GET"])
 def get_liked_posts():
@@ -2151,19 +2202,6 @@ def get_filtered_posts():
                 'is_active': bool(post['is_active']),
                 'comment': post['comment']
             })
-
-        # Check if a token is provided and insert into user_view_post if so
-        token = request.headers.get('Authorization')
-        if token:
-            decoded_token = g.decoded_token
-            user_id = decoded_token.get("user_id")
-            if user_id:
-                for post in result:
-                    cursor.execute("""
-                        INSERT INTO user_view_post (user_id, post_id)
-                        VALUES (%s, %s)
-                    """, (user_id, post['post_id']))
-                connection.commit()
 
         return jsonify({
             'message': 'Data retrieved Successfully',
