@@ -9,10 +9,17 @@ import datetime
 import bcrypt
 import redis
 import json
+import firebase_admin
+from firebase_admin import credentials
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
+import requests
 
 app = Flask(__name__)
 
 SECRET_KEY = "YAKINIKU_DECO7381"
+OPEN_WEATHER_API_KEY = "9480d17e216cfcf5b44da6050c7286a4"
+GEOAPIFY_API_KEY = '2fb86e8ed34d45129f34c3fab949ecd4'
 
 # r = redis.Redis(host='149.28.188.65', port=6379, db=0)
 
@@ -32,6 +39,8 @@ NO_TOKEN_NEEDED_APIs = [
 ]
 
 TOKENS = {}
+
+
 
 
 # test use
@@ -110,10 +119,65 @@ def hash_password(password: str) -> bytes:
     return hashed_password
 
 
-# Helper function to check if the password matches the hash
 def verify_password(password, hashed_password):
+    """
+    Helper function to check if the password matches the hash
+    """
     return bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8"))
 
+
+def get_suburb_id_from_geolocation(latitude: str, longitude: str) -> int | None:
+    url = f"https://api.geoapify.com/v1/geocode/reverse?lat={latitude}&lon={longitude}&apiKey={GEOAPIFY_API_KEY}"
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("features"):
+            properties = data["features"][0].get("properties", {})
+            country = properties.get("country")
+            suburb_name = properties.get("suburb", "Suburb not found")
+            postcode = properties.get("postcode", "Postcode not found")
+            state_code = properties.get("state_code", "State code not found")
+        else:
+            return None
+    
+    except requests.exceptions.RequestException:
+        return None
+    
+    if country != 'Australia' or state_code != 'QLD':
+        return None
+    cursor.execute("SELECT * FROM suburbs WHERE postcode = %s", (postcode,))
+    suburbs = cursor.fetchall()
+
+    suburb_id = None
+    if len(suburbs) > 1:
+        for suburb in suburbs:
+            if suburb['suburb_name'] == suburb_name:
+                suburb_id = suburb['suburb_id']
+                break
+    if suburb_id is None:
+        suburb_id = suburbs[0].get('id')
+    return suburb_id
+
+def get_current_weather(longitude: str, latitude: str) -> int | None:
+    url = f"https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&appid={OPEN_WEATHER_API_KEY}"
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        if data.get('current'):
+            weather_code = data.get('current').get('weather')[0].get('id')
+        else:
+            return None
+    except requests.exceptions.RequestException as e:
+        return None
+
+    cursor.execute("SELECT * FROM weather WHERE weather_code = %s", weather_code)
+    weather_id = cursor.fetchone().get('id')
+    return weather_id
 
 @app.before_request
 def check_token():
@@ -292,7 +356,7 @@ def handle_login():
 
 @app.route("/handle_logout", methods=["POST"])
 def handle_logout():
-    token = request.headers.get("Authorization")
+    token = g.token
 
     # Delete token from the whitelist
     # r.delete(token)
@@ -466,6 +530,81 @@ def handle_delete_account():
 
     except mysql.connector.Error as err:
         raise err
+
+
+@app.route('/register_fcm_token', methods=['POST'])
+def register_fcm_token():
+    data = request.get_json()
+    fcm_token = data.get('fcm_token')
+    decoded_token = g.decoded_token
+    user_id = decoded_token.get('user_id')
+
+    if not fcm_token:
+        return jsonify({"error": MISSING_DATA}), 400
+
+    try:
+        cursor.execute("INSERT INTO user_fcm_tokens (user_id, fcm_token) VALUES (%s, %s) ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP;", (user_id, fcm_token))
+        connection.commit()
+        return jsonify({'message': SUCCESS_DATA_CREATED}), 200
+    except mysql.connector.Error as err:
+        raise err
+
+
+@app.route('/handle_periodical_submitted_location', methods=['POST'])
+def handle_periodical_submitted_location():
+    data = request.get_json()
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+    fcm_token = data.get('fcm_token')
+    decoded_token = g.decoded_token
+    user_id = decoded_token.get('user_id')
+
+    if not fcm_token:
+        return jsonify({"error": MISSING_DATA}), 400
+    
+    if not latitude or not longitude:
+        current_suburb_id = None
+    else:
+        current_suburb_id = get_suburb_id_from_geolocation(latitude, longitude)
+
+    cursor.execute("select start_time, end_time from user_alert_time where user_id = %s and is_active = true;", (user_id,))
+    alert_times = cursor.fetchall()
+
+    current_time = datetime.datetime.now().time()
+
+    in_alert_time = False
+    for alert_time in alert_times:
+        start_time = alert_time.get('start_time')
+        end_time = alert_time.get('end_time')
+        if start_time <= current_time <= end_time:
+            in_alert_time = True
+            break
+    
+    if not in_alert_time:
+        return jsonify({"message": NOT_IN_ALERT_TIME}), 204
+    
+    cursor.execute("select * \
+                    from posts, user_alert_suburb uas, user_alert_weather uaw, weathers \
+                    where (uas.suburb_id = posts.suburb_id or uas.suburb_id = %s) and \
+                    uaw.user_id = uas.user_id and \
+                    uas.user_id = %s and \
+                    uaw.weather_id = posts.weather_id and \
+                    posts.created_at >= NOW() - INTERVAL %s MINUTE;", (current_suburb_id, user_id, POST_EXPIRY_WINDOW))
+    post_result = cursor.fetchall()
+
+    api_current_weather_id = get_current_weather(latitude, longitude)
+    cursor.execute("select * from user_alert_weather where user_id = %s and weather_id = %s;", (user_id, api_current_weather_id))
+    api_result = cursor.fetchone()
+
+    if len(post_result) >= NOTIFICATION_ALERT_THRESHOLD or api_result is not None:
+        send_notifications()
+
+
+
+def send_notifications():
+    print("Sending scheduled notification...")
+
+
 
 
 if __name__ == "__main__":

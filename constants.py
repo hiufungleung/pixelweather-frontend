@@ -15,6 +15,9 @@ SUCCESS_DATA_DELETED = "Data deleted Successfully"
 SUCCESS_SIGN_UP = "Sign Up Successful"
 SUCCESS_DATA_CREATED = "Data created Successfully"
 
+# 204 No Content
+NOT_IN_ALERT_TIME = "Not in user's alert time"
+
 # Client Error Responses
 # 400 Bad Request
 MISSING_SIGNUP_INFO = "Missing email, username or password"
@@ -66,3 +69,8 @@ USERNAME_LENGTH = 31
 
 # Token expire
 TOKEN_VALID_DURATION = 60
+
+# post related
+POST_EXPIRY_WINDOW = 30 # minutes
+
+NOTIFICATION_ALERT_THRESHOLD = 2

@@ -32,7 +32,7 @@ CREATE TABLE `weathers` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `category_id` int NOT NULL,
   `weather` varchar(31) NOT NULL,
-  `weather_code` int NOT NULL DEFAULT -1
+  `weather_code` int NOT NULL UNIQUE DEFAULT -1
 );
 
 CREATE TABLE `posts` (
@@ -89,6 +89,14 @@ CREATE TABLE `user_saved_suburb` (
   `label` varchar(15) NOT NULL
 );
 
+CREATE TABLE `user_fcm_tokens` (
+    `id` int PRIMARY KEY AUTO_INCREMENT,
+    `user_id` int NOT NULL,
+    `fcm_token` VARCHAR(255) UNIQUE NOT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE UNIQUE INDEX `suburbs_index_0` ON `suburbs` (`suburb_name`, `postcode`);
 
 CREATE UNIQUE INDEX `user_alert_time_index_1` ON `user_alert_time` (`user_id`, `start_time`, `end_time`);
@@ -134,4 +142,6 @@ ALTER TABLE `user_alert_suburb` ADD FOREIGN KEY (`suburb_id`) REFERENCES `suburb
 ALTER TABLE `user_saved_suburb` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `user_saved_suburb` ADD FOREIGN KEY (`suburb_id`) REFERENCES `suburbs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `user_fcm_tokens` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
