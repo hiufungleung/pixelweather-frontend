@@ -1175,6 +1175,32 @@ comment   : string, optional","{
 {
   'error': 'An internal server error occurred. Please try again later.'
 }"
+6,Add viewed posts,POST,/posts/view,Add a record for user viewing a post.,TRUE,N/A,"post_id: int, not null","{
+  'post_id': 12
+}","// Status Code: 201 Created
+// Occurs when the user's viewed posts are successfully created.
+{
+  'message': 'Data created Successfully',
+  'data': {
+      'post_id': 1
+    }
+
+}
+
+// Status Code: 400 Bad Request
+{
+  'error': 'Missing (part of) required data'
+}
+
+// Status Code: 401 Unauthorized
+{
+  'error': 'Invalid or expired token'
+}
+
+// Status Code: 500 Internal Server Error
+{
+  'error': 'An internal server error occurred. Please try again later.'
+}"
 6,Get liked posts,GET,/posts/like,"Retrieve all posts liked by the user, stored in user_like_post table.",TRUE,N/A,N/A,{},"// Status Code: 200 OK
 // Occurs when the user's liked posts are successfully retrieved.
 {
