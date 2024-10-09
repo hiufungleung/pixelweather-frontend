@@ -42,7 +42,8 @@ NOT_FOUND_RECORDS = "Record is not found"
 
 # 409 Conflict
 CONFLICT_EMAIL = "Email is already in use"
-CONFLICT_SAVED_SUBURB = "The label has been used by user"
+CONFLICT_SAVED_LABEL = "The label has been used by user"
+CONFLICT_SAVED_SUBURB = "User has already saved this suburb"
 CONFLICT_ALERT_SUBURB = "User has set this alert suburb"
 CONFLICT_ALERT_TIME = "User has already saved an alert time for this time range"
 
