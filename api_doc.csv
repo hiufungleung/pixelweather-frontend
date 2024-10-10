@@ -1515,8 +1515,8 @@ report_comment: text, not null","{
     'error': 'An internal server error occurred. Please try again later.'
 }
 "
-7,Handle Periodical Submitted Location,POST,/handle_periodical_submitted_location,"This endpoint processes the periodically submitted geolocation from the client and checks if the user is within an alert time. If the user is in the alert time and there are posts within their saved suburbs or based on current location, it sends notifications.",TRUE,N/A,"latitude : string, not null
-longitude: string, not null
+7,Handle Periodical Submitted Location,POST,/handle_periodical_submitted_location,"This endpoint processes the periodically submitted geolocation from the client and checks if the user is within an alert time. If the user is in the alert time and there are posts within their saved suburbs or based on current location, it sends notifications.",TRUE,N/A,"latitude : string
+longitude: string
 fcm_token: string, not null","{
     'latitude': '51.217096',
     'longitude': '6.778288',
@@ -1525,7 +1525,17 @@ fcm_token: string, not null","{
 // Occurs when notifications are triggered due to relevant posts being found.
 
 {
-    'message': 'Data created Successfully'
+    'message': 'Notification Sent',
+    'data': [
+        {
+            'message_title': 'Heavy Rain',
+            'message_body': 'Rain Rain Rain at St Lucia'
+        },
+        {
+            'message_title': 'Heavy Rain',
+            'message_body': 'Rain Rain Rain at City'
+        }
+    ]
 }
 
 // Status Code: 204 No Content
@@ -1547,5 +1557,4 @@ fcm_token: string, not null","{
 
 {
     'error': 'An internal server error occurred. Please try again later.'
-}
-"
+}"
