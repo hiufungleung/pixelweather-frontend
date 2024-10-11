@@ -114,8 +114,6 @@ export default function TabLayout() {
                 console.log('Registering for push notifications...');
                 fcmToken = await registerForPushNotificationsAsync({ userToken });  // Use await to get the actual token
                 console.log('FCM Token:', fcmToken);
-                // startBackgroundLocationTracking(userToken, fcmToken);  // Start background tracking after getting the FCM token
-                setupPushNotifications();  // Call the async function inside useEffect
 
                 // Dynamically import Firebase messaging for Android only
                 import('@react-native-firebase/messaging')
@@ -126,12 +124,13 @@ export default function TabLayout() {
                     .catch((error) => {
                         console.error('Error loading Firebase messaging module:', error);
                     });
-
             } else {
                 console.log('userToken is not available yet.');
             }
         };
+        setupPushNotifications(); // Call it outside itself
     }, [userToken]);
+
 
     // Handle foreground messages
     useEffect(() => {

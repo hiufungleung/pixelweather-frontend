@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import * as SecureStore from 'expo-secure-store';  // 引入 `expo-secure-store`
+import * as SecureStore from 'expo-secure-store';
+import {Alert} from "react-native";
+import {API_LINK} from "@/constants/API_link";  // 引入 `expo-secure-store`
 
 // 建立一個 context，用來管理登入狀態
 export const AuthContext = createContext();
@@ -31,31 +33,104 @@ export const AuthProvider = ({ children }) => {
         loadToken();
     }, []);
 
-    // useEffect(() => {
-    //     // 每當 `userData` 發生變化時列印出其內容
-    //     console.log('Current User Data:', userData);
-    // }, [userData]);
-
     // 定義登入方法
-    const login = async (token, userInfo) => {
-        setIsLoggedIn(true);
-        setUserToken(token);
-        setUserData(userInfo);
+    const login = async (email, password) => {
+        if (!email || !password) {
+            Alert.alert('Error', 'Missing email or password.');
+            return false;
+        }
 
-        // 保存到 SecureStore
-        await SecureStore.setItemAsync('userToken', token); // 使用 SecureStore 存儲 Token
-        await SecureStore.setItemAsync('userData', JSON.stringify(userInfo)); // 使用 SecureStore 存儲用戶資料
+        try {
+            const response = await fetch(`${API_LINK}/handle_login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "email": email,
+                    "password": password,
+                }),
+            });
+
+            const rawResponse = await response.text();
+
+            if (rawResponse.includes('<')) {
+                console.error('伺服器回傳了 HTML 而非 JSON:', rawResponse);
+                Alert.alert('Server Error', 'Received unexpected response from server.');
+                return false;
+            }
+
+            const data = JSON.parse(rawResponse);
+
+            if (response.status === 200) {
+                // 成功登入後，更新狀態並存儲 Token 和用戶資料
+                await SecureStore.setItemAsync('userToken', data.data.token);
+                await SecureStore.setItemAsync('userData', JSON.stringify({
+                    email: data.data.email,
+                    username: data.data.username,
+                }));
+
+                setIsLoggedIn(true);
+                setUserToken(data.data.token);
+                setUserData({
+                    email: data.data.email,
+                    username: data.data.username,
+                });
+                Alert.alert('Success', 'Login successful!');
+                return true;
+            } else {
+                Alert.alert('Error', data.error || 'Invalid credentials.');
+                return false;
+            }
+        } catch (error) {
+            console.error("Error: didn't send the request", error);
+            Alert.alert('Error', `${error.message}`);
+            return false;
+        }
     };
 
-    // 定義登出方法s
+    // 定義登出方法，並且處理登出 API 請求
     const logout = async () => {
-        setIsLoggedIn(false);
-        setUserToken(null);
-        setUserData(null);
+        if (!userToken) {
+            Alert.alert('Error', 'No active session to log out.');
+            return false;
+        }
 
-        // 移除 SecureStore 中的資料
-        await SecureStore.deleteItemAsync('userToken');  // 使用 SecureStore 刪除 Token
-        await SecureStore.deleteItemAsync('userData');  // 使用 SecureStore 刪除用戶資料
+        try {
+            const response = await fetch(`${API_LINK}/handle_logout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userToken}`,
+                },
+                body: JSON.stringify({ logout_all: false }),
+            });
+
+            const data = await response.json();
+
+            if (response.status === 200 || response.status === 400 || response.status === 401) {
+                Alert.alert('Success', data.message || 'Log out successful.');
+
+                // 清空 SecureStore 中的 token 和用戶資料
+                await SecureStore.deleteItemAsync('userToken');
+                await SecureStore.deleteItemAsync('userData');
+
+                // 重置本地狀態
+                setIsLoggedIn(false);
+                setUserToken(null);
+                setUserData(null);
+                return true;
+            } else if (response.status === 500) {
+                Alert.alert('Server Error', data.error || 'An internal server error occurred. Please try again later.');
+                return false;
+            } else {
+                Alert.alert('Error', 'An unexpected error occurred.');
+                return false;
+            }
+        } catch (error) {
+            Alert.alert('Error', `An error occurred: ${error.message}`);
+            return false;
+        }
     };
 
     return (
@@ -65,5 +140,4 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-// 自定義 Hook：用來方便取得 `AuthContext` 的內容
 export const useAuth = () => useContext(AuthContext);

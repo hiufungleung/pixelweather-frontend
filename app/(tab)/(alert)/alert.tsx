@@ -74,8 +74,6 @@ export default function AlertsScreen() {
     // Render Alert Area Buttons with or without delete button based on edit mode
     function renderAlertAreaButtons(data, isEditMode) {
 
-        console.log('Alert Type Button:', data);
-
         return data
             .sort((a, b) => a.suburb_name.localeCompare(b.suburb_name))
             .map((item, index) => (
@@ -89,8 +87,6 @@ export default function AlertsScreen() {
     }
 
     function renderAlertTiming(data, isEditMode) {
-
-        console.log('Alert Timing Button:', data);
 
         return data
             .sort((a, b) => a.start_time.localeCompare(b.start_time))

@@ -27,50 +27,9 @@ export default function LogInScreen() {
     const passwordRef = useRef(null);
 
     const handleLogIn = async () => {
-        if (!email || !password) {
-            Alert.alert('Error', 'Missing email or password.');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_LINK}/handle_login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "email": email,
-                    "password": password,
-                }),
-            });
-
-            // 確認回傳的內容類型（不解析 JSON，直接顯示文字）
-            const rawResponse = await response.text();
-            // console.log('Raw Response:', rawResponse);  // 列印回應文字內容
-
-            // 確認回應狀態碼
-            // console.log('Response Status:', response.status);
-
-            // 如果回傳內容包含 '<'，表示是 HTML 內容
-            if (rawResponse.includes('<')) {
-                console.error('伺服器回傳了 HTML 而非 JSON:', rawResponse);
-                Alert.alert('Server Error', 'Received unexpected response from server.');
-                return;
-            }
-
-            // 嘗試解析 JSON 格式的資料
-            const data = JSON.parse(rawResponse);
-
-            if (response.status === 200) {
-                login(data.data.token, { email: data.data.email, username: data.data.username });  // 傳遞 `token` 和 `userData`
-                Alert.alert('Success', 'Login successful!');
-                router.push('/(map)/map');
-            } else {
-                Alert.alert('Error', data.error || 'Invalid credentials.');
-            }
-        } catch (error) {
-            console.log("Error: didn't send the request");
-            Alert.alert('Error', `${error.message}`);
+        const isSuccess = await login(email, password);
+        if (isSuccess) {
+            router.push('/(map)/map');
         }
     };
 
