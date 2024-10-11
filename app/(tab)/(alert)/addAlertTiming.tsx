@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Platform, ScrollView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import GradientTheme from '@/components/GradientTheme';
 import * as ColorScheme from '@/constants/ColorScheme';
@@ -86,7 +86,7 @@ export default function AddTimingScreen({ navigation }) {
 
     return (
         <GradientTheme>
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.card}>
                     <Text style={styles.title}>Add Alert Timing</Text>
 
@@ -95,13 +95,13 @@ export default function AddTimingScreen({ navigation }) {
                         <Text style={styles.timeButtonText}>Pick Start Time</Text>
                     </TouchableOpacity>
                     {showStartPicker && (
-                        <DateTimePicker
-                            value={startTime}
-                            mode="time"
-                            is24Hour={true}
-                            display="default"
-                            onChange={onChangeStart}
-                        />
+                            <DateTimePicker
+                                value={startTime}
+                                mode="time"
+                                is24Hour={true}
+                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                onChange={onChangeStart}
+                            />
                     )}
                     <View style={styles.timeDisplayContainer}>
                         <Text style={styles.selectedTimeText}>
@@ -114,13 +114,13 @@ export default function AddTimingScreen({ navigation }) {
                         <Text style={styles.timeButtonText}>Pick End Time</Text>
                     </TouchableOpacity>
                     {showEndPicker && (
-                        <DateTimePicker
-                            value={endTime}
-                            mode="time"
-                            is24Hour={true}
-                            display="default"
-                            onChange={onChangeEnd}
-                        />
+                            <DateTimePicker
+                                value={endTime}
+                                mode="time"
+                                is24Hour={true}
+                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                onChange={onChangeEnd}
+                            />
                     )}
                     <View style={styles.timeDisplayContainer}>
                         <Text style={styles.selectedTimeText}>
@@ -137,7 +137,7 @@ export default function AddTimingScreen({ navigation }) {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
+            </ScrollView>
         </GradientTheme>
     );
 };

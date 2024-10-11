@@ -14,9 +14,9 @@ export default function PostCompletedScreen() {
     const router = useRouter();
 
     const handleViewPost = () => {
-                // Navigate to postConfirm with query params
-                navigation.navigate('logs', { screen: 'Posted', params: { refresh: true } });
-            };
+        // Use router.push to navigate
+        navigation.navigate('Posted');
+    };
 
     console.log('returnData: ' + returnData);
     const parsedReturnData = returnData ? JSON.parse(returnData) : null;

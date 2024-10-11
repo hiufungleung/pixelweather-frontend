@@ -1,9 +1,8 @@
 import { Stack } from 'expo-router';
 import GradientTheme from '@/components/GradientTheme';
-import {AuthProvider} from "@/components/accAuth";
+import { AuthProvider } from "@/components/accAuth";
 
 export default function RootLayout() {
-
   return (
       <AuthProvider>
         <GradientTheme>

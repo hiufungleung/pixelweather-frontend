@@ -34,5 +34,7 @@ export const WeatherNamesMapping = {
     'fog': 'Fog',
     'hail': 'Hail',
     'hot': 'Hot',
-    'cold': 'Cold'
+    'cold': 'Cold',
+    'rain': 'Test Rain',
+    'scattered clouds: 25-50%': 'Test Cloud'
 }

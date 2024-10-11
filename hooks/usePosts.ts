@@ -28,7 +28,6 @@ export const usePosts = (postType = '', includeSelfPosts = false) => {
                 const jsonResponse = await response.json();
                 setData(jsonResponse.data);
                 setError(null);
-                console.log('ViewedPosts: ' + data);
             } else {
                 const errorResponse = await response.json();
                 setError(errorResponse.error || 'Failed to load posts.');
@@ -56,7 +55,6 @@ export const usePosts = (postType = '', includeSelfPosts = false) => {
             if (response.ok) {
                 const jsonResponse = await response.json();
                 setSelfPosts(jsonResponse.data);
-                console.log('PostedPosts: ' + selfPosts);
             } else {
                 const errorResponse = await response.json();
                 Alert.alert('Error', errorResponse.error || 'Failed to fetch self posts.');
@@ -80,7 +78,6 @@ export const usePosts = (postType = '', includeSelfPosts = false) => {
             if (response.ok) {
                 const jsonResponse = await response.json();
                 setLikedPosts(jsonResponse.data);
-                console.log('LikePosts: ' + likedPosts);
             } else {
                 const errorResponse = await response.json();
                 Alert.alert('Error', errorResponse.error || 'Failed to fetch liked posts.');
@@ -104,7 +101,6 @@ export const usePosts = (postType = '', includeSelfPosts = false) => {
             if (response.ok) {
                 const jsonResponse = await response.json();
                 setReportedPosts(jsonResponse.data);
-                console.log('LikePosts: ' + reportedPosts);
             } else {
                 const errorResponse = await response.json();
                 Alert.alert('Error', errorResponse.error || 'Failed to fetch reported posts.');

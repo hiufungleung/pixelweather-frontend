@@ -4,6 +4,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import GradientTheme from '@/components/GradientTheme';
 import { useRouter } from 'expo-router';
 import {useAuth} from '@/components/accAuth'
+import { API_LINK } from '@/constants/API_link';
 
 const data = [
     { id: '1', title: 'Account Center', icon: 'arrow-right', route: '/(accountSetting)/accountSetting', requireLogin: true },
@@ -12,9 +13,36 @@ const data = [
     { id: '4', title: 'Privacy', icon: 'arrow-right', route: '/privacy', requireLogin: false },
 ];
 
+// Function to handle the logout API call
+async function handleLogoutAPI(userToken) {
+    try {
+        const response = await fetch(`${API_LINK}/handle_logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+            body: JSON.stringify({ logout_all: false }), // Set logout_all to false as per the API requirement
+        });
+
+        const result = await response.json();
+
+        if (response.status === 200) {
+            return { success: true, message: result.message || 'Log out successful' };
+        } else if (response.status === 400 || response.status === 401) {
+            return { success: false, message: result.error || 'Token error. Logging out.' };
+        } else if (response.status === 500) {
+            return { success: false, message: 'An internal server error occurred. Please try again later.' };
+        }
+    } catch (error) {
+        console.error('Error logging out:', error);
+        return { success: false, message: 'Network error. Please try again later.' };
+    }
+}
+
 export default function SettingScreen() {
   const router = useRouter();
-    const { isLoggedIn, login, logout } = useAuth();
+    const { isLoggedIn, login, logout, userToken } = useAuth();
 
     const filteredData = data.filter((item) => (isLoggedIn || !item.requireLogin));
 
@@ -27,15 +55,23 @@ export default function SettingScreen() {
                 [
                     {
                         text: 'Confirm',
-                        onPress: () => {
-                            logout(); // 執行登出
-                            Alert.alert('Success', 'You have been logged out successfully.');
+                        onPress: async () => {
+                            // Call the API to log out
+                            logout(); // Call logout to clear the auth state
+                            const result = await handleLogoutAPI(userToken);
+                            if (result.success) {
+                                Alert.alert('Success', result.message); // Show success message
+                            } else {
+                                Alert.alert('Error', result.message); // Show error message
+                            }
                         },
                     },
                     { text: 'Cancel', style: 'cancel' },
                 ],
                 { cancelable: true }
             );
+
+
         } else {
             // 當前為未登入狀態，跳轉到登入畫面
             router.push('/login'); // 根據你的路由結構，這裡設定跳轉路徑

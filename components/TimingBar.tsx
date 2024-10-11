@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         borderRadius: 20,
-        padding: Platform.OS === 'ios' ? '3.5%' : '1.5%',
+        padding: '3.5%',
         marginBottom: 10,
     },
     timingBarText: {

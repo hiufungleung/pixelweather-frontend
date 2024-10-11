@@ -42,15 +42,13 @@ export default function PostTemplate({ item, isSelfPost, onDelete, onReport, isR
     const [reportComment, setReportComment] = useState('');  // State to store the report comment
     const { userToken } = useAuth();
     const convertedWeather = Mappings.WeatherNamesMapping[item.weather];
+    const [localLikes, setLocalLikes] = useState(likes);  // Track local likes count
+    const [liked, setLiked] = useState(isLiked); // Whether the post is liked by the user
 
     // Use effect to synchronize local likes count with the props
     useEffect(() => {
         setLocalLikes(likes);
     }, [likes]);
-
-    // Manage local likes count and liked status in state
-    const [localLikes, setLocalLikes] = useState(likes);  // Track local likes count
-    const [liked, setLiked] = useState(isLiked); // Whether the post is liked by the user
 
     // Handle toggling the like status
     const handleToggleLike = () => {

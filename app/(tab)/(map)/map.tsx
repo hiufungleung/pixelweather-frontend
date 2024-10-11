@@ -10,11 +10,38 @@ import { useAuth } from '@/components/accAuth';
 import * as WeatherIcons from "@/constants/Mappings";
 import { weatherIconById } from '@/constants/weatherCode';
 
+import { Button } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
+
+// Function to trigger a local notification
+const triggerLocalNotification = async () => {
+    await Notifications.scheduleNotificationAsync({
+        content: {
+            title: "Test Notification",  // Title of the notification
+            body: "This is a test notification to check the appearance!",  // Body content
+            sound: true,  // Play a sound (optional)
+            data: { testData: 'test' },  // You can add additional data (optional)
+        },
+        trigger: {
+            seconds: 1,  // Notification will trigger after 5 seconds
+        },
+    });
+
+    showMessage({
+        message: "Notification scheduled!",
+        description: "A local notification will appear in 5 seconds.",
+        type: "info",
+        icon: "auto",
+    });
+};
+
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;  // 取得螢幕高度
 const SCREEN_WIDTH = Dimensions.get('window').width;    // 取得螢幕寬度
 
 const SEARCH_CONTAINER_WIDTH = SCREEN_WIDTH - 30;  // SearchContainer 的寬度 (左右 margin 各 15)
-const BUTTON_TO_TOP_DISTANCE = SCREEN_HEIGHT*0.12;
+const BUTTON_TO_TOP_DISTANCE = SCREEN_HEIGHT * 0.12;
 
 const API_KEY = '9480d17e216cfcf5b44da6050c7286a4'; // 替换为你的天气API密钥
 
@@ -183,6 +210,12 @@ export default function HomeScreen() {
                         <Icon name="magnifying-glass" size={20} color="gray" style={styles.searchIcon} onPress={searchLocation} />
                     </View>
 
+                    <View>
+                        <Button title="Trigger Local Notification" onPress={triggerLocalNotification} />
+                        {/* Add FlashMessage component */}
+                        <FlashMessage position="top" />
+                    </View>
+
                     {weather ? (
                         <View>
                             {/* 天氣資訊顯示容器 */}
@@ -191,13 +224,13 @@ export default function HomeScreen() {
                                 <Text style={styles.locationText}>
                                     {weather.name ? `${weather.name}` : 'Unknown Location'}
                                 </Text>
-                                <View style={{ flexDirection: 'row', marginVertical: 30, width: '65%', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <View style={{ flexDirection: 'row', marginVertical: 30, width: '65%', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Image source={WeatherIcons.weatherIconMap['Clear Sky']} style={styles.weatherIcon} />
 
-                                    <View style={{alignItems:'center', padding: 5}}>
+                                    <View style={{ alignItems: 'center', padding: 5 }}>
                                         <Text style={styles.temperatureText}>
                                             {weather.main?.temp ? `${weather.main.temp.toFixed(0)}` : 'N/A'}
-                                            <Text style={{fontSize: 20}}>{' '}{'°C'}</Text>
+                                            <Text style={{ fontSize: 20 }}>{' '}{'°C'}</Text>
                                         </Text>
 
                                         {/* 高溫和低溫顯示 */}
