@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import ViewedScreen from './ViewedScreen';
@@ -6,14 +6,14 @@ import PostedScreen from './PostedScreen';
 import GradientTheme from '@/components/GradientTheme';
 import * as ColorScheme from '@/constants/ColorScheme';
 import { useRouter } from 'expo-router';
-import { useAuth } from '@/components/accAuth'
+import { useAuth } from '@/components/accAuth';
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function LogsScreen() {
     const router = useRouter();
     // if the user is not logged in, login screen is displayed
-        const { isLoggedIn } = useAuth();
+    const { isLoggedIn } = useAuth();
 
         if (!isLoggedIn) {
             return (
@@ -31,7 +31,7 @@ export default function LogsScreen() {
     return (
         <GradientTheme>
             <Tab.Navigator
-                initialRouteName="Viewed"
+                initialRouteName={'Viewed'}
                 screenOptions={{
                     tabBarActiveTintColor: '#6200EE',
                     tabBarInactiveTintColor: '#AAA',

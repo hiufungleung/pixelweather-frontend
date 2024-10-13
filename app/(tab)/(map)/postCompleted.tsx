@@ -14,8 +14,10 @@ export default function PostCompletedScreen() {
     const router = useRouter();
 
     const handleViewPost = () => {
-        // Use router.push to navigate
-        navigation.navigate('Posted');
+        navigation.navigate('logs', {
+            screen: 'Posted',  // Specify the tab you want to navigate to
+            params: { directRefresh: true },  // Pass the `directRefresh` param
+        });
     };
 
     console.log('returnData: ' + returnData);
@@ -23,31 +25,31 @@ export default function PostCompletedScreen() {
     console.log('parsedReturnData: ' + parsedReturnData);
 
     // Function to handle post sharing
-        const onShare = async () => {
-            if (!parsedReturnData) {
-                    console.error('No data to share');
-                    return;
-                }
-            try {
-                const { suburb_name, weather, comment, created_at } = parsedReturnData;
+    const onShare = async () => {
+        if (!parsedReturnData) {
+            console.error('No data to share');
+            return;
+        }
+        try {
+            const { suburb_name, weather, comment, created_at } = parsedReturnData;
 
-                const result = await Share.share({
-                    message: `Beware of the weather in ${suburb_name}: It's ${Mappings.WeatherNamesMapping[weather]}! \n\n${comment} \n\nPosted on: ${new Date(created_at).toLocaleString()}`,
-                });
+            const result = await Share.share({
+                message: `Beware of the weather in ${suburb_name}: It's ${Mappings.WeatherNamesMapping[weather]}! \n\n${comment} \n\nPosted on: ${new Date(created_at).toLocaleString()}`,
+            });
 
-                if (result.action === Share.sharedAction) {
-                    if (result.activityType) {
-                        console.log('Shared with activity type:', result.activityType);
-                    } else {
-                        console.log('Post shared successfully!');
-                    }
-                } else if (result.action === Share.dismissedAction) {
-                    console.log('Share dismissed');
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    console.log('Shared with activity type:', result.activityType);
+                } else {
+                    console.log('Post shared successfully!');
                 }
-            } catch (error) {
-                console.error('Error sharing the post:', error.message);
+            } else if (result.action === Share.dismissedAction) {
+                console.log('Share dismissed');
             }
-        };
+        } catch (error) {
+            console.error('Error sharing the post:', error.message);
+        }
+    };
 
     return (
         <GradientTheme>
@@ -56,7 +58,7 @@ export default function PostCompletedScreen() {
                     <Text style={styles.backButton}>←</Text>
                 </TouchableOpacity>
                 <View style={styles.card}>
-                    <Image source={require('@/assets/icons/16.png')} style={styles.icon} resizeMode="contain"/>
+                    <Image source={require('@/assets/icons/16.png')} style={styles.icon} resizeMode="contain" />
                     <Text style={styles.header}>Successful!</Text>
                     <Text style={styles.label}>Thank you for your sharing!</Text>
                     <View style={styles.buttonContainer}>

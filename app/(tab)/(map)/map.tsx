@@ -29,7 +29,6 @@ import {usePosts} from "@/hooks/usePosts"
 import {BTN_BACKGROUND} from "@/constants/ColorScheme";
 import {Text, TouchableOpacity} from "react-native";
 
-
 const SCREEN_HEIGHT = RN.Dimensions.get('window').height;  // 取得螢幕高度
 const SCREEN_WIDTH = RN.Dimensions.get('window').width;    // 取得螢幕寬度
 
@@ -37,7 +36,6 @@ const SEARCH_CONTAINER_WIDTH = SCREEN_WIDTH - 30;  // SearchContainer 的寬度 
 const BUTTON_TO_TOP_DISTANCE = SCREEN_HEIGHT*0.08;
 
 const API_KEY = '9480d17e216cfcf5b44da6050c7286a4'; // 替换为你的天气API密钥
-
 
 // HomeScreen 組件
 export default function HomeScreen() {
@@ -61,7 +59,6 @@ export default function HomeScreen() {
     const [markerPressed, setMarkerPressed] = useState(false);  // 追蹤是否點擊了 Marker
     const [isLiked, setIsLiked] = useState(null); // 初始化為 `item` 中的 liked 狀態
     const [likeCount, setLikeCount] = useState(0); // 初始化喜歡的數量
-
 
     const animatedHeight = useRef(new RN.Animated.Value(400)).current;  // 初始化地圖高度動畫
     const animatedWidth = useRef(new RN.Animated.Value(SEARCH_CONTAINER_WIDTH)).current;  // 初始化地圖寬度動畫
@@ -98,8 +95,11 @@ export default function HomeScreen() {
             setLoading(false);
         };
 
-        initializeData();
-    }, []);
+        if (userToken) {
+            initializeData();
+        };
+
+    }, [userToken]);
 
 
     const searchLocation = async () => {

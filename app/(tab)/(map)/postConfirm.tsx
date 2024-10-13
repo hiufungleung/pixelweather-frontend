@@ -19,6 +19,7 @@ const weatherId = {
     'Hail': 47,
     'Hot': 48,
     'Cold': 49,
+    'High UV': 51,
 };
 
 export default function PostConfirm() {

@@ -21,6 +21,7 @@ export default function NewPostScreen() {
         { label: 'Hail', value: 'Hail' },
         { label: 'Hot', value: 'Hot' },
         { label: 'Cold', value: 'Cold' },
+        { label: 'High UV', value: 'High UV' },
     ]);
 
     const router = useRouter();

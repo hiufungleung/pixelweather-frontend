@@ -18,7 +18,6 @@ export default function SettingScreen() {
     const { isLoggedIn, login, logout ,userToken} = useAuth();
     const filteredData = data.filter((item) => (isLoggedIn || !item.requireLogin));
 
-
     const handlePress = () => {
         if (isLoggedIn) {
             // 當前為已登入狀態

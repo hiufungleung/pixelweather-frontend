@@ -90,20 +90,20 @@ export default function SignUpScreen() {
                         const alertData = await alertResponse.json(); // Handle the second response
 
                         if (alertResponse.status === 201) {
-                            Alert.alert('Success', 'Alert timing added successfully.');
+                            console.log('Success', 'Alert timing added successfully.');
                         } else if (alertResponse.status === 400) {
-                            Alert.alert('Error', 'Missing required data. Please try again.');
+                            console.log('Error', 'Missing required data. Please try again.');
                         } else if (alertResponse.status === 401) {
-                            Alert.alert('Error', 'Invalid or expired token.');
+                            console.log('Error', 'Invalid or expired token.');
                         } else if (alertResponse.status === 409) {
-                            Alert.alert('Error', 'This time range has already been added.');
+                            console.log('Error', 'This time range has already been added.');
                         } else if (alertResponse.status === 422) {
-                            Alert.alert('Error', 'Invalid time range: start_time cannot be later than end_time.');
+                            console.log('Error', 'Invalid time range: start_time cannot be later than end_time.');
                         } else {
-                            Alert.alert('Error', 'An unknown error occurred.');
+                            console.log('Error', 'An unknown error occurred.');
                         }
                     } catch (error) {
-                        Alert.alert('Error', 'Failed to connect to the server. Please try again.');
+                        console.log('Error', 'Failed to connect to the server. Please try again.');
                     }
 
                     // 取得 token 和使用者資訊

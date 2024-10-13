@@ -9,6 +9,7 @@ export const weatherIconMap = {
       Fog: require('@/assets/icons/08.png'),
       Cold: require('@/assets/icons/15.png'),
       Hot: require('@/assets/icons/14.png'),
+      'High UV': require('@/assets/icons/17.png'),
 };
 
 export const WeatherIdMapping = {
@@ -22,6 +23,7 @@ export const WeatherIdMapping = {
      'Hail': 47,
      'Hot': 48,
      'Cold': 49,
+     'High UV': 51,
 };
 
 export const WeatherNamesMapping = {
@@ -36,5 +38,6 @@ export const WeatherNamesMapping = {
     'hot': 'Hot',
     'cold': 'Cold',
     'rain': 'Test Rain',
-    'scattered clouds: 25-50%': 'Test Cloud'
+    'scattered clouds: 25-50%': 'Test Cloud',
+    'moderate uv index': 'High UV',
 }

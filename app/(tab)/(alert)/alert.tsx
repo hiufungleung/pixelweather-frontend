@@ -13,10 +13,12 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/components/accAuth';
 import { API_LINK } from '@/constants/API_link';
 import * as Notifications from 'expo-notifications';
+import { useNavigation } from '@react-navigation/native';
 
 // Main screen
 export default function AlertsScreen() {
     const router = useRouter();
+    const navigation = useNavigation();
     const newAlert = router.params?.newAlert; // Safely check for newAlert
     const newLocation = router.params?.newLocation; // Safely check for newAlert
     const newAlertTiming = router.params?.newAlertTiming; // Safely check for newAlert
@@ -56,8 +58,6 @@ export default function AlertsScreen() {
 
     // Render Alert Type Buttons with or without delete button based on edit mode
     function renderAlertTypeButtons(data, isEditMode) {
-
-        console.log('Alert Type Button:', data);
 
         return data
             .sort((a, b) => Mappings.WeatherNamesMapping[a.weather].localeCompare(Mappings.WeatherNamesMapping[b.weather]))
@@ -228,7 +228,7 @@ export default function AlertsScreen() {
     };
 
     // Fetch all data on refresh
-    const onRefresh = useCallback(() => {
+/*     const onRefresh = useCallback(() => {
         setRefreshing(true); // Start refreshing
         fetchData(`${API_LINK}/user_alert_weather`, setWeatherAlerts);
         fetchData(`${API_LINK}/user_alert_suburb`, setAlertLocations);
@@ -236,7 +236,11 @@ export default function AlertsScreen() {
             setRefreshing(false); // Stop refreshing once data is fetched
         });
         checkNotificationPermissions().finally(() => setRefreshing(false));
-    }, []);
+    }, []); */
+
+    const onRefresh = useCallback(() => {
+        navigation.replace('alert'); // Replace the screen with itself
+    }, [navigation]);
 
     // Check Notification Permissions
     const checkNotificationPermissions = async () => {
@@ -280,7 +284,7 @@ export default function AlertsScreen() {
         }
     }, [userToken, permissionStatus]);  // Add userToken as a dependency
 
-    useEffect(() => {
+     useEffect(() => {
         if (alertTiming.length > 0) {
             // Process the alert timing after it is fetched
             const wholeDayTiming = alertTiming.find(
@@ -375,7 +379,14 @@ export default function AlertsScreen() {
 
                     </View>
                     <View style={styles.buttonContainer}>
-                        {renderAlertTypeButtons(weatherAlerts, editingSection === 'alertType')}
+                        {weatherAlerts && weatherAlerts.length > 0 ? (
+                            renderAlertTypeButtons(weatherAlerts, editingSection === 'alertType')
+                        ) : (
+                            <Text style={styles.emptyMessage}>
+                                No active alert weather types {"\n"}
+                                Add a alert weather type through "+"
+                            </Text>
+                        )}
                     </View>
                 </View>
 
@@ -389,7 +400,14 @@ export default function AlertsScreen() {
                         </View>
                     </View>
                     <View style={styles.buttonContainer}>
-                        {renderAlertAreaButtons(alertLocations, editingSection === 'alertArea')}
+                        {alertLocations && alertLocations.length > 0 ? (
+                            renderAlertAreaButtons(alertLocations, editingSection === 'alertArea')
+                        ) : (
+                            <Text style={styles.emptyMessage}>
+                                No active alert areas {"\n"}
+                                Add an alert location through "+"
+                            </Text>
+                        )}
                     </View>
                 </View>
 
@@ -403,7 +421,7 @@ export default function AlertsScreen() {
                         </View>
                     </View>
                     <View style={styles.timingBarContainer}>
-                        {renderAlertTiming(wholeDayTiming)}
+                        {renderAlertTiming(wholeDayTiming, editingSection === 'alertTiming')}
                         {renderAlertTiming(alertTiming, editingSection === 'alertTiming')}
                     </View>
                 </View>
@@ -488,5 +506,12 @@ const styles = StyleSheet.create({
     popUpBtnText: {
         color: 'white',
         textAlign: 'center',
-    }
+    },
+    emptyMessage: {
+        textAlign: 'center',
+        width: '100%',
+        marginBottom: '3%',
+        color: 'gray',
+        fontSize: 16,
+    },
 });

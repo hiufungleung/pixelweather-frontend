@@ -41,7 +41,7 @@ export default function AddTimingScreen({ navigation }) {
         const requestBody = {
             start_time: startTimeFormatted,
             end_time: endTimeFormatted,
-            is_active: true, // Assuming the new timing should be active by default
+            is_active: false,
         };
 
         try {
