@@ -4,11 +4,11 @@
     "slug": "pixel-weather",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/app_icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/welcome_view.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -16,6 +16,11 @@
       "supportsTablet": true,
       "config": {
         "googleMapsApiKey": "AIzaSyDPly3NPgi0EcdMOipNY8ZEyckkobvkuyI"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app needs to access your location.",
+        "NSLocationAlwaysUsageDescription": "This app needs to access your location in the background.",
+        "UIBackgroundModes": ["location", "fetch"]
       }
     },
     "android": {
