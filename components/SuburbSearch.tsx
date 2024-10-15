@@ -7,21 +7,7 @@ export default function SuburbSearch({ onSuburbSelect, token }) {
     const [query, setQuery] = useState('');
     const [filteredSuburbs, setFilteredSuburbs] = useState([]);
     const [selectedSuburb, setSelectedSuburb] = useState(null);
-    const [suburbData, setSuburbData] = useState([
-        { id: 1, name: "Brisbane City", postcode: "4000" },
-        { id: 2, name: "Brisbane Adelaide Street", postcode: "4000" },
-        { id: 3, name: "Brisbane", postcode: "4000" },
-        { id: 4, name: "Petrie Terrace", postcode: "4000" },
-        { id: 5, name: "Spring Hill", postcode: "4000" },
-        { id: 11, name: "Brisbane CBD", postcode: "4000" },
-        { id: 12, name: "Fortitude Valley", postcode: "4000" },
-        { id: 13, name: "Greenslopes", postcode: "4120" },
-        { id: 6, name: "Fortitude Valley", postcode: "4006" },
-        { id: 7, name: "New Farm", postcode: "4005" },
-        { id: 8, name: "Herston", postcode: "4006" },
-        { id: 9, name: "Kangaroo Point", postcode: "4169" },
-        { id: 10, name: "Bowen Hills", postcode: "4006" },
-    ]);
+    const [suburbData, setSuburbData] = useState([]);
 
     // Function to fetch suburbs from the API
     const fetchSuburbs = async () => {
