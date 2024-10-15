@@ -8,10 +8,12 @@ import * as ColorScheme from '@/constants/ColorScheme';
 import { useRouter } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';  // Get params from navigation route
+import { useRoute } from '@react-navigation/native';
 
 export default function PostedScreen() {
-    const { data, likedPosts, reportedPosts, selfPosts, refreshing, loading, error, handleToggleLike, handleDeletePost, handleReportPost, fetchPosts, fetchLikedPosts } = usePosts();  // No need for selfPosts here
+    const { data, likedPosts, reportedPosts, selfPosts, refreshing, loading, error,
+        handleToggleLike, handleDeletePost, handleReportPost, fetchPosts,
+        fetchLikedPosts } = usePosts();
     const route = useRoute();  // Get the route object to access params
     const router = useRouter();
 
@@ -33,7 +35,14 @@ export default function PostedScreen() {
     );
 
     if (loading) {
-        return <GradientTheme><ActivityIndicator size="large" color={ColorScheme.BTN_BACKGROUND} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} /></GradientTheme>;
+        return
+        <GradientTheme>
+            <ActivityIndicator
+                size="large"
+                color={ColorScheme.BTN_BACKGROUND}
+                style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+            />
+        </GradientTheme>;
     }
 
     if (error) {

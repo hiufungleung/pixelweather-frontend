@@ -47,7 +47,7 @@ export default function AddAlertWeather() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}` // Token required in the header
+                    'Authorization': `Bearer ${userToken}`
                 },
                 body: JSON.stringify(requestBody)
             });

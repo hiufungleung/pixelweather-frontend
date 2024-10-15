@@ -1,30 +1,40 @@
+// Import necessary modules and components
 import React, { useState } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet, TextInput, Image, Share } from 'react-native';
+import { 
+    TouchableOpacity, 
+    View, 
+    Text, 
+    StyleSheet, 
+    TextInput, 
+    Image, 
+    Share 
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import GradientTheme from '@/components/GradientTheme';
-import * as ColorScheme from '@/constants/ColorScheme';
-import * as Mappings from '@/constants/Mappings';
-import { useRouter } from 'expo-router';
-import { useLocalSearchParams } from 'expo-router';
-import { useAuth } from '@/components/accAuth'
+import GradientTheme from '@/components/GradientTheme'; // Custom theme component
+import * as ColorScheme from '@/constants/ColorScheme'; // Color constants
+import * as Mappings from '@/constants/Mappings'; // Mappings for weather names
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useAuth } from '@/components/accAuth'; // Authentication hook
 
 export default function PostCompletedScreen() {
-    const { returnData } = useLocalSearchParams();
+    const { returnData } = useLocalSearchParams(); // Retrieve data from query params
     const navigation = useNavigation();
     const router = useRouter();
 
+    // Handle navigation to the "logs" screen with direct refresh
     const handleViewPost = () => {
         navigation.navigate('logs', {
-            screen: 'Posted',  // Specify the tab you want to navigate to
-            params: { directRefresh: true },  // Pass the `directRefresh` param
+            screen: 'Posted',
+            params: { directRefresh: true },
         });
     };
 
-    console.log('returnData: ' + returnData);
+    // Log and parse the return data from query params
+    console.log('returnData:', returnData);
     const parsedReturnData = returnData ? JSON.parse(returnData) : null;
-    console.log('parsedReturnData: ' + parsedReturnData);
+    console.log('parsedReturnData:', parsedReturnData);
 
-    // Function to handle post sharing
+    // Function to handle sharing the post details
     const onShare = async () => {
         if (!parsedReturnData) {
             console.error('No data to share');
@@ -34,15 +44,15 @@ export default function PostCompletedScreen() {
             const { suburb_name, weather, comment, created_at } = parsedReturnData;
 
             const result = await Share.share({
-                message: `Beware of the weather in ${suburb_name}: It's ${Mappings.WeatherNamesMapping[weather]}! \n\n${comment} \n\nPosted on: ${new Date(created_at).toLocaleString()}`,
+                message: `Beware of the weather in ${suburb_name}: It's ${Mappings.WeatherNamesMapping[weather]}!\n\n${comment}\n\nPosted on: ${new Date(created_at).toLocaleString()}`,
             });
 
             if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    console.log('Shared with activity type:', result.activityType);
-                } else {
-                    console.log('Post shared successfully!');
-                }
+                console.log(
+                    result.activityType 
+                        ? `Shared with activity type: ${result.activityType}` 
+                        : 'Post shared successfully!'
+                );
             } else if (result.action === Share.dismissedAction) {
                 console.log('Share dismissed');
             }
@@ -54,13 +64,22 @@ export default function PostCompletedScreen() {
     return (
         <GradientTheme>
             <View style={styles.container}>
+                {/* Back button to navigate to the map screen */}
                 <TouchableOpacity onPress={() => router.push('/(map)/map')}>
                     <Text style={styles.backButton}>←</Text>
                 </TouchableOpacity>
+
+                {/* Card displaying post completion details */}
                 <View style={styles.card}>
-                    <Image source={require('@/assets/icons/16.png')} style={styles.icon} resizeMode="contain" />
+                    <Image 
+                        source={require('@/assets/icons/16.png')} 
+                        style={styles.icon} 
+                        resizeMode="contain" 
+                    />
                     <Text style={styles.header}>Successful!</Text>
                     <Text style={styles.label}>Thank you for your sharing!</Text>
+
+                    {/* Buttons for sharing and viewing the post */}
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity onPress={onShare} style={styles.saveButton}>
                             <Text style={styles.saveText}>SHARE</Text>
@@ -75,6 +94,7 @@ export default function PostCompletedScreen() {
     );
 }
 
+// Stylesheet for the component
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -82,7 +102,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     card: {
-        backgroundColor: '#FFFFFFA3',
+        backgroundColor: '#FFFFFFA3', // Semi-transparent white
         paddingHorizontal: '10%',
         paddingTop: '10%',
         borderRadius: 10,
@@ -109,15 +129,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: '5%',
         alignSelf: 'center',
-    },
-    preparationTextContainer: {
-        backgroundColor: '#FFFFFF',
-        marginBottom: '10%',
-        padding: '7%',
-        borderRadius: 10,
-    },
-    preparationText: {
-        fontSize: 18,
     },
     buttonContainer: {
         alignItems: 'center',

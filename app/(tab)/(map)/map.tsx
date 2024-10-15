@@ -33,8 +33,8 @@ const SCREEN_WIDTH = RN.Dimensions.get('window').width;
 const SEARCH_CONTAINER_WIDTH = SCREEN_WIDTH - 30;
 const BUTTON_TO_TOP_DISTANCE = SCREEN_HEIGHT * 0.08;
 
-const API_KEY = 'acbdc80633478d6533e96ea77d9cd3a8';
-// const API_KEY = '9480d17e216cfcf5b44da6050c7286a4'; // openweather api key
+// const API_KEY = 'acbdc80633478d6533e96ea77d9cd3a8';
+const API_KEY = '9480d17e216cfcf5b44da6050c7286a4'; // openweather api key
 
 // saved location buttons
 function SavedLocationButton() {
@@ -468,7 +468,7 @@ export default function HomeScreen() {
                                     <RN.Animated.View style={[styles.mapBtnContainer, { top: animatedBtnTop }]}>
                                         <RNPickerSelect
                                             items={timeOptions}  // Use the defined array of options
-                                            onValueChange={(value) => {setSelectedTime(value);}}  // Update selected time
+                                            onValueChange={(value) => {setSelectedTime(value);filterSuburbs(region);}}  // Update selected time
                                             value={selectedTime}  // Current selected value
                                             style={pickerSelectStyles}  // Add styles if needed
                                         />
