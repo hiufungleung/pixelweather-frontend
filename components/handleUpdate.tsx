@@ -1,7 +1,6 @@
 import { Alert } from 'react-native';
 import {API_LINK} from "@/constants/API_link";
 
-
 export const handleUpdateRequest = async (route, method, requestBody, userToken) => {
     try {
         // 發送更新請求

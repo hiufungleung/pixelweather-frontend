@@ -48,7 +48,7 @@ export default function TabLayout() {
                 }}
               />
               <Tabs.Screen
-                name="logs"
+                name="(logs)"
                 options={{
                   title: '',
                   tabBarIcon: ({ color }) => (
@@ -60,7 +60,7 @@ export default function TabLayout() {
                 }}
               />
               <Tabs.Screen
-                name="alert"
+                name="(alert)"
                 options={{
                   title: '',
                   tabBarIcon: ({ color }) => (
@@ -92,7 +92,6 @@ export default function TabLayout() {
                     headerShown: false,
                 }}
             />
-
             </Tabs>
         </GradientTheme>
       </AuthProvider>
@@ -107,7 +106,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         // height: Platform.OS === 'android' ? 60 : 50, // 調整 Tab 項目的高度，使其在 Android 中完整顯示
         // paddingBottom: Platform.OS === 'android' ? 5 : 0, // 在 Android 中加入額外的下邊距
-
     },
     tabLabel: {
         fontSize: 12,

@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { TouchableOpacity, View, Text, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import * as ColorScheme from '@/constants/ColorScheme';
-import { useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
+import {useLocalSearchParams, useRouter} from 'expo-router';
 import DropDownPicker from 'react-native-dropdown-picker';
+import * as Location from 'expo-location';
 
 export default function NewPostScreen() {
-
     const [weather, setWeather] = useState(null);
     const [open, setOpen] = useState(false);
     const [items, setItems] = useState([
@@ -22,23 +21,60 @@ export default function NewPostScreen() {
         { label: 'Hot', value: 'Hot' },
         { label: 'Cold', value: 'Cold' },
     ]);
-    const router = useRouter();
 
-    // State for text input
+    const router = useRouter();
     const [preparationText, setPreparationText] = useState('');
-    const [searchText, setSearchText] = useState('');
+    const [location, setLocation] = useState(null);
+    const [loading, setLoading] = useState(true);  // New loading state
+
+    useEffect(() => {
+        const getPermissionAndLocation = async () => {
+            try {
+                // 檢查是否已獲得權限
+                const { status } = await Location.getForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    // 如果沒有授權，請求權限
+                    const { status: newStatus } = await Location.requestForegroundPermissionsAsync();
+                    if (newStatus !== 'granted') {
+                        Alert.alert('Permission denied', 'Location permission is required to use this feature.');
+                        setLoading(false);
+                        return;
+                    }
+                }
+
+                // 已授權，取得目前位置
+                const currentLocation = await Location.getCurrentPositionAsync({
+                    accuracy: Location.Accuracy.Balanced,
+                });
+                setLocation(currentLocation);
+                setLoading(false);
+            } catch (error) {
+                console.error('Failed to get location:', error);
+                setLoading(false);
+            }
+        };
+
+        getPermissionAndLocation();
+    }, []);
+
+if (loading) {
+        return (
+            <GradientTheme>
+                <ActivityIndicator size="large" color={ColorScheme.BTN_BACKGROUND} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+            </GradientTheme>
+        );
+    }
 
     const handleNextPress = () => {
-        // Navigate to postConfirm with query params
         if (weather) {
+            // Navigate to postConfirm with query params
             router.push({
                 pathname: 'postConfirm',
-                params: { weather, preparationText },
-            })
+                params: { weather, preparationText, location: JSON.stringify(location) },
+            });
         } else {
-            alert("You must select a weather condition!")
+            alert("You must select a weather condition!");
         }
-        ;
     };
 
     return (
@@ -49,11 +85,11 @@ export default function NewPostScreen() {
                 </TouchableOpacity>
                 <View style={styles.card}>
                     <Text style={styles.header}>New Post</Text>
-                    <View style={{flexDirection: 'row', justifyContent:'space-between',}}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Text style={styles.label}>Now it's...</Text>
-                        <Text style={{color: 'red',}}>*required</Text>
+                        <Text style={{ color: 'red', }}>*required</Text>
                     </View>
-                    {/* Dropdown Menu */}
+
                     <DropDownPicker
                         open={open}
                         value={weather}
@@ -64,10 +100,10 @@ export default function NewPostScreen() {
                         placeholder="Type to search..."
                         searchable={true}
                         searchPlaceholder="Search for weather..."
-                        onChangeSearchText={setSearchText}
                         style={styles.input}
                         dropDownContainerStyle={styles.dropdownContainer}
                     />
+
                     <Text style={styles.label}>Comment</Text>
                     <TextInput
                         value={preparationText}
@@ -75,10 +111,12 @@ export default function NewPostScreen() {
                         style={styles.input}
                         placeholder="Enter preparation notes"
                     />
+
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity onPress={handleNextPress} style={styles.saveButton}>
                             <Text style={styles.saveText}>Next</Text>
                         </TouchableOpacity>

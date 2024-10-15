@@ -4,6 +4,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import GradientTheme from '@/components/GradientTheme';
 import { useRouter } from 'expo-router';
 import {useAuth} from '@/components/accAuth'
+import {API_LINK} from "@/constants/API_link";
 
 const data = [
     { id: '1', title: 'Account Center', icon: 'arrow-right', route: '/(accountSetting)/accountSetting', requireLogin: true },
@@ -13,9 +14,8 @@ const data = [
 ];
 
 export default function SettingScreen() {
-  const router = useRouter();
-    const { isLoggedIn, login, logout } = useAuth();
-
+    const router = useRouter();
+    const { isLoggedIn, login, logout ,userToken} = useAuth();
     const filteredData = data.filter((item) => (isLoggedIn || !item.requireLogin));
 
 
@@ -28,9 +28,8 @@ export default function SettingScreen() {
                 [
                     {
                         text: 'Confirm',
-                        onPress: () => {
-                            logout(); // 執行登出
-                            Alert.alert('Success', 'You have been logged out successfully.');
+                        onPress: async () => {
+                            await logout();
                         },
                     },
                     { text: 'Cancel', style: 'cancel' },
