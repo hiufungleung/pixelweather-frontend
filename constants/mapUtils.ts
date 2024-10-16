@@ -134,6 +134,7 @@ export const fetchFilteredPosts = async (userToken, suburbId, mins = 60) => {
         );
         const data = await response.json();
         if (response.status === 200) {
+            console.log('fetch success: ', data);
             return data.data;
         } else {
             console.error('Failed to fetch posts:', data.error);
@@ -169,8 +170,10 @@ export const fetchSavedLocations = async (userToken) => {
 
         if (response.ok) {
             const result = await response.json();
+            console.log('success: ', result);
             return result.data;  // 將取得的地點設定到狀態中
         } else {
+            console.log('failed: ', response);
             Alert.alert('Error', 'Failed to fetch saved locations.');
         }
     } catch (error) {

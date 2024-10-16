@@ -1,8 +1,11 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, FlatList, Alert} from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import {useAuth} from "@/components/accAuth";
+import {API_LINK} from "@/constants/API_link";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 // simulation of data from saved suburb API calls
 const data = {
@@ -34,13 +37,45 @@ const data = {
 export default function SavedLocationScreen() {
     const router = useRouter();
     const navigation = useNavigation();
+    const { isLoggedIn, userToken } = useAuth(); // 使用 `useAuth` 取得登入狀態
+    const [savedLocations, setSavedLocations] = useState([]);
+
+    const fetchSavedLocations = async () => {
+        try {
+            const response = await fetch(`${API_LINK}/user_saved_suburb`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userToken}`,
+                },
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log(result.data);
+                setSavedLocations(result.data);  // 將取得的地點設定到狀態中
+            } else {
+                Alert.alert('Error', 'Failed to fetch saved locations.');
+            }
+        } catch (error) {
+            console.error('Error fetching saved locations:', error);
+            Alert.alert('Error', 'An error occurred while fetching saved locations.');
+        }
+    };
+
+    useEffect(() => {
+        fetchSavedLocations();
+    }, []);
 
     // Function to render each suburb item in the FlatList
     const renderSuburbItem = ({ item }) => (
         <View style={styles.locationContainer}>
-            <Text style={styles.locationText}>{item.suburb_name}</Text>
-            <TouchableOpacity onPress={() => router.push(`/editLocation/${item.id}`)}>
-                <Text style={styles.editIcon}>✏️</Text>
+            <View>
+                <Text style={styles.locationTitle}>{item.label}</Text>
+                <Text style={styles.locationText}>{item.suburb_name}, {item.post_code}</Text>
+            </View>
+            <TouchableOpacity>
+                <Text style={styles.editIcon}><FontAwesome6 size={20} name="pencil"/></Text>
             </TouchableOpacity>
         </View>
     );
@@ -48,19 +83,25 @@ export default function SavedLocationScreen() {
     return (
         <GradientTheme>
             <View style={styles.container}>
+                {/* 返回按鈕 */}
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Text style={styles.backButton}>←</Text>
                 </TouchableOpacity>
 
-                {/* Card to display the saved locations */}
+                {/* 顯示儲存地點的卡片 */}
                 <View style={styles.card}>
+                    <Text style={styles.headerText}>Your Saved Locations</Text>
+
+                    {/* FlatList 顯示儲存地點 */}
                     <FlatList
-                        data={data.data}  // Access the suburb data array
+                        data={savedLocations}  // 使用儲存地點的狀態
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={renderSuburbItem}
+                        style={styles.list}
                     />
-                    {/* Add Location Button */}
-                    <TouchableOpacity style={styles.addLocationButton} onPress={() => router.push('/addLocation')}>
+
+                    {/* 新增地點按鈕 */}
+                    <TouchableOpacity style={styles.addLocationButton}>
                         <Text style={styles.addLocationText}>Add Location</Text>
                         <Text style={styles.addIcon}>+</Text>
                     </TouchableOpacity>
@@ -91,11 +132,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 15,
+        margin:5,
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
     },
     locationText: {
-        fontSize: 16,
+        fontSize: 13,
         color: 'black',
     },
     editIcon: {
@@ -120,4 +162,10 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: 'black',
     },
+    locationTitle: {
+        fontSize: 24,
+        color: 'black',
+        marginBottom: 5,
+    }
+
 });
