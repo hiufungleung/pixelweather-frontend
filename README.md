@@ -35,23 +35,24 @@ The app also integrates location-based services to fetch the user's current loca
 ### From your phone
 1. **Download Expo Go from app store/ play store**
    **Expo Go**:
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://itunes.apple.com/app/apple-store/id982107779">
-        <img src="assets/images/app_store_qr-code.png" alt="App Store QR Code" width="200" height="200">
-        <p>App Store</p>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://play.google.com/store/apps/details?id=host.exp.exponent&pcampaignid=web_share">
-        <img src="assets/images/play_store_qr-code.png" alt="Play Store QR Code" width="200" height="200">
-        <p>Play Store</p>
-      </a>
-    </td>
-  </tr>
-</table>
-  <Text style="font-weight:bold">Apk download </Text><Text>(Android ony):</Text>
+    <table>
+      <tr>
+        <td align="center">
+          <a href="https://itunes.apple.com/app/apple-store/id982107779">
+            <img src="assets/images/app_store_qr-code.png" alt="App Store QR Code" width="200" height="200">
+            <p>App Store</p>
+          </a>
+        </td>
+        <td align="center">
+          <a href="https://play.google.com/store/apps/details?id=host.exp.exponent&pcampaignid=web_share">
+            <img src="assets/images/play_store_qr-code.png" alt="Play Store QR Code" width="200" height="200">
+            <p>Play Store</p>
+          </a>
+        </td>
+      </tr>
+    </table>
+    
+2. **Download apk file on your phone (Android only)**
 <table>
   <tr>
     <td align="center">
