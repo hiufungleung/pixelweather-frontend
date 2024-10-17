@@ -52,17 +52,17 @@ The app also integrates location-based services to fetch the user's current loca
       </tr>
     </table>
     
-2. **Download apk file on your phone (Android only)**
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://expo.dev/accounts/jaccup/projects/pixel-weather/builds/a3395872-a2e0-40ad-a2c8-998994d6a62b">
-        <img src="assets/images/pixel_weather_qr-code.png" alt="Pixel Weather QR Code" width="200" height="200">
-        <p>apk</p>
-      </a>
-    </td>
-  </tr>
-</table>
+2. **Download apk file to your phone (Android only)**
+  <table>
+    <tr>
+      <td align="center">
+        <a href="https://expo.dev/accounts/jaccup/projects/pixel-weather/builds/a3395872-a2e0-40ad-a2c8-998994d6a62b">
+          <img src="assets/images/pixel_weather_qr-code.png" alt="Pixel Weather QR Code" width="200" height="200">
+          <p>apk</p>
+        </a>
+      </td>
+    </tr>
+  </table>
 
 ### From your computer
 1. **Clone the repository:**
