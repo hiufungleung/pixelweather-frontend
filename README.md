@@ -51,13 +51,13 @@ The app also integrates location-based services to fetch the user's current loca
     </td>
   </tr>
 </table>
-  **apk download**(only for android):
+  <Text style="font-weight:bold">Apk download </Text><Text>(Android ony):</Text>
 <table>
   <tr>
     <td align="center">
       <a href="https://expo.dev/accounts/jaccup/projects/pixel-weather/builds/a3395872-a2e0-40ad-a2c8-998994d6a62b">
         <img src="assets/images/pixel_weather_qr-code.png" alt="Pixel Weather QR Code" width="200" height="200">
-        <p>Pixel Weather apk file</p>
+        <p>apk</p>
       </a>
     </td>
   </tr>
