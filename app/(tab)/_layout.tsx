@@ -49,19 +49,20 @@ export default function TabLayout() {
 
     useEffect(() => {
         const checkPermissions = async () => {
-            const { status } = await Notifications.getPermissionsAsync();
-            if (status !== 'granted') {
-                const { status: newStatus } = await Notifications.requestPermissionsAsync();
-                if (newStatus !== 'granted') {
-                    console.error('Notification permissions not granted.');
-                    return;
+            // Only for Android 13+ devices
+            if (Platform.OS === 'android' && Platform.Version >= 33) {
+                const { status } = await Notifications.requestPermissionsAsync();
+
+                if (status !== 'granted') {
+                    Alert.alert('Permission not granted', 'Notification permissions are required for this app.');
+                } else {
+                    console.log('Notification permission granted.');
                 }
             }
-            console.log('Notification permissions granted.');
         };
+
         checkPermissions();
     }, []);
-
 
     // Handle foreground messages
     useEffect(() => {

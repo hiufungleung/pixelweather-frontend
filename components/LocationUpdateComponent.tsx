@@ -120,7 +120,7 @@ const requestPermissions = async () => {
 
         return true;
     } catch (error) {
-        console.error('Error requesting location permissions:', error);
+        console.log('Error requesting location permissions:', error);
         return false;
     }
 };

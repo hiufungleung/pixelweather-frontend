@@ -7,7 +7,8 @@ import * as WeatherIcons from "@/constants/Mappings";
 import {API_LINK} from "@/constants/API_link";
 import {router} from "expo-router";
 
-const API_KEY = '9480d17e216cfcf5b44da6050c7286a4';
+const API_KEY = 'acbdc80633478d6533e96ea77d9cd3a8';
+// const API_KEY = '9480d17e216cfcf5b44da6050c7286a4';
 
 // ask for location permission
 export const requestLocationPermission = async () => {
@@ -194,41 +195,6 @@ export const isLocationSaved = async (weather, savedLocations) => {
 export const setPostModalVisible = (setPostVisible: Function) =>{
     setPostVisible(true);
 }
-
-// get all suburb data
-export const fetchSuburbs = async (userToken) => {
-    try {
-        const response = await fetch(`${API_LINK}/suburbs`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${userToken}`,
-            },
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            // console.log(result.data);
-            if (result && result.data) {
-                return result.data;
-            } else {
-                throw new Error('Unexpected response format.');
-            }
-
-        } else {
-            switch (response.status) {
-                case 500:
-                    Alert.alert('Error', 'An internal server error occurred. Please try again later.');
-                    break;
-                default:
-                    Alert.alert('Error', 'Failed to fetch suburbs. Please try again.');
-            }
-        }
-
-    } catch (error) {
-        Alert.alert('Error', `Failed to retrieve suburbs: ${error.message}`);
-    }
-};
 
 // handle when user like a post
 export const handleToggleLike = async (userToken, postid, isLiked, prevCount, setLikeCount, setIsLiked) => {

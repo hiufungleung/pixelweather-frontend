@@ -10,16 +10,17 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
-    getCurrentLocation, fetchWeather, fetchHourlyForecast, loadRecentSearches, saveRecentSearch, removeSearchItem,
-    fetchFilteredPosts, handleAddPost, isLocationSaved, fetchSavedLocations, setPostModalVisible, fetchSuburbs,
-    handleInputChange, handleSuggestionSelect, handleToggleLike, handleLikedPost, handleViewPost, formatTimeDifference,
+    getCurrentLocation, fetchWeather, fetchHourlyForecast, loadRecentSearches, saveRecentSearch,
+    removeSearchItem, fetchFilteredPosts, handleAddPost, isLocationSaved, fetchSavedLocations,
+    setPostModalVisible, handleInputChange, handleSuggestionSelect, handleToggleLike,
+    handleLikedPost, handleViewPost, formatTimeDifference,
 } from '@/constants/mapUtils';
 import { BTN_BACKGROUND } from "@/constants/ColorScheme";
 import { weatherIconById } from "@/constants/weatherCode";
 import RNPickerSelect from "react-native-picker-select";
 import { API_LINK } from "@/constants/API_link";
 import ModalSelector from 'react-native-modal-selector';
-
+import { fetchSuburbs, loadCachedSuburbs } from '@/constants/suburbService';
 
 const timeOptions = [
     { id: 1, label: '1 HR AGO', value: '60' },
@@ -97,16 +98,19 @@ export default function HomeScreen() {
 
     useEffect(() => {
         const getLocationAndWeather = async () => {
+
             try {
                 setLoading(true);
+
+                fetchSuburbs(setSuburbs);
+
                 const coords = await getCurrentLocation();
                 if (coords) {
                     setLocation(coords);
 
-                    const [currentWeather, hourlyForecast, suburbListData] = await Promise.all([
+                    const [currentWeather, hourlyForecast] = await Promise.all([
                         fetchWeather(coords.latitude, coords.longitude),
                         fetchHourlyForecast(coords.latitude, coords.longitude),
-                        fetchSuburbs(userToken),
                     ]);
 
                     setRegion({
@@ -114,7 +118,6 @@ export default function HomeScreen() {
                         latitudeDelta: 0.05, longitudeDelta: 0.05,
                     });
 
-                    setSuburbs(suburbListData);
                     setWeather(currentWeather);
                     setHourlyForecast(hourlyForecast);
                 }
@@ -212,22 +215,80 @@ export default function HomeScreen() {
         }
 
         try {
-            const response = await fetch(
-                `https://api.openweathermap.org/data/2.5/weather?q=${query},au&units=metric&appid=${API_KEY}`
-            );
-            const weather = await response.json();
-            const { lat, lon } = weather.coord;
+            const queryParts = query.split(',').map(part => part.trim());
 
-            // Update the location and region
-            await updateLocationData(lat, lon);
+            let matchedSuburb;
 
-            await saveRecentSearch(query, recentSearches, setRecentSearches);
+            // if search according to suburb suggestion
+            if (queryParts.length === 2) {
+                // If the query is in the format 'suburb_name, postcode'
+                const suburbName = queryParts[0].toLowerCase();
+                const postcode = queryParts[1];
+
+                // Search for matching suburb with both name and postcode
+                matchedSuburb = suburbs.find(suburb =>
+                    suburb.suburb_name.toLowerCase() === suburbName &&
+                    suburb.postcode.toString() === postcode
+                );
+
+            } else if (queryParts.length === 1) { // else directly search through the typed query
+                const input = queryParts[0];
+
+                // Check if the input is a number (postcode search)
+                if (/^\d+$/.test(input)) {
+                    // Search for matching suburb based on postcode only
+                    matchedSuburb = suburbs.find(suburb =>
+                        suburb.postcode.toString() === input
+                    );
+
+                    if (matchedSuburb) {
+
+                        const { latitude, longitude } = matchedSuburb;
+                        updateLocationData(latitude, longitude); // Update location based on postcode
+                        await saveRecentSearch(matchedSuburb.postcode, recentSearches, setRecentSearches);
+
+                    } else {
+                        console.log('No suburb found for the postcode.');
+                        Alert.alert('Error', 'No suburb found for the provided postcode.');
+                    }
+
+                } else {
+                    const response = await fetch(
+                        `https://api.openweathermap.org/data/2.5/weather?q=${queryParts[0]},au&units=metric&appid=${API_KEY}`
+                    );
+
+                    const weather = await response.json();
+                    const { lat, lon } = weather.coord;
+
+                    // Update the location and region
+                    await updateLocationData(lat, lon);
+
+                    await saveRecentSearch(query, recentSearches, setRecentSearches);
+                }
+            }
+
+            if (matchedSuburb) {
+                console.log('Suburb found:', matchedSuburb);
+
+                // Retrieve latitude and longitude
+                const { latitude, longitude } = matchedSuburb;
+                console.log('Latitude:', latitude, 'Longitude:', longitude);
+
+                // Update the location based on the latitude and longitude
+                updateLocationData(latitude, longitude); // Call the function to update location
+
+                await saveRecentSearch(`${matchedSuburb.suburb_name}, ${matchedSuburb.postcode}`, recentSearches, setRecentSearches);
+
+            } else {
+                console.log('No suburb suggestion found for the query.');
+            }
 
             const isCurrentLocationSaved = await isLocationSaved(weather, savedLocations);
             setIsSaved(isCurrentLocationSaved);
+
         } catch (error) {
             console.error('Error searching location:', error);
-            RN.Alert.alert('Error', 'Location not found.');
+            RN.Alert.alert('Error', 'Suburb or city not found in Australia.');
         }
     };
 
@@ -480,7 +541,7 @@ export default function HomeScreen() {
                                                             const filteredPostsClick = posts.filter((post) => post.suburb_name.trim().toLowerCase() === suburb.suburb_name.trim().toLowerCase());
                                                             setFilteredPosts(() => [...filteredPostsClick]);
                                                         } catch (error) {
-                                                            console.error('Error fetching posts:', error);
+                                                            console.log('Error fetching posts:', error);
                                                         };
                                                         setPostModalVisible(setPostVisible);  // Show modal
                                                     }}
@@ -591,7 +652,7 @@ export default function HomeScreen() {
                                         <RN.TouchableOpacity
                                             style={styles.suggestionItem}
                                             onPress={() => {
-                                                handleSuggestionSelect(item.suburb_name, setSearchQuery, setShowSuggestions);
+                                                handleSuggestionSelect(`${item.suburb_name}, ${item.postcode}`, setSearchQuery, setShowSuggestions);
                                             }}
                                         >
                                             <RN.Text style={styles.suggestionText}>{item.suburb_name}, {item.postcode}</RN.Text>

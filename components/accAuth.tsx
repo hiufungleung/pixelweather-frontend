@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
             });
 
             if (response.status !== 200) {
-                console.error('Failed to register FCM token. Status:', response.status);
+                console.log('Failed to register FCM token. Status:', response.status);
                 return;
             }
 

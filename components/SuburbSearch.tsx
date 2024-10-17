@@ -2,62 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, FlatList, TouchableOpacity, Text, StyleSheet, Alert, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_LINK } from '@/constants/API_link';
+import { fetchSuburbs, loadCachedSuburbs } from '@/constants/suburbService';
+import { useAuth } from '@/components/accAuth';
 
 export default function SuburbSearch({ onSuburbSelect, token }) {
     const [query, setQuery] = useState('');
     const [filteredSuburbs, setFilteredSuburbs] = useState([]);
     const [selectedSuburb, setSelectedSuburb] = useState(null);
     const [suburbData, setSuburbData] = useState([]);
+    const { userToken } = useAuth();
 
-    // Function to fetch suburbs from the API
-    const fetchSuburbs = async () => {
-        try {
-            console.log('Fetching suburbs from:', `${API_LINK}/suburbs`); // Log the URL
-
-            const response = await fetch(`${API_LINK}/suburbs`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-            });
-
-            const data = await response.json();
-
-            console.log('Response status:', response.status); // Log the status code
-            console.log('Response data:', data); // Log the response data
-
-            if (response.status === 200) {
-                setSuburbData(data.data); // Update state with fetched suburb data
-                await AsyncStorage.setItem('suburbData', JSON.stringify(data.data)); // Cache the suburb data
-            } else {
-                Alert.alert('Error', 'Failed to retrieve suburb data. Please try again later.');
-            }
-        } catch (error) {
-            console.error('Error fetching suburbs:', error); // Log any error that occurs
-            Alert.alert('Error', 'Failed to connect to the server. Please try again later.');
-        }
-    };
-
-
-    // Function to load suburb data from cache
-    const loadCachedSuburbs = async () => {
-        try {
-            const cachedSuburbs = await AsyncStorage.getItem('suburbData');
-            if (cachedSuburbs !== null) {
-                setSuburbData(JSON.parse(cachedSuburbs)); // Load cached data
-            } else {
-                fetchSuburbs(); // If no cache, fetch from the API
-            }
-        } catch (error) {
-            Alert.alert('Error', 'Failed to load cached data.');
-        }
-    };
-
-    // Fetch or load cached data when the component mounts
+    // Load cached suburbs when the component mounts
     useEffect(() => {
-        loadCachedSuburbs();
-    }, []);
+        loadCachedSuburbs(setSuburbData, fetchSuburbs);
+    }, [userToken]);
 
     // Function to filter suburbs based on input (either name or postal code)
     const filterSuburbs = (input) => {
