@@ -55,7 +55,7 @@ The app also integrates location-based services to fetch the user's current loca
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/Leung-Hiufung/pixelweather.git
-   cd pixel-weather
+   cd pixelweather
 
 2. **Install dependencies:**
    ```bash
