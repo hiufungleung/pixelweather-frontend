@@ -70,7 +70,7 @@ You can either run our app with **Expo go** or download our **apk** and run on y
       </table>
       
 
-  #### From your computer
+  ### From your computer
   1. **Clone the repository:**
   
   ```bash
