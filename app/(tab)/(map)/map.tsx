@@ -20,6 +20,7 @@ import { weatherIconById } from "@/constants/weatherCode";
 import { API_LINK } from "@/constants/API_link";
 import ModalSelector from 'react-native-modal-selector';
 import { fetchSuburbs, loadCachedSuburbs } from '@/constants/suburbService';
+// <a href="https://www.flaticon.com/packs/weather-163" title="weather icons">weather icons created by iconixar - Flaticon</a>
 
 const timeOptions = [
     { id: 1, label: '1 HR AGO', value: '60' },
@@ -539,7 +540,7 @@ export default function HomeScreen() {
                                         ))}
                                     </RN.ScrollView>
                                 </RN.View>
-
+                                <a href="https://www.flaticon.com/packs/weather-163" title="weather icons">weather icons created by iconixar - Flaticon</a>
                                 {/* map view */}
                                 <RN.Animated.View
                                     style={[
