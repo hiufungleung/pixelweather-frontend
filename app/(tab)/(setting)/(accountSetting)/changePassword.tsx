@@ -21,6 +21,7 @@ export default function ChangePasswordScreen() {
         return passwordRegex.test(password);
     };
 
+    // this is considered as privacy consideration since we will upload user's old password and new password to the server.
     const handleChangePassword = async () => {
         // Validate inputs
         if (!currentPassword || !newPassword || !confirmPassword) {
@@ -58,6 +59,7 @@ export default function ChangePasswordScreen() {
             setErrorMessage('An error occurred. Please try again later.');
         }
     };
+
 
     return (
         <GradientTheme>

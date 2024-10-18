@@ -89,6 +89,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // method to login in to the app to retrieve userToken,
+    // this is considered as privacy and security consideration since we will upload user's password to the server.
+    // the data that retrived from server will be stored in secureStore to build the privacy and security.
     const login = async (email, password) => {
         if (!email || !password) {
             Alert.alert('Error', 'Missing email or password.');

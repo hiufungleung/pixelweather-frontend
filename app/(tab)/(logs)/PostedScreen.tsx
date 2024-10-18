@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
+import * as RN from 'react-native';
 
 export default function PostedScreen() {
     const { data, likedPosts, reportedPosts, selfPosts, refreshing, loading, error,

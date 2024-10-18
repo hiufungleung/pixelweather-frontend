@@ -172,6 +172,8 @@ export const usePosts = (postType = '', includeSelfPosts = false) => {
     };
 
     // Handle reporting a post
+    // This function is considered as ethical consideration, we won't know what user will post on community.
+    // So this function can let user report some unethical comment.
     const handleReportPost = async (item, reportComment, onSuccess) => {
         if (!reportComment.trim()) {
             Alert.alert('Error', 'Report comment cannot be empty.');

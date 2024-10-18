@@ -6,6 +6,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import { ActivityIndicator } from 'react-native';
 import * as ColorScheme from '@/constants/ColorScheme';
 import { useRouter } from 'expo-router';
+import * as RN from 'react-native';
 
 export default function ViewedScreen() {
     const { data, likedPosts, reportedPosts, selfPosts, refreshing, loading, error,
