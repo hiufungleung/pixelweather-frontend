@@ -18,6 +18,9 @@ export const AuthProvider = ({ children }) => {
     const [isSettingUpNotifications, setIsSettingUpNotifications] = useState(false);
     const router = useRouter();
 
+    // Function requesting location permission
+    // Related to privacy considerations, always request permissions from users when accessing
+    // their location information
     const requestLocationPermissions = async () => {
         const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
         if (foregroundStatus !== 'granted') {
@@ -35,6 +38,8 @@ export const AuthProvider = ({ children }) => {
         return true;
     };
 
+    // Function to register for registering FCM token for receiving notifications
+    // Related 
     const registerForPushNotificationsAsync = async () => {
         try {
             const { status } = await Notifications.requestPermissionsAsync();
@@ -52,7 +57,7 @@ export const AuthProvider = ({ children }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`, // Potential issue: Invalid token used
+                    'Authorization': `Bearer ${userToken}`,
                 },
                 body: JSON.stringify({ fcm_token: data }),
             });

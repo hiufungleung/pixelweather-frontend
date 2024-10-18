@@ -8,8 +8,11 @@ import * as Location from 'expo-location';
 
 export default function NewPostScreen() {
 
+    // useStat for setting the post weather condition
     const [weather, setWeather] = useState(null);
+    // useState for opening up the dropdown picker
     const [open, setOpen] = useState(false);
+    // Options for dropdown picker
     const [items, setItems] = useState([
         { label: 'Clear Sky', value: 'Clear Sky' },
         { label: 'Rainy', value: 'Rainy' },
@@ -23,11 +26,13 @@ export default function NewPostScreen() {
         { label: 'Cold', value: 'Cold' },
         { label: 'High UV', value: 'High UV' },
     ]);
-
+    // Expo router for navigation
     const router = useRouter();
+    // useState storing comment
     const [preparationText, setPreparationText] = useState('');
+    // useState for storing current location for posting posts
     const [location, setLocation] = useState(null);
-    const [loading, setLoading] = useState(true);  // New loading state
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         (async () => {
@@ -36,29 +41,34 @@ export default function NewPostScreen() {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
                     alert('Permission to access location was denied');
-                    setLoading(false);  // Stop loading since we can't get the location
+                    setLoading(false);  // Stop loading and return
                     return;
                 }
 
                 // Get the user's current location
                 let location = await Location.getCurrentPositionAsync({});
                 setLocation(location);
-                setLoading(false);  // Location fetched, stop loading
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching location:", error);
-                setLoading(false);  // Stop loading even if an error occurs
+                setLoading(false);
             }
         })();
     }, []);
 
-if (loading) {
+    // Loading screen
+    if (loading) {
         return (
             <GradientTheme>
-                <ActivityIndicator size="large" color={ColorScheme.BTN_BACKGROUND} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+                <ActivityIndicator
+                    size="large"
+                    color={ColorScheme.BTN_BACKGROUND}
+                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
             </GradientTheme>
         );
     }
 
+    // Function to push to the post confirm page with post information
     const handleNextPress = () => {
         if (weather) {
             // Navigate to postConfirm with query params

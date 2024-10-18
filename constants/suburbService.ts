@@ -1,4 +1,3 @@
-// suburbService.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_LINK } from '@/constants/API_link';
 import { Alert } from 'react-native';
@@ -17,12 +16,10 @@ export const fetchSuburbs = async (setSuburbData) => {
 
         const data = await response.json();
 
-        console.log('Response status:', response.status);
-        console.log('Response data:', data);
-
         if (response.status === 200) {
             setSuburbData(data.data); // Update state with fetched suburb data
-            await AsyncStorage.setItem('suburbData', JSON.stringify(data.data)); // Cache the suburb data
+            // Cache the suburb data
+            await AsyncStorage.setItem('suburbData', JSON.stringify(data.data));
         } else {
             Alert.alert('Error', 'Failed to retrieve suburb data. Please try again later.');
         }

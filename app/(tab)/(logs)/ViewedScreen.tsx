@@ -8,7 +8,9 @@ import * as ColorScheme from '@/constants/ColorScheme';
 import { useRouter } from 'expo-router';
 
 export default function ViewedScreen() {
-    const { data, likedPosts, reportedPosts, selfPosts, refreshing, loading, error, handleToggleLike, handleDeletePost, handleReportPost, fetchPosts, fetchSelfPosts, fetchLikedPosts, fetchReportedPosts } = usePosts('/view', true);  // includeSelfPosts is true
+    const { data, likedPosts, reportedPosts, selfPosts, refreshing, loading, error,
+        handleToggleLike, handleDeletePost, handleReportPost, fetchPosts, fetchSelfPosts,
+        fetchLikedPosts, fetchReportedPosts } = usePosts('/view', true); // includeSelfPosts is true
     const router = useRouter();
 
     const onRefresh = useCallback(() => {
@@ -19,7 +21,12 @@ export default function ViewedScreen() {
     }, []);
 
     if (loading) {
-        return <GradientTheme><ActivityIndicator size="large" color={ColorScheme.BTN_BACKGROUND} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} /></GradientTheme>;
+        return <GradientTheme>
+            <ActivityIndicator
+                size="large"
+                color={ColorScheme.BTN_BACKGROUND}
+                style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+            </GradientTheme>;
     }
 
     if (error) {

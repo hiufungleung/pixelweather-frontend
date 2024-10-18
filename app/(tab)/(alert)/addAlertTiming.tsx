@@ -95,13 +95,13 @@ export default function AddTimingScreen({ navigation }) {
                         <Text style={styles.timeButtonText}>Pick Start Time</Text>
                     </TouchableOpacity>
                     {showStartPicker && (
-                            <DateTimePicker
-                                value={startTime}
-                                mode="time"
-                                is24Hour={true}
-                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                onChange={onChangeStart}
-                            />
+                        <DateTimePicker
+                            value={startTime}
+                            mode="time"
+                            is24Hour={true}
+                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                            onChange={onChangeStart}
+                        />
                     )}
                     <View style={styles.timeDisplayContainer}>
                         <Text style={styles.selectedTimeText}>
@@ -114,13 +114,13 @@ export default function AddTimingScreen({ navigation }) {
                         <Text style={styles.timeButtonText}>Pick End Time</Text>
                     </TouchableOpacity>
                     {showEndPicker && (
-                            <DateTimePicker
-                                value={endTime}
-                                mode="time"
-                                is24Hour={true}
-                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                onChange={onChangeEnd}
-                            />
+                        <DateTimePicker
+                            value={endTime}
+                            mode="time"
+                            is24Hour={true}
+                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                            onChange={onChangeEnd}
+                        />
                     )}
                     <View style={styles.timeDisplayContainer}>
                         <Text style={styles.selectedTimeText}>

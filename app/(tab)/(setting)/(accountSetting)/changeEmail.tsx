@@ -7,8 +7,8 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { handleUpdateRequest } from "@/components/handleUpdate";
 
 export default function ChangeEmailScreen() {
-    const { userData, userToken, setUserData } = useAuth();  // Get `setUserData` from useAuth context
-    const [email, setEmail] = useState(userData?.email || '');  // Initialize `email` state from `userData`
+    const { userData, userToken, setUserData } = useAuth();
+    const [email, setEmail] = useState(userData?.email || '');
     const navigation = useNavigation();
 
     // Update `email` when `userData` changes (in case it changes externally)
@@ -47,7 +47,8 @@ export default function ChangeEmailScreen() {
                 setUserData(updatedUserData);  // Update state in context
 
                 Alert.alert('Success', 'Email updated successfully');
-                navigation.replace('(accountSetting)/accountSetting');  // Navigate back with a refresh
+                // Navigate back with a refresh
+                navigation.replace('(accountSetting)/accountSetting');
             }
         } catch (error) {
             Alert.alert('Error', 'Failed to update email. Please try again.');
@@ -71,7 +72,10 @@ export default function ChangeEmailScreen() {
                         autoCapitalize="none"
                     />
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity onPress={() => navigation.navigate('(accountSetting)/accountSetting')} style={styles.cancelButton}>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('(accountSetting)/accountSetting')}
+                            style={styles.cancelButton}
+                        >
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={handleChangeEmail} style={styles.saveButton}>

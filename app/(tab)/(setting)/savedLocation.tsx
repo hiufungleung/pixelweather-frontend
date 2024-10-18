@@ -7,37 +7,10 @@ import {useAuth} from "@/components/accAuth";
 import {API_LINK} from "@/constants/API_link";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
-// simulation of data from saved suburb API calls
-const data = {
-  'message': 'Data retrieved successfully',
-  'data': [
-    {
-      'id': 1,
-      'suburb_id': 1,
-      'label': 'Home',
-      'suburb_name': 'Suburb 1',
-      'post_code': 4000,
-      'latitude': -33.8688,
-      'longitude': 151.2093,
-      'state_code': 'QLD'
-    },
-    {
-      'id': 14,
-      'suburb_id': 2,
-      'label': 'Work',
-      'suburb_name': 'Suburb 2',
-      'post_code': 4067,
-      'latitude': -37.8136,
-      'longitude': 144.9631,
-      'state_code': 'QLD'
-    }
-  ]
-};
-
 export default function SavedLocationScreen() {
     const router = useRouter();
     const navigation = useNavigation();
-    const { isLoggedIn, userToken } = useAuth(); // 使用 `useAuth` 取得登入狀態
+    const { isLoggedIn, userToken } = useAuth();
     const [savedLocations, setSavedLocations] = useState([]);
 
     const fetchSavedLocations = async () => {
@@ -53,7 +26,7 @@ export default function SavedLocationScreen() {
             if (response.ok) {
                 const result = await response.json();
                 console.log(result.data);
-                setSavedLocations(result.data);  // 將取得的地點設定到狀態中
+                setSavedLocations(result.data);
             } else {
                 Alert.alert('Error', 'Failed to fetch saved locations.');
             }

@@ -14,7 +14,7 @@ export default function PostedScreen() {
     const { data, likedPosts, reportedPosts, selfPosts, refreshing, loading, error,
         handleToggleLike, handleDeletePost, handleReportPost, fetchPosts,
         fetchLikedPosts } = usePosts();
-    const route = useRoute();  // Get the route object to access params
+    const route = useRoute();
     const router = useRouter();
 
     // Get params passed when navigating to this screen

@@ -1,23 +1,23 @@
-// Import necessary modules and components
 import React, { useState } from 'react';
-import { 
-    TouchableOpacity, 
-    View, 
-    Text, 
-    StyleSheet, 
-    TextInput, 
-    Image, 
-    Share 
+import {
+    TouchableOpacity,
+    View,
+    Text,
+    StyleSheet,
+    TextInput,
+    Image,
+    Share
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import GradientTheme from '@/components/GradientTheme'; // Custom theme component
-import * as ColorScheme from '@/constants/ColorScheme'; // Color constants
-import * as Mappings from '@/constants/Mappings'; // Mappings for weather names
+import GradientTheme from '@/components/GradientTheme';
+import * as ColorScheme from '@/constants/ColorScheme';
+import * as Mappings from '@/constants/Mappings';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useAuth } from '@/components/accAuth'; // Authentication hook
+import { useAuth } from '@/components/accAuth';
 
 export default function PostCompletedScreen() {
-    const { returnData } = useLocalSearchParams(); // Retrieve data from query params
+    // Retrieve data from post params
+    const { returnData } = useLocalSearchParams();
     const navigation = useNavigation();
     const router = useRouter();
 
@@ -29,10 +29,7 @@ export default function PostCompletedScreen() {
         });
     };
 
-    // Log and parse the return data from query params
-    console.log('returnData:', returnData);
     const parsedReturnData = returnData ? JSON.parse(returnData) : null;
-    console.log('parsedReturnData:', parsedReturnData);
 
     // Function to handle sharing the post details
     const onShare = async () => {
@@ -43,14 +40,16 @@ export default function PostCompletedScreen() {
         try {
             const { suburb_name, weather, comment, created_at } = parsedReturnData;
 
+            // Share post format
             const result = await Share.share({
                 message: `Beware of the weather in ${suburb_name}: It's ${Mappings.WeatherNamesMapping[weather]}!\n\n${comment}\n\nPosted on: ${new Date(created_at).toLocaleString()}`,
             });
 
+            // Console logging if post shared successfully
             if (result.action === Share.sharedAction) {
                 console.log(
-                    result.activityType 
-                        ? `Shared with activity type: ${result.activityType}` 
+                    result.activityType
+                        ? `Shared with activity type: ${result.activityType}`
                         : 'Post shared successfully!'
                 );
             } else if (result.action === Share.dismissedAction) {
@@ -71,10 +70,10 @@ export default function PostCompletedScreen() {
 
                 {/* Card displaying post completion details */}
                 <View style={styles.card}>
-                    <Image 
-                        source={require('@/assets/icons/16.png')} 
-                        style={styles.icon} 
-                        resizeMode="contain" 
+                    <Image
+                        source={require('@/assets/icons/16.png')}
+                        style={styles.icon}
+                        resizeMode="contain"
                     />
                     <Text style={styles.header}>Successful!</Text>
                     <Text style={styles.label}>Thank you for your sharing!</Text>
@@ -102,7 +101,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     card: {
-        backgroundColor: '#FFFFFFA3', // Semi-transparent white
+        backgroundColor: '#FFFFFFA3',
         paddingHorizontal: '10%',
         paddingTop: '10%',
         borderRadius: 10,

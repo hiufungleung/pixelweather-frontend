@@ -69,6 +69,7 @@
       "eas": {
         "projectId": "be9a59be-dbe2-4842-a970-d731b93f51c1"
       }
-    }
+    },
+    "privacy": "public"
   }
 }
