@@ -31,7 +31,7 @@ The app also integrates location-based services to fetch the user's current loca
 - Expo CLI
 - Expo Go app (for mobile testing)
 ## Installation
-You can either run our app with **Expo go** or download our **apk** and run on your android phone.
+You can either run our app with **Expo go** or download our **apk** (from our [website](http://149.28.188.65/) or below apk link)  and run on your android phone.
 
 ### Apk installation:
 
