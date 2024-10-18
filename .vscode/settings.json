@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "149.28.188.65",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "pixelweather",
+            "database": "pixel_weather",
+            "username": "yakiniku"
+        }
+    ]
+}
