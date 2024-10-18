@@ -88,6 +88,7 @@ export default function PostCompletedScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <a href="https://www.flaticon.com/packs/weather-163" title="weather icons">weather icons created by iconixar - Flaticon</a>
             </View>
         </GradientTheme>
     );
