@@ -63,7 +63,9 @@ export default function PostedScreen() {
                 handleDeletePost={handleDeletePost}
                 router={router}
             />
-            <a href="https://www.flaticon.com/packs/weather-163" title="weather icons">weather icons created by iconixar - Flaticon</a>
+            {/*<RN.Text style={{color: 'grey'}} onPress={() => RN.Linking.openURL('https://wallpapers.com/png/open-hand-gesture-emoji-x6a7if3pzucpm0v8.html')}>*/}
+            {/*    Wallpaper by se224340 on Wallpapers.com*/}
+            {/*</RN.Text>*/}
         </GradientTheme>
     );
 }

@@ -14,6 +14,7 @@ import * as ColorScheme from '@/constants/ColorScheme';
 import * as Mappings from '@/constants/Mappings';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/components/accAuth';
+import * as RN from "react-native";
 
 export default function PostCompletedScreen() {
     // Retrieve data from post params
@@ -88,7 +89,9 @@ export default function PostCompletedScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <a href="https://wallpapers.com/png/open-hand-gesture-emoji-x6a7if3pzucpm0v8.html">Wallpaper by se224340</a> on Wallpapers.com
+                {/*<RN.Text style={{color: 'grey'}} onPress={() => RN.Linking.openURL('https://wallpapers.com/png/open-hand-gesture-emoji-x6a7if3pzucpm0v8.html')}>*/}
+                {/*    Wallpaper by se224340 on Wallpapers.com*/}
+                {/*</RN.Text>*/}
             </View>
         </GradientTheme>
     );

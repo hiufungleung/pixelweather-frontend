@@ -6,7 +6,8 @@ import * as ColorScheme from '@/constants/ColorScheme';
 import * as Mappings from '@/constants/Mappings';
 import { useRouter } from 'expo-router';
 import { API_LINK } from '@/constants/API_link';
-import { useAuth } from '@/components/accAuth'; // Import authentication hook
+import { useAuth } from '@/components/accAuth';
+import * as RN from "react-native"; // Import authentication hook
 
 export default function PostConfirm() {
     // Get the post params
@@ -98,7 +99,9 @@ export default function PostConfirm() {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <a href="https://www.flaticon.com/packs/weather-163" title="weather icons">weather icons created by iconixar - Flaticon</a>
+                {/*<RN.Text style={{color: 'grey'}} onPress={() => RN.Linking.openURL('https://www.flaticon.com/packs/weather-163')}>*/}
+                {/*    weather icons created by iconixar - Flaticon*/}
+                {/*</RN.Text>*/}
             </View>
         </GradientTheme>
     );

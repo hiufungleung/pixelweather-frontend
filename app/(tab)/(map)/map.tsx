@@ -540,7 +540,9 @@ export default function HomeScreen() {
                                         ))}
                                     </RN.ScrollView>
                                 </RN.View>
-                                <a href="https://www.flaticon.com/packs/weather-163" title="weather icons">weather icons created by iconixar - Flaticon</a>
+                                {/*<RN.Text style={{color: 'grey'}} onPress={() => RN.Linking.openURL('https://www.flaticon.com/packs/weather-163')}>*/}
+                                {/*    weather icons created by iconixar - Flaticon*/}
+                                {/*</RN.Text>*/}
                                 {/* map view */}
                                 <RN.Animated.View
                                     style={[
