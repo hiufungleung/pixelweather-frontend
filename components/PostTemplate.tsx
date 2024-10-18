@@ -153,7 +153,9 @@ export default function PostTemplate({ item, isSelfPost, onDelete, onReport, isR
                             </TouchableOpacity>
                         ) : (
                             <TouchableOpacity onPress={() => setModalVisible(true)} disabled={isReported}>
-                                <Text style={{ color: isReported ? "gray" : "blue" }}>{isReported ? "Reported" : "Report"}</Text>
+                                <Text
+                                    style={{ color: isReported ? "gray" : "blue" }}>{isReported ? "Reported" : "Report"}
+                                </Text>
                             </TouchableOpacity>
                         )}
                     </View>

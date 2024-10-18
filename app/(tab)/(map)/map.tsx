@@ -17,7 +17,6 @@ import {
 } from '@/constants/mapUtils';
 import { BTN_BACKGROUND } from "@/constants/ColorScheme";
 import { weatherIconById } from "@/constants/weatherCode";
-import RNPickerSelect from "react-native-picker-select";
 import { API_LINK } from "@/constants/API_link";
 import ModalSelector from 'react-native-modal-selector';
 import { fetchSuburbs, loadCachedSuburbs } from '@/constants/suburbService';
@@ -36,88 +35,95 @@ const SCREEN_WIDTH = RN.Dimensions.get('window').width;
 const SEARCH_CONTAINER_WIDTH = SCREEN_WIDTH - 30;
 const BUTTON_TO_TOP_DISTANCE = SCREEN_HEIGHT * 0.08;
 
+// OpenWeather api keys
 const API_KEY = 'acbdc80633478d6533e96ea77d9cd3a8';
-// const API_KEY = '9480d17e216cfcf5b44da6050c7286a4'; // openweather api key
+// const API_KEY = '9480d17e216cfcf5b44da6050c7286a4';
 
-// saved location buttons
-function SavedLocationButton() {
-    return (
-        <RN.TouchableOpacity
-            style={styles.savedLocationBtn}>
-            <RN.Text style={styles.savedLocationBtnText}>Saved Locations</RN.Text>
-        </RN.TouchableOpacity>
-    )
-}
-
-// HomeScreen 組件
+// Main home screen component
 export default function HomeScreen() {
+    // Use state for storing locations and related information
     const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
     const [weather, setWeather] = useState(null);
     const [suburbs, setSuburbs] = useState(null);
     const [hourlyForecast, setHourlyForecast] = useState([]);
 
-    // Search constant
+    // Use states for searching
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [recentSearches, setRecentSearches] = useState([]);
 
-    // Map related
+    // Map related useStates
     const [mapExpanded, setMapExpanded] = useState(false);
     const [markerPressed, setMarkerPressed] = useState(false);
     const [loading, setLoading] = useState(true);
     const [expanded, setExpanded] = useState(false);
     const [savedLocations, setSavedLocations] = useState([]);
-    const [isSaved, setIsSaved] = useState(false); // is this location in saved location
+    const [isSaved, setIsSaved] = useState(false);
     const [region, setRegion] = useState(null);
     const [selectedTime, setSelectedTime] = useState('60');
     const [selectedLabel, setSelectedLabel] = useState('1 HR AGO');
+    const mapRef = useRef(null); // Ref for the MapView
 
-    const [visibleSuburbs, setVisibleSuburbs] = useState([]); // Store filtered suburbs
-    const previousRegion = useRef(null); // Track the previous region
+    const [visibleSuburbs, setVisibleSuburbs] = useState([]);
+    const previousRegion = useRef(null);
 
-    // Post constant
+    // Post modal useStates
     const [posts, setPosts] = useState([]);
     const [filteredPosts, setFilteredPosts] = useState([]);
     const [selectedPost, setSelectedPost] = useState(null);
     const [isLiked, setIsLiked] = useState(null);
     const [likeCount, setLikeCount] = useState(0);
 
-    // Modal control
+    // Modal control useStates
     const [focusSuburb, setFocusSuburb] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [postVisible, setPostVisible] = useState(false);
 
+    // Constants and sizes for map animation
     const animatedHeight = useRef(new RN.Animated.Value(400)).current;
     const animatedWidth = useRef(new RN.Animated.Value(SEARCH_CONTAINER_WIDTH)).current;
     const animatedPadding = useRef(new RN.Animated.Value(15)).current;
     const animatedBorderRadius = useRef(new RN.Animated.Value(15)).current;
     const animatedBtnTop = useRef(new RN.Animated.Value(50)).current;
 
+    // Login status
     const { isLoggedIn, userToken } = useAuth();
 
     useEffect(() => {
+        // Function for retrieving location and weather information when the app loads
         const getLocationAndWeather = async () => {
 
             try {
+                // Set loading screen true
                 setLoading(true);
 
-                fetchSuburbs(setSuburbs);
+                // Fetch suburbs
+                // fetchSuburbs(setSuburbs);
+                loadCachedSuburbs(setSuburbs, fetchSuburbs);
 
+                // Get current location
                 const coords = await getCurrentLocation();
+
+                // If successfully retrieved the coordinates
                 if (coords) {
+
+                    // Save current location
                     setLocation(coords);
 
+                    // Fetch all weather information based on current location
                     const [currentWeather, hourlyForecast] = await Promise.all([
                         fetchWeather(coords.latitude, coords.longitude),
                         fetchHourlyForecast(coords.latitude, coords.longitude),
                     ]);
 
+                    // Save region so it updates on the map
                     setRegion({
                         latitude: coords.latitude, longitude: coords.longitude,
                         latitudeDelta: 0.05, longitudeDelta: 0.05,
                     });
 
+                    // Save weather information
                     setWeather(currentWeather);
                     setHourlyForecast(hourlyForecast);
                 }
@@ -131,10 +137,13 @@ export default function HomeScreen() {
     }, []);
 
     useEffect(() => {
+        // If user is not logged in, do not run this code block
         if (!userToken) return;
 
+        // Load additional data that user saved
         const loadAdditionalData = async () => {
             try {
+                // Fetch saved locations and users' posts & save locally
                 const [savedLocationsData, filteredPostsData] = await Promise.all([
                     fetchSavedLocations(userToken),
                     fetchFilteredPosts(userToken),
@@ -143,7 +152,9 @@ export default function HomeScreen() {
                 setSavedLocations(savedLocationsData);
                 setPosts(filteredPostsData);
 
+                // If weather retrieved successfully from weather API
                 if (weather) {
+                    // Save current location if not already
                     const isCurrentLocationSaved = await isLocationSaved(weather, savedLocationsData);
                     setIsSaved(isCurrentLocationSaved);
                 }
@@ -152,12 +163,15 @@ export default function HomeScreen() {
             }
         };
 
+        // Load search history and additional data
         loadRecentSearches(setRecentSearches);
         loadAdditionalData();
     }, [userToken]);
 
     useEffect(() => {
+        // If weather information retrieved successfully and there are posts to show
         if (weather && posts?.length > 0) {
+            // Set and format the posted timing in comparison to current time
             const now = new Date();
             const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
             const sameLocationPosts = posts.filter(post => {
@@ -171,20 +185,21 @@ export default function HomeScreen() {
         }
     }, [weather, posts]);
 
-    const mapRef = useRef(null); // Ref for the MapView
-
-
+    // Update saved states of the current location
     const updateLocationData = async (lat, lon) => {
         try {
+            // Fetch current weather condition based on new location
             const [currentWeather, hourlyForecast] = await Promise.all([
                 fetchWeather(lat, lon),
                 fetchHourlyForecast(lat, lon),
             ]);
 
+            // Save them in use states
             setWeather(currentWeather);
             setLocation({ latitude: lat, longitude: lon });
             setHourlyForecast(hourlyForecast);
 
+            // Format of new region data
             const newRegion = {
                 latitude: lat,
                 longitude: lon,
@@ -194,16 +209,20 @@ export default function HomeScreen() {
 
             // Update region only via animateToRegion
             if (mapRef.current) {
-                mapRef.current.animateToRegion(newRegion, 1000); // Smooth transition to avoid flickering
+                // Smooth transition to avoid flickering
+                mapRef.current.animateToRegion(newRegion, 1000);
             }
 
-            setRegion(newRegion); // Optional, store the latest region in state
+            // Store the latest region in state
+            setRegion(newRegion);
         } catch (error) {
             console.error('Error fetching weather or location data:', error);
         }
     };
 
+    // Function to search for location from the search bar
     const searchLocation = async (query) => {
+        // If there is no query enter, update according to current location and return
         if (!query || !query.trim()) {
             try {
                 const coords = await getCurrentLocation();
@@ -215,6 +234,7 @@ export default function HomeScreen() {
         }
 
         try {
+            // Split the query for further processing
             const queryParts = query.split(',').map(part => part.trim());
 
             let matchedSuburb;
@@ -231,7 +251,8 @@ export default function HomeScreen() {
                     suburb.postcode.toString() === postcode
                 );
 
-            } else if (queryParts.length === 1) { // else directly search through the typed query
+            } else if (queryParts.length === 1) {
+                // else directly search through the typed query
                 const input = queryParts[0];
 
                 // Check if the input is a number (postcode search)
@@ -244,8 +265,10 @@ export default function HomeScreen() {
                     if (matchedSuburb) {
 
                         const { latitude, longitude } = matchedSuburb;
-                        updateLocationData(latitude, longitude); // Update location based on postcode
-                        await saveRecentSearch(matchedSuburb.postcode, recentSearches, setRecentSearches);
+                        // Update location based on postcode
+                        updateLocationData(latitude, longitude);
+                        await saveRecentSearch(matchedSuburb.postcode, recentSearches,
+                            setRecentSearches);
 
                     } else {
                         console.log('No suburb found for the postcode.');
@@ -253,10 +276,13 @@ export default function HomeScreen() {
                     }
 
                 } else {
+                    // Else search the name directly on OpenWeather API
                     const response = await fetch(
-                        `https://api.openweathermap.org/data/2.5/weather?q=${queryParts[0]},au&units=metric&appid=${API_KEY}`
+                        `https://api.openweathermap.org/data/2.5/weather?q=${queryParts[0]}
+                        ,au&units=metric&appid=${API_KEY}`
                     );
 
+                    // Using weather condition data returned
                     const weather = await response.json();
                     const { lat, lon } = weather.coord;
 
@@ -267,6 +293,7 @@ export default function HomeScreen() {
                 }
             }
 
+            // If a matcheed suburb is found
             if (matchedSuburb) {
                 console.log('Suburb found:', matchedSuburb);
 
@@ -275,62 +302,70 @@ export default function HomeScreen() {
                 console.log('Latitude:', latitude, 'Longitude:', longitude);
 
                 // Update the location based on the latitude and longitude
-                updateLocationData(latitude, longitude); // Call the function to update location
+                updateLocationData(latitude, longitude);
 
+                // Save to recent search
                 await saveRecentSearch(`${matchedSuburb.suburb_name}, ${matchedSuburb.postcode}`, recentSearches, setRecentSearches);
 
             } else {
                 console.log('No suburb suggestion found for the query.');
             }
 
+            // Save current search to saved location (simulation, non-functional)
             const isCurrentLocationSaved = await isLocationSaved(weather, savedLocations);
             setIsSaved(isCurrentLocationSaved);
 
         } catch (error) {
+            // Else raise an error alert
             console.error('Error searching location:', error);
             RN.Alert.alert('Error', 'Suburb or city not found in Australia.');
         }
     };
 
-
+    // Function handling when the map is pressed, expand or minimize
     const handleMapPress = () => {
         if (markerPressed || postVisible) {
             return;
         }
         setMapExpanded(!mapExpanded);
+
+        // Height change
         RN.Animated.timing(animatedHeight, {
-            toValue: mapExpanded ? 400 : SCREEN_HEIGHT,  // Height change
+            toValue: mapExpanded ? 400 : SCREEN_HEIGHT,
             duration: 300,
             useNativeDriver: false,
         }).start();
 
+        // Width change
         RN.Animated.timing(animatedWidth, {
-            toValue: mapExpanded ? SEARCH_CONTAINER_WIDTH : SCREEN_WIDTH,  // Width change
+            toValue: mapExpanded ? SEARCH_CONTAINER_WIDTH : SCREEN_WIDTH,
             duration: 300,
             useNativeDriver: false,
         }).start();
 
+        // Change the `paddingHorizontal` according to map Expanded or not
         RN.Animated.timing(animatedPadding, {
-            toValue: mapExpanded ? 15 : 0,  // Change the `paddingHorizontal` according to map Expanded or not
+            toValue: mapExpanded ? 15 : 0,
             duration: 300,
             useNativeDriver: false,
         }).start();
 
+        // change border radius
         RN.Animated.timing(animatedBorderRadius, {
-            toValue: mapExpanded ? 15 : 0,  // change border radius
+            toValue: mapExpanded ? 15 : 0,
             duration: 300,
             useNativeDriver: false,
         }).start();
 
+        // Animate buttons on map
         RN.Animated.timing(animatedBtnTop, {
             toValue: mapExpanded ? 15 : BUTTON_TO_TOP_DISTANCE,
             duration: 300,
             useNativeDriver: false,
         }).start();
-
     };
 
-    // Calculate the lat-long range of the map view
+    // Function to calculate the lat-long range of the map view based on the region
     const calculateLatLongRange = (region) => {
         const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
 
@@ -360,7 +395,6 @@ export default function HomeScreen() {
             );
         });
 
-        // console.log('Visible Suburbs:', filtered); // Print suburbs for checking
         setVisibleSuburbs(filtered); // Store filtered suburbs in state
         fetchPostCounts(filtered); // Fetch post counts for the visible suburbs
     };
@@ -375,23 +409,23 @@ export default function HomeScreen() {
                     );
                     if (response.ok) {
                         const result = await response.json();
-                        return { ...suburb, postCount: result.data.length }; // Store post count with suburb
+                        // Store post count with suburb
+                        return { ...suburb, postCount: result.data.length };
                     } else {
                         console.error(`Failed to fetch posts for suburb ${suburb.id}`);
                         return { ...suburb, postCount: 0 }; // Default to 0 if API fails
                     }
                 })
             );
-            // console.log('Suburbs with Post Counts:', suburbPostCounts);
             setVisibleSuburbs(suburbPostCounts); // Update visible suburbs with post counts
         } catch (error) {
             console.log('Error fetching post counts:', error);
-            // RN.Alert.alert('Error', 'An error occurred while fetching post counts.');
         }
     };
 
-    const [ignoreMapPress, setIgnoreMapPress] = React.useState(false);
+    // const [ignoreMapPress, setIgnoreMapPress] = React.useState(false);
 
+    // Function to check if the changes on map is completed (after user scrolling)
     const handleRegionChangeComplete = (newRegion) => {
         if (hasRegionChanged(newRegion)) {
             previousRegion.current = newRegion;
@@ -400,6 +434,7 @@ export default function HomeScreen() {
         }
     };
 
+    // Function to minimize the sensitivity for map changes to avoid minor flickers
     const hasRegionChanged = (newRegion) => {
         if (!previousRegion.current) return true; // Allow the first change
 
@@ -416,10 +451,14 @@ export default function HomeScreen() {
         );
     };
 
+    // Loading screen
     if (loading) {
         return (
             <GradientTheme>
-                <RN.ActivityIndicator size="large" color={ColorScheme.BTN_BACKGROUND} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+                <RN.ActivityIndicator
+                    size="large"
+                    color={ColorScheme.BTN_BACKGROUND}
+                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
             </GradientTheme>
         );
     }
@@ -428,7 +467,8 @@ export default function HomeScreen() {
         <GradientTheme>
             <SafeAreaView style={{ flex: 1 }}>
                 <RN.View style={{ flex: 1 }}>
-                    <RN.Animated.View style={{ flex: 1, paddingTop: 10, paddingHorizontal: animatedPadding }}>
+                    <RN.Animated.View
+                        style={{ flex: 1, paddingTop: 10, paddingHorizontal: animatedPadding }}>
                         <RN.View style={styles.searchContainer}>
                             <RN.TextInput
                                 style={styles.searchInput}
@@ -436,7 +476,8 @@ export default function HomeScreen() {
                                 value={searchQuery}
                                 onFocus={() => {
                                     setExpanded(true);
-                                    setModalVisible(true); // expand search modal when clicking TextInput
+                                    // expand search modal when clicking TextInput
+                                    setModalVisible(true);
                                 }}
                                 onChangeText={setSearchQuery}
                             />
@@ -463,7 +504,11 @@ export default function HomeScreen() {
                                             {weather?.name ? `${weather.name}` : 'Unknown Location'}
                                         </RN.Text>
                                         {/* show the bookmark sign if location is saved */}
-                                        <RN.Text>{isSaved && <FontAwesome name="bookmark" size={24} color="#FFFFFF" />}</RN.Text>
+                                        <RN.Text>
+                                            {isSaved &&
+                                                <FontAwesome
+                                                    name="bookmark" size={24} color="#FFFFFF" />}
+                                        </RN.Text>
                                     </RN.View>
                                     <RN.View style={{ flexDirection: 'row', marginBottom: 30, marginTop: 20, width: '75%', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <RN.Image source={WeatherIcons.weatherIconMap[weatherIconById?.[weather?.weather?.[0]?.id] ?? 'Clear Sky']} style={styles.weatherIcon} />
@@ -482,6 +527,7 @@ export default function HomeScreen() {
                                         </RN.View>
                                     </RN.View>
 
+                                    {/* hourly weather forecast */}
                                     <RN.ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hourlyForecastContainer}>
                                         {hourlyForecast.map((forecast, index) => (
 
@@ -522,7 +568,8 @@ export default function HomeScreen() {
                                             if (!markerPressed) {
                                                 handleMapPress();
                                             } else {
-                                                setMarkerPressed(false);  // Reset marker state after marker is clicked
+                                                // Reset marker state after marker is clicked
+                                                setMarkerPressed(false);
                                             }
                                         }}
                                     >
@@ -543,7 +590,7 @@ export default function HomeScreen() {
                                                         } catch (error) {
                                                             console.log('Error fetching posts:', error);
                                                         };
-                                                        setPostModalVisible(setPostVisible);  // Show modal
+                                                        setPostModalVisible(setPostVisible);
                                                     }}
                                                 >
                                                     <RN.View style={styles.circleContainer}>
@@ -567,7 +614,7 @@ export default function HomeScreen() {
                                                 filterSuburbs(region);
                                                 setSelectedLabel(option.label)
                                             }}
-                                            style={styles.selectorOverride} // Apply map button styles with some overrides
+                                            style={styles.selectorOverride}
                                             initValueTextStyle={styles.btnText}
                                             selectTextStyle={styles.btnText}
                                         />
@@ -586,7 +633,7 @@ export default function HomeScreen() {
                     animationType="slide"
                     transparent={false}
                     visible={modalVisible}
-                    onRequestClose={() => {RN.Keyboard.dismiss(); setModalVisible(false); setExpanded(false);}}
+                    onRequestClose={() => { RN.Keyboard.dismiss(); setModalVisible(false); setExpanded(false); }}
                 >
                     <RN.View style={{ flex: 1, paddingTop: '15%' }}>
                         <RN.View style={styles.fullScreenSearchContainer}>
@@ -647,7 +694,7 @@ export default function HomeScreen() {
                             <RN.FlatList
                                 data={filteredSuggestions}
                                 keyExtractor={(item) => item.suburb_id}
-                                renderItem={({ item }) => { // check the item in renderItem
+                                renderItem={({ item }) => {
                                     return (
                                         <RN.TouchableOpacity
                                             style={styles.suggestionItem}
@@ -771,7 +818,7 @@ export default function HomeScreen() {
                                                             <Icon
                                                                 name={isLiked ? "favorite" : "favorite-border"}
                                                                 size={24}
-                                                                color={isLiked ? "red" : "black"} // Red when liked
+                                                                color={isLiked ? "red" : "black"}
                                                             />
                                                             <RN.Text style={styles.likeCount}>{likeCount} </RN.Text>
                                                         </RN.TouchableOpacity>
@@ -923,12 +970,12 @@ const styles = RN.StyleSheet.create({
         color: ColorScheme.BTN_BACKGROUND,
     },
     suggestionList: {
-        position: 'absolute', // 設置為絕對定位
-        top: 120, // 根據輸入框位置調整，確保它顯示在輸入框下方
+        position: 'absolute',
+        top: 120,
         width: '93%',
         maxHeight: '50%',
         backgroundColor: '#ffffff',
-        zIndex: 100, // 確保它顯示在其他元素上方
+        zIndex: 100,
         marginLeft: 15,
         borderWidth: 1,
         borderColor: BTN_BACKGROUND,
@@ -953,7 +1000,6 @@ const styles = RN.StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: SCREEN_WIDTH * 0.94,
-        // borderWidth: 1,
         paddingVertical: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#D0D0D090',
@@ -995,23 +1041,23 @@ const styles = RN.StyleSheet.create({
     //post modal
     modalBackdrop: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 半透明背景
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         justifyContent: 'center',
         alignItems: 'center',
     },
     modalContainer: {
         backgroundColor: 'white',
         width: '85%',
-        height: '60%', // 固定 Modal 的高度
+        height: '60%',
         borderRadius: 20,
         overflow: 'hidden',
     },
     modalContent: {
         padding: 20,
-        height: '80%', // ScrollView 的高度，讓內部 post 可以滾動
+        height: '80%',
     },
     footer: {
-        height: '10%', // 預留按鈕區域的高度
+        height: '10%',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -1087,26 +1133,3 @@ const styles = RN.StyleSheet.create({
     },
 
 });
-
-const pickerSelectStyles = {
-    inputIOS: {
-        backgroundColor: '#FFFFFF',
-        padding: 10,
-        borderRadius: 30,
-        marginHorizontal: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-    },
-    inputAndroid: {
-        backgroundColor: '#FFFFFF',
-        padding: 10,
-        borderRadius: 30,
-        marginHorizontal: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-    },
-};

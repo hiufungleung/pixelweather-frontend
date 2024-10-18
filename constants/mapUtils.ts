@@ -1,4 +1,3 @@
-
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
@@ -8,7 +7,6 @@ import {API_LINK} from "@/constants/API_link";
 import {router} from "expo-router";
 
 const API_KEY = 'acbdc80633478d6533e96ea77d9cd3a8';
-// const API_KEY = '9480d17e216cfcf5b44da6050c7286a4';
 
 // ask for location permission
 export const requestLocationPermission = async () => {
@@ -54,8 +52,8 @@ export const fetchHourlyForecast = async (latitude: number, longitude: number) =
         const forecastData = data.hourly.slice(1, 24).map((hourData, index) => {
             const weatherType = weatherIconById[hourData.weather[0].id] || 'Clear Sky';
             return {
-                time: new Date(hourData.dt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // 轉換成可讀格式
-                temp: hourData.temp.toFixed(0), // 溫度
+                time: new Date(hourData.dt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                temp: hourData.temp.toFixed(0),
                 icon: WeatherIcons.weatherIconMap[weatherType],
             };
         });
@@ -89,7 +87,7 @@ export const handleSuggestionSelect = (suggestion, setSearchQuery, setShowSugges
 // save recent search
 export const saveRecentSearch = async (query: string, recentSearches: string[], setRecentSearches: Function) => {
     try {
-        const updatedSearches = [query, ...recentSearches].slice(0, 5);  // 最多保存 5 個最近搜尋
+        const updatedSearches = [query, ...recentSearches].slice(0, 5);
         setRecentSearches(updatedSearches);
         await AsyncStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
     } catch (error) {
@@ -172,7 +170,7 @@ export const fetchSavedLocations = async (userToken) => {
         if (response.ok) {
             const result = await response.json();
             console.log('success: ', result);
-            return result.data;  // 將取得的地點設定到狀態中
+            return result.data;
         } else {
             console.log('failed: ', response);
             Alert.alert('Error', 'Failed to fetch saved locations.');
@@ -235,14 +233,12 @@ export const handleLikedPost = async (userToken, postId, setIsLiked) => {
         if (response.status === 200) {
             setIsLiked(data.liked);
         } else {
-            // 處理錯誤狀態碼
             console.log("Error getting liked status:", data.error);
         }
     } catch (error) {
         console.error("Failed to handle liked status:", error);
     }
 }
-
 
 export const handleViewPost = async (userToken, post_id) => {
     try{
@@ -266,7 +262,6 @@ export const handleViewPost = async (userToken, post_id) => {
     }
 }
 
-
 export const handleReportPost = async (userToken, postId,report_comment) => {
     try{
         const response = await fetch(`${API_LINK}/posts/report`, {
@@ -283,7 +278,6 @@ export const handleReportPost = async (userToken, postId,report_comment) => {
         const data = await response.json();
         if (response.status === 200) {
         } else {
-            // 處理錯誤狀態碼
             console.log("Error toggling like:", data.error);
         }
 
@@ -291,7 +285,6 @@ export const handleReportPost = async (userToken, postId,report_comment) => {
         console.error("Failed to report post:", error);
     }
 }
-
 
 export const formatTimeDifference = (postedTime) => {
     const now = new Date();

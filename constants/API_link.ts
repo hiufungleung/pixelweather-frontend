@@ -1,1 +1,1 @@
-export const API_LINK = 'http://149.28.188.65'
+export const API_LINK = 'http://149.28.188.65:5050'

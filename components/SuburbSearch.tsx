@@ -41,7 +41,8 @@ export default function SuburbSearch({ onSuburbSelect, token }) {
     // Handle suburb selection
     const handleSelectSuburb = (suburb) => {
         setSelectedSuburb(suburb);
-        setQuery(suburb.suburb_name + ', ' + suburb.postcode); // Set the selected suburb in the input field
+        // Set the selected suburb in the input field
+        setQuery(suburb.suburb_name + ', ' + suburb.postcode);
         setFilteredSuburbs([]); // Hide the dropdown
         onSuburbSelect(suburb.id); // Call the parent function with selected suburb_id
     };

@@ -45,7 +45,10 @@ export default function ChangeNameScreen() {
                         placeholder="Enter your name."
                     />
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity onPress={() => navigation.navigate('(accountSetting)/accountSetting')} style={styles.cancelButton}>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('(accountSetting)/accountSetting')}
+                            style={styles.cancelButton}
+                        >
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={handleChangeUsername} style={styles.saveButton}>

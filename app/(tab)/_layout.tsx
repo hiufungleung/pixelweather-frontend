@@ -14,8 +14,10 @@ import FlashMessage, { showMessage } from 'react-native-flash-message';
 
 export default function TabLayout() {
 
-    const { userToken } = useAuth(); // Get the userToken from the authentication context
-    const [firebaseMessaging, setFirebaseMessaging] = useState(null); // Track Firebase messaging module
+    // Get the userToken from the authentication context
+    const { userToken } = useAuth();
+    // Track Firebase messaging module
+    const [firebaseMessaging, setFirebaseMessaging] = useState(null);
 
     useEffect(() => {
         const setupFirebaseMessaging = async () => {
@@ -47,9 +49,9 @@ export default function TabLayout() {
         }
     }, []);
 
+    // Check permission status for Android 13+ devices since they handle notification differently
     useEffect(() => {
         const checkPermissions = async () => {
-            // Only for Android 13+ devices
             if (Platform.OS === 'android' && Platform.Version >= 33) {
                 const { status } = await Notifications.requestPermissionsAsync();
 
@@ -125,8 +127,8 @@ export default function TabLayout() {
                         backgroundColor: ColorScheme.SECOND_BTN,
                         bottom: 0,
                         elevation: 0,
-                        height: Platform.OS === 'android' ? 80 : 80,  // 設定不同平台的 tabBar 高度
-                        paddingBottom: 0,  // 增加 Android 中的內邊距
+                        height: Platform.OS === 'android' ? 80 : 80,
+                        paddingBottom: 0,
                         borderTopWidth: 0,
                     },
                     tabBarIconStyle: {
@@ -192,8 +194,8 @@ export default function TabLayout() {
                     name="(index)"
                     options={{
                         title: 'Welcome Page',
-                        tabBarStyle: { display: 'none' }, // 隱藏 TabBar
-                        tabBarButton: () => null,         // 不顯示按鈕
+                        tabBarStyle: { display: 'none' },
+                        tabBarButton: () => null,
                         headerShown: false,
                     }}
                 />
@@ -207,8 +209,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        // height: Platform.OS === 'android' ? 60 : 50, // 調整 Tab 項目的高度，使其在 Android 中完整顯示
-        // paddingBottom: Platform.OS === 'android' ? 5 : 0, // 在 Android 中加入額外的下邊距
     },
     tabLabel: {
         fontSize: 12,
