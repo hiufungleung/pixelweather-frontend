@@ -31,45 +31,71 @@ The app also integrates location-based services to fetch the user's current loca
 - Expo CLI
 - Expo Go app (for mobile testing)
 ## Installation
+You can either run our app with **Expo go** or download our **apk** and run on your android phone.
+
+### Apk installation:
+
+  **Download apk file to your phone (Android only)**
+      <table>
+        <tr>
+          <td align="center">
+            <a href="https://expo.dev/accounts/jaccup/projects/pixel-weather/builds/a3395872-a2e0-40ad-a2c8-998994d6a62b">
+              <img src="assets/images/pixel_weather_qr-code.png" alt="Pixel Weather QR Code" width="200" height="200">
+              <p>apk</p>
+            </a>
+          </td>
+        </tr>
+      </table>
+
+
+### Run with Expo go:
 
 ### From your phone
-1. **Download Expo Go from app store/ play store**
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://itunes.apple.com/app/apple-store/id982107779">
-        <img src="assets/images/app_store_qr-code.png" alt="App Store QR Code" width="200" height="200">
-        <p>App Store</p>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://play.google.com/store/apps/details?id=host.exp.exponent&pcampaignid=web_share">
-        <img src="assets/images/play_store_qr-code.png" alt="Play Store QR Code" width="200" height="200">
-        <p>Play Store</p>
-      </a>
-    </td>
-  </tr>
-</table>
+  **Download Expo Go from app store/ play store**
+      <table>
+        <tr>
+          <td align="center">
+            <a href="https://itunes.apple.com/app/apple-store/id982107779">
+              <img src="assets/images/app_store_qr-code.png" alt="App Store QR Code" width="200" height="200">
+              <p>App Store</p>
+            </a>
+          </td>
+          <td align="center">
+            <a href="https://play.google.com/store/apps/details?id=host.exp.exponent&pcampaignid=web_share">
+              <img src="assets/images/play_store_qr-code.png" alt="Play Store QR Code" width="200" height="200">
+              <p>Play Store</p>
+            </a>
+          </td>
+        </tr>
+      </table>
+      
 
-### From your computer
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Leung-Hiufung/pixelweather.git
-   cd pixel-weather
+  ### From your computer
+  1. **Clone the repository:**
+  
+  ```bash
+  git clone https://github.com/Leung-Hiufung/pixelweather.git
+  cd pixelweather
+  ```
 
-2. **Install dependencies:**
-   ```bash
-   npm install
 
-3. **Install Expo CLI**
-   ```bash
-   npm install -g expo-cli
+  2. **Install dependencies:**
+  ```bash
+  npm install
+  ```
+
+  3. **Install Expo CLI**
+  ```bash
+  npm install -g expo-cli
+  ```
 
 ## Running the App
 1. Start the Expo development server:
-   ```bash
-   npx expo start
-2. Open the Expo Go app on your mobile device and scan the QR code to load the app.
+```bash
+npx expo start
+```
+
+2.  Scan the QR code to load the app and choose open with the Expo Go app on your mobile device.
 
 ## Page Overview
 - **HomePage**: The main screen of the app, where users can search for location or use their current location to display weather data and community posts. It includes a **map view**, **current weather info**, **hourly forecast** and **user posts**
@@ -78,4 +104,4 @@ The app also integrates location-based services to fetch the user's current loca
 - **Setting**: User can change their account details here and add saved location, they can also find help and our terms of use and privacy policy here.
 ## API Usage
 
-This app uses the [OpenWeatherMap API](https://openweathermap.org/api) for retrieving weather information. Make sure to replace the API_KEY in the code with your valid OpenWeatherMap API key.
+This app uses the [OpenWeatherMap API](https://openweathermap.org/api) and Google Map API for retrieving weather information and Google Maps. Make sure to replace the API_KEY in the code with your valid OpenWeatherMap API key and Google Map API key in **app.json** if you using Android phone.
