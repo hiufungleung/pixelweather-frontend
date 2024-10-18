@@ -262,29 +262,6 @@ export const handleViewPost = async (userToken, post_id) => {
     }
 }
 
-export const handleReportPost = async (userToken, postId,report_comment) => {
-    try{
-        const response = await fetch(`${API_LINK}/posts/report`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${userToken}`,
-            },
-            body: JSON.stringify({
-                post_id: postId,
-                report_comment: report_comment,
-            }),
-        })
-        const data = await response.json();
-        if (response.status === 200) {
-        } else {
-            console.log("Error toggling like:", data.error);
-        }
-
-    } catch (error) {
-        console.error("Failed to report post:", error);
-    }
-}
 
 export const formatTimeDifference = (postedTime) => {
     const now = new Date();

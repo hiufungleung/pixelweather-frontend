@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             const { data } = await Notifications.getDevicePushTokenAsync();
-            console.log('FCM Token:', data);
+            // console.log('FCM Token:', data);
 
             await SecureStore.setItemAsync('fcmToken', data);
 
@@ -187,14 +187,6 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         loadToken();
     }, []);
-
-    // Log state updates
-    useEffect(() => {
-        console.log('State updated:');
-        console.log('isLoggedIn: ', isLoggedIn);
-        console.log('userToken: ', userToken);
-        console.log('userData: ', userData);
-    }, [isLoggedIn, userToken, userData]);
 
     useEffect(() => {
         const setupNotifications = async () => {

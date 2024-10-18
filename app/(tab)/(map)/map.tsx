@@ -279,8 +279,8 @@ export default function HomeScreen() {
                 } else {
                     // Else search the name directly on OpenWeather API
                     const response = await fetch(
-                        `https://api.openweathermap.org/data/2.5/weather?q=${queryParts[0]}
-                        ,au&units=metric&appid=${API_KEY}`
+                        `https://api.openweathermap.org/data/2.5/weather?q=${queryParts[0].toLowerCase()}
+                        ,AU&units=metric&appid=${API_KEY}`
                     );
 
                     // Using weather condition data returned
