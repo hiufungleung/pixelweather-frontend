@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, FlatList, Alert} from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
-import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import {useAuth} from "@/components/accAuth";
 import {API_LINK} from "@/constants/API_link";
@@ -9,7 +8,6 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 export default function SavedLocationScreen() {
     const router = useRouter();
-    const navigation = useNavigation();
     const { isLoggedIn, userToken } = useAuth();
     const [savedLocations, setSavedLocations] = useState([]);
 
@@ -57,7 +55,7 @@ export default function SavedLocationScreen() {
         <GradientTheme>
             <View style={styles.container}>
                 {/* 返回按鈕 */}
-                <TouchableOpacity onPress={() => navigation.goBack()}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.backButton}>←</Text>
                 </TouchableOpacity>
 

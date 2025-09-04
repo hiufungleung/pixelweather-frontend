@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 // Data for Help Center
@@ -41,7 +41,7 @@ const combinedData = [
 ];
 
 export default function PrivacyScreen() {
-    const navigation = useNavigation();
+    const router = useRouter();
     const [expandedItems, setExpandedItems] = useState({});
 
     const toggleItem = (id) => {
@@ -66,7 +66,7 @@ export default function PrivacyScreen() {
         <GradientTheme>
             <View style={styles.container}>
                 <View>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity onPress={() => router.back()}>
                         <Text style={styles.backButton}><FontAwesome6 size={28} name="arrow-left"/></Text>
                     </TouchableOpacity>
                     <Text style={styles.header}>{"\n"}Pixel Weather {"\n"}Help Center</Text>

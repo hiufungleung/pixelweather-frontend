@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import {showAlert} from "@/components/alertMsg";
 import { useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
 import GradientTheme from "@/components/GradientTheme";
 import * as ColorScheme from "@/constants/ColorScheme";
 import { useAuth } from '@/components/accAuth';

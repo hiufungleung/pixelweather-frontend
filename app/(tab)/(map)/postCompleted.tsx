@@ -8,7 +8,6 @@ import {
     Image,
     Share
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import GradientTheme from '@/components/GradientTheme';
 import * as ColorScheme from '@/constants/ColorScheme';
 import * as Mappings from '@/constants/Mappings';
@@ -19,15 +18,11 @@ import * as RN from "react-native";
 export default function PostCompletedScreen() {
     // Retrieve data from post params
     const { returnData } = useLocalSearchParams();
-    const navigation = useNavigation();
     const router = useRouter();
 
     // Handle navigation to the "logs" screen with direct refresh
     const handleViewPost = () => {
-        navigation.navigate('logs', {
-            screen: 'Posted',
-            params: { directRefresh: true },
-        });
+        router.push('/(tab)/(logs)/logs');
     };
 
     const parsedReturnData = returnData ? JSON.parse(returnData) : null;

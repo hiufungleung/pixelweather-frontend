@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { TouchableOpacity, View, Text, StyleSheet, TextInput, Image, Alert } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import { useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
 import { API_LINK } from '@/constants/API_link';
 import { useAuth } from '@/components/accAuth';
 
@@ -11,7 +10,6 @@ export default function deleteAccountScreen() {
     const { userToken, logout } = useAuth();
     const [password, setPassword] = useState();
     const router = useRouter();
-    const navigation = useNavigation();
 
     // Function to delete the account
     const handleDeleteAccount = async () => {
@@ -37,7 +35,6 @@ export default function deleteAccountScreen() {
                         if (response.status === 200) {
                             Alert.alert('Success', 'Your account has been deleted successfully.');
                             await logout();  // Log the user out
-                            navigation.replace('setting');
                             router.push('/login'); // Redirect to the login screen
                         } else {
                             Alert.alert('Error', result.error || 'Failed to delete the account. Please try again.');
@@ -54,7 +51,7 @@ export default function deleteAccountScreen() {
     return (
         <GradientTheme>
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.backButton}>←</Text>
                 </TouchableOpacity>
                 <View style={styles.card}>

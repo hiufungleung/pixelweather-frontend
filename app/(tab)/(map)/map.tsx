@@ -36,9 +36,16 @@ const SCREEN_WIDTH = RN.Dimensions.get('window').width;
 const SEARCH_CONTAINER_WIDTH = SCREEN_WIDTH - 30;
 const BUTTON_TO_TOP_DISTANCE = SCREEN_HEIGHT * 0.08;
 
-// OpenWeather api keys
-const API_KEY = 'acbdc80633478d6533e96ea77d9cd3a8';
-// const API_KEY = '9480d17e216cfcf5b44da6050c7286a4';
+// OpenWeather API key from environment
+const getOpenWeatherApiKey = (): string => {
+  const apiKey = process.env.EXPO_PUBLIC_OPENWEATHER_API_KEY;
+  if (!apiKey) {
+    throw new Error('OpenWeather API key not configured. Please set EXPO_PUBLIC_OPENWEATHER_API_KEY in your environment.');
+  }
+  return apiKey;
+};
+
+const API_KEY = getOpenWeatherApiKey();
 
 // Main home screen component
 export default function HomeScreen() {
@@ -186,6 +193,15 @@ export default function HomeScreen() {
         }
     }, [weather, posts]);
 
+    // Cleanup timer on unmount
+    useEffect(() => {
+        return () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, []);
+
     // Update saved states of the current location
     const updateLocationData = async (lat, lon) => {
         try {
@@ -285,6 +301,12 @@ export default function HomeScreen() {
 
                     // Using weather condition data returned
                     const weather = await response.json();
+                    
+                    // Check if the API returned valid coordinates
+                    if (!weather || !weather.coord || !weather.coord.lat || !weather.coord.lon) {
+                        throw new Error('Location not found or invalid API response');
+                    }
+                    
                     const { lat, lon } = weather.coord;
 
                     // Update the location and region
@@ -400,38 +422,79 @@ export default function HomeScreen() {
         fetchPostCounts(filtered); // Fetch post counts for the visible suburbs
     };
 
-    // Fetch the number of posts for each visible suburb
+    // Fetch the number of posts for each visible suburb using batch request
     const fetchPostCounts = async (filteredSuburbs) => {
         try {
-            const suburbPostCounts = await Promise.all(
-                filteredSuburbs.map(async (suburb) => {
-                    const response = await fetch(
-                        `${API_LINK}/get_posts?suburb_id=${suburb.id}&time_interval=${selectedTime}`
-                    );
-                    if (response.ok) {
-                        const result = await response.json();
-                        // Store post count with suburb
-                        return { ...suburb, postCount: result.data.length };
-                    } else {
-                        console.error(`Failed to fetch posts for suburb ${suburb.id}`);
-                        return { ...suburb, postCount: 0 }; // Default to 0 if API fails
-                    }
-                })
+            if (filteredSuburbs.length === 0) {
+                setVisibleSuburbs([]);
+                return;
+            }
+
+            // Create comma-separated string of suburb IDs
+            const suburbIds = filteredSuburbs.map(suburb => suburb.id).join(',');
+            
+            // Make single batch request for all suburbs
+            const response = await fetch(
+                `${API_LINK}/get_posts?suburb_id=${suburbIds}&time_interval=${selectedTime}`
             );
-            setVisibleSuburbs(suburbPostCounts); // Update visible suburbs with post counts
+            
+            if (response.ok) {
+                const result = await response.json();
+                const posts = result.data || [];
+                
+                // Count posts per suburb
+                const postCountsBySuburb = {};
+                posts.forEach(post => {
+                    postCountsBySuburb[post.suburb_id] = (postCountsBySuburb[post.suburb_id] || 0) + 1;
+                });
+                
+                // Update suburbs with post counts
+                const suburbPostCounts = filteredSuburbs.map(suburb => ({
+                    ...suburb,
+                    postCount: postCountsBySuburb[suburb.id] || 0
+                }));
+                
+                setVisibleSuburbs(suburbPostCounts);
+            } else {
+                console.error('Failed to fetch posts for suburbs');
+                // Fallback: set all counts to 0
+                const suburbPostCounts = filteredSuburbs.map(suburb => ({
+                    ...suburb,
+                    postCount: 0
+                }));
+                setVisibleSuburbs(suburbPostCounts);
+            }
         } catch (error) {
             console.log('Error fetching post counts:', error);
+            // Fallback: set all counts to 0
+            const suburbPostCounts = filteredSuburbs.map(suburb => ({
+                ...suburb,
+                postCount: 0
+            }));
+            setVisibleSuburbs(suburbPostCounts);
         }
     };
 
     // const [ignoreMapPress, setIgnoreMapPress] = React.useState(false);
+
+    // Debounce timer ref
+    const debounceTimerRef = useRef(null);
 
     // Function to check if the changes on map is completed (after user scrolling)
     const handleRegionChangeComplete = (newRegion) => {
         if (hasRegionChanged(newRegion)) {
             previousRegion.current = newRegion;
             setRegion(newRegion); // Store the new region
-            filterSuburbs(newRegion); // Filter suburbs based on the new region
+            
+            // Clear existing timer
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+            
+            // Debounce the suburb filtering and API calls
+            debounceTimerRef.current = setTimeout(() => {
+                filterSuburbs(newRegion); // Filter suburbs based on the new region
+            }, 500); // Wait 500ms after user stops moving the map
         }
     };
 
@@ -532,7 +595,7 @@ export default function HomeScreen() {
                                     <RN.ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hourlyForecastContainer}>
                                         {hourlyForecast.map((forecast, index) => (
 
-                                            <RN.View key={index} style={styles.hourlyForecast}>
+                                            <RN.View key={`${forecast.time}-${index}`} style={styles.hourlyForecast}>
                                                 <RN.Text style={styles.hourText}>{forecast.time}</RN.Text>
                                                 <RN.Image source={forecast.icon} style={styles.hourIcon} />
                                                 <RN.Text style={styles.hourText}>{forecast.temp}{'°C'}</RN.Text>
@@ -676,7 +739,7 @@ export default function HomeScreen() {
                                 <RN.ScrollView horizontal>
                                     {savedLocations.map((location, index) => (
                                         <RN.TouchableOpacity
-                                            key={index}
+                                            key={location.id || index}
                                             style={styles.savedLocationBtn}
                                             onPress={() => {
                                                 searchLocation(location.suburb_name);
@@ -696,7 +759,7 @@ export default function HomeScreen() {
                         {showSuggestions && filteredSuggestions.length > 0 && (
                             <RN.FlatList
                                 data={filteredSuggestions}
-                                keyExtractor={(item) => item.suburb_id}
+                                keyExtractor={(item) => item.suburb_id?.toString() || item.id?.toString() || Math.random().toString()}
                                 renderItem={({ item }) => {
                                     return (
                                         <RN.TouchableOpacity
@@ -717,7 +780,7 @@ export default function HomeScreen() {
                         <RN.ScrollView style={styles.recentSearchContainer}>
                             {recentSearches.length > 0 ? (
                                 recentSearches.map((item, index) => (
-                                    <RN.View key={index} style={styles.recentSearchItem}>
+                                    <RN.View key={`recent-${index}-${item}`} style={styles.recentSearchItem}>
                                         <RN.View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                             <FontAwesome6 name="clock-rotate-left" size={20} color="gray" style={{ marginRight: '10%' }} />
                                             <RN.TouchableOpacity onPress={() => setSearchQuery(item)}>
@@ -755,7 +818,7 @@ export default function HomeScreen() {
                                             <RN.Text style={[styles.locationText, { marginBottom: 10, marginLeft: 5, color: '#000000' }]}>{focusSuburb?.suburb_name ? `${focusSuburb.suburb_name}` : 'Unknown Location'}</RN.Text>
                                             {filteredPosts.map((post, index) => (
                                                 <RN.TouchableOpacity
-                                                    key={index}
+                                                    key={post.post_id || index}
                                                     style={styles.postContainer}
                                                     onPress={() => {
                                                         setSelectedPost(post);

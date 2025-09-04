@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, RefreshControl } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
-import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/components/accAuth';
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -9,7 +8,6 @@ import * as ColorScheme from '@/constants/ColorScheme';
 
 export default function AccountSettingScreen() {
     const router = useRouter();
-    const navigation = useNavigation();
     const { userData, isLoggedIn, logout, userToken } = useAuth();
     const [refreshing, setRefreshing] = useState(false); // Track refreshing state
 
@@ -17,10 +15,10 @@ export default function AccountSettingScreen() {
         setRefreshing(true);
         // Simulate a network request and refresh user data
         setTimeout(() => {
-            navigation.replace('(accountSetting)/accountSetting'); // Replace the current route
+            router.replace('/(tab)/(setting)/(accountSetting)/accountSetting'); // Replace the current route
             setRefreshing(false);
         }, 500); // Optional delay to show refresh animation
-    }, [navigation]);
+    }, [router]);
 
     return (
         <GradientTheme>
@@ -30,7 +28,7 @@ export default function AccountSettingScreen() {
                      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-                <TouchableOpacity onPress={() => navigation.navigate('setting')}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.backButton}>
                         <FontAwesome6 size={28} name="arrow-left" />
                     </Text>

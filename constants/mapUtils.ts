@@ -6,7 +6,15 @@ import * as WeatherIcons from "@/constants/Mappings";
 import {API_LINK} from "@/constants/API_link";
 import {router} from "expo-router";
 
-const API_KEY = 'acbdc80633478d6533e96ea77d9cd3a8';
+const getOpenWeatherApiKey = (): string => {
+  const apiKey = process.env.EXPO_PUBLIC_OPENWEATHER_API_KEY;
+  if (!apiKey) {
+    throw new Error('OpenWeather API key not configured. Please set EXPO_PUBLIC_OPENWEATHER_API_KEY in your environment.');
+  }
+  return apiKey;
+};
+
+const API_KEY = getOpenWeatherApiKey();
 
 // ask for location permission
 export const requestLocationPermission = async () => {
@@ -208,8 +216,10 @@ export const handleToggleLike = async (userToken, postid, isLiked, prevCount, se
 
         const data = await response.json();
         if (response.status === 200) {
-            setLikeCount((prevCount) => (!isLiked) ? prevCount + 1 : prevCount - 1);
-            setIsLiked(data.liked);
+            // Use actual server data instead of incremental logic
+            const responseData = data.data;
+            setLikeCount(responseData.likes);
+            setIsLiked(responseData.is_liked);
         } else {
             console.log("Error toggling like:", data.error);
         }
@@ -221,7 +231,7 @@ export const handleToggleLike = async (userToken, postid, isLiked, prevCount, se
 // show the correct like number and liked post or not in post
 export const handleLikedPost = async (userToken, postId, setIsLiked) => {
     try {
-        const response = await fetch(`${API_LINK}/posts/like/${postId}`, {
+        const response = await fetch(`${API_LINK}/posts/like`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -231,7 +241,9 @@ export const handleLikedPost = async (userToken, postId, setIsLiked) => {
 
         const data = await response.json();
         if (response.status === 200) {
-            setIsLiked(data.liked);
+            // Check if the postId is in the user's liked posts
+            const isLiked = data.data && data.data.some(like => like.post_id === postId);
+            setIsLiked(isLiked);
         } else {
             console.log("Error getting liked status:", data.error);
         }

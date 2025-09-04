@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { TouchableOpacity, View, Text, StyleSheet, TextInput, Alert } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
 import { useAuth } from '@/components/accAuth';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { handleUpdateRequest } from "@/components/handleUpdate";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
@@ -13,7 +13,7 @@ export default function ChangePasswordScreen() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const navigation = useNavigation();
+    const router = useRouter();
 
     // Password validation function
     const validatePassword = (password) => {
@@ -51,7 +51,7 @@ export default function ChangePasswordScreen() {
                 setSuccessMessage('Password updated successfully!');
                 setErrorMessage('');
                 Alert.alert('Success', 'Password updated successfully!', [
-                    { text: 'OK', onPress: () => navigation.navigate('(accountSetting)/accountSetting') }
+                    { text: 'OK', onPress: () => router.back() }
                 ]);
             }
         } catch (error) {
@@ -64,7 +64,7 @@ export default function ChangePasswordScreen() {
     return (
         <GradientTheme>
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => navigation.navigate('(accountSetting)/accountSetting')}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.backButton}><FontAwesome6 size={28} name="arrow-left" /></Text>
                 </TouchableOpacity>
                 <View style={styles.card}>

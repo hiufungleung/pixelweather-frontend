@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {TouchableOpacity, View, Text, StyleSheet, TextInput, Alert} from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/components/accAuth';
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import {handleUpdateRequest} from "@/components/handleUpdate";
@@ -10,7 +10,7 @@ import {email} from "@sideway/address";
 export default function ChangeNameScreen() {
     const { userData, setUserData, userToken } = useAuth();
     const [username, setUserName] = useState(userData?.username || '');
-    const navigation = useNavigation();
+    const router = useRouter();
 
     const handleChangeUsername = async() => {
         if (!username) {
@@ -25,14 +25,14 @@ export default function ChangeNameScreen() {
             // Update context with new username
             setUserData((prevData) => ({ ...prevData, username: username }));
             // Redirect to Account Setting and refresh
-            navigation.replace('(accountSetting)/accountSetting');
+            router.replace('/(tab)/(setting)/(accountSetting)/accountSetting');
         }
     };
 
     return (
         <GradientTheme>
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => navigation.navigate('(accountSetting)/accountSetting')}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.backButton}><FontAwesome6 size={28} name="arrow-left"/></Text>
                 </TouchableOpacity>
                 <View style={styles.card}>
@@ -46,7 +46,7 @@ export default function ChangeNameScreen() {
                     />
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
-                            onPress={() => navigation.navigate('(accountSetting)/accountSetting')}
+                            onPress={() => router.back()}
                             style={styles.cancelButton}
                         >
                             <Text style={styles.cancelText}>Cancel</Text>

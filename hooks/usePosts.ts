@@ -124,23 +124,33 @@ export const usePosts = (postType = '', includeSelfPosts = false) => {
 
             if (response.ok) {
                 const jsonResponse = await response.json();
-                const updatedLikedPosts = jsonResponse.liked
-                    ? [...likedPosts, { post_id: postId }]
+                const responseData = jsonResponse.data;
+                
+                // Update liked posts based on server response
+                const updatedLikedPosts = responseData.is_liked
+                    ? [...likedPosts.filter(post => post.post_id !== postId), { post_id: postId }]
                     : likedPosts.filter(post => post.post_id !== postId);
 
                 setLikedPosts(updatedLikedPosts);
 
-                // Update the likes count in the data array
+                // Update the likes count with the actual count from server
                 setData(prevPosts =>
                     prevPosts.map(post =>
                         post.post_id === postId
-                            ? { ...post, likes: jsonResponse.liked ? post.likes + 1 : post.likes - 1 }
+                            ? { ...post, likes: responseData.likes }
                             : post
                     )
                 );
             } else {
-                const errorResponse = await response.json();
-                Alert.alert('Error', errorResponse.error || 'Failed to toggle like.');
+                console.error('Like request failed:', response.status, response.statusText);
+                // Try to parse error response, but handle non-JSON responses
+                try {
+                    const errorResponse = await response.json();
+                    Alert.alert('Error', errorResponse.error || 'Failed to toggle like.');
+                } catch (parseError) {
+                    console.error('Failed to parse error response:', parseError);
+                    Alert.alert('Error', `Failed to toggle like. Server returned ${response.status}`);
+                }
             }
         } catch (err) {
             Alert.alert('Error', 'Failed to connect to the server.');

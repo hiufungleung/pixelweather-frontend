@@ -22,12 +22,13 @@ export default function ViewedScreen() {
     }, []);
 
     if (loading) {
-        return <GradientTheme>
+        return (
             <ActivityIndicator
                 size="large"
                 color={ColorScheme.BTN_BACKGROUND}
-                style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
-            </GradientTheme>;
+                style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} 
+            />
+        );
     }
 
     if (error) {
@@ -35,23 +36,18 @@ export default function ViewedScreen() {
     }
 
     return (
-        <GradientTheme>
-            <PostList
-                data={data}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                likedPosts={likedPosts}
-                reportedPosts={reportedPosts}
-                selfPosts={selfPosts}  // Pass selfPosts
-                handleToggleLike={handleToggleLike}
-                handleReportPost={handleReportPost}
-                handleDeletePost={handleDeletePost}
-                router={router}
-                section='view'
-            />
-            {/*<RN.Text style={{color: 'grey'}} onPress={() => RN.Linking.openURL('https://wallpapers.com/png/open-hand-gesture-emoji-x6a7if3pzucpm0v8.html')}>*/}
-            {/*    Wallpaper by se224340 on Wallpapers.com*/}
-            {/*</RN.Text>*/}
-        </GradientTheme>
+        <PostList
+            data={data}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            likedPosts={likedPosts}
+            reportedPosts={reportedPosts}
+            selfPosts={selfPosts}  // Pass selfPosts
+            handleToggleLike={handleToggleLike}
+            handleReportPost={handleReportPost}
+            handleDeletePost={handleDeletePost}
+            router={router}
+            section='view'
+        />
     );
 }

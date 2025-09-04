@@ -28,15 +28,13 @@ const PostList = ({ data, refreshing, onRefresh, likedPosts, reportedPosts, self
         const route = section === 'view' ? '/(map)' : '/(map)/post';
 
         return (
-            <GradientTheme>
-                <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-                    <Text>No posts available.</Text>
-                    <View style={{ marginTop: '3%' }}>
-                        <Button title={buttonTitle} onPress={() => router.push(route)} />
-                    </View>
-                </ScrollView>
-            </GradientTheme>
+            <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+                <Text>No posts available.</Text>
+                <View style={{ marginTop: '3%' }}>
+                    <Button title={buttonTitle} onPress={() => router.push(route)} />
+                </View>
+            </ScrollView>
         );
     }
 

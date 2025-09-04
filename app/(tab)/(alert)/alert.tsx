@@ -19,12 +19,9 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/components/accAuth';
 import { API_LINK } from '@/constants/API_link';
 import * as Notifications from 'expo-notifications';
-import { useNavigation } from '@react-navigation/native';
-
 // Main screen
 export default function AlertsScreen() {
     const router = useRouter();
-    const navigation = useNavigation();
     const { userToken, isLoggedIn } = useAuth(); // log in state
 
     const newAlert = router.params?.newAlert; // Safely check for newAlert
@@ -83,8 +80,8 @@ export default function AlertsScreen() {
 
     // Refresh the screen by replacing it with itself
     const onRefresh = useCallback(() => {
-        navigation.replace('alert');
-    }, [navigation]);
+        router.replace('/(tab)/(alert)/alert');
+    }, [router]);
 
     // Open the app settings based on the platform
     const openAppSettings = () => {

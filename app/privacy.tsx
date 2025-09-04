@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 // Data for Terms of Use and Privacy Policy
@@ -39,13 +39,13 @@ const combinedData = [
 ];
 
 export default function PrivacyScreen() {
-    const navigation = useNavigation();
+    const router = useRouter();
 
     return (
         <GradientTheme>
             <View style={styles.container}>
                 <View>
-                    <TouchableOpacity style={{marginBottom: '3%', }} onPress={() => navigation.goBack()}>
+                    <TouchableOpacity style={{marginBottom: '3%', }} onPress={() => router.back()}>
                         <Text style={styles.backButton}><FontAwesome6 size={28} name="arrow-left"/></Text>
                     </TouchableOpacity>
                     <Text style={styles.header}>Pixel Weather {"\n"}Terms of Use and Privacy Policy</Text>

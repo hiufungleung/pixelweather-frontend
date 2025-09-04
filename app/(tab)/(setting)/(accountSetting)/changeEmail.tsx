@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, View, Text, StyleSheet, TextInput, Alert } from 'react-native';
 import GradientTheme from '@/components/GradientTheme';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/components/accAuth';
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { handleUpdateRequest } from "@/components/handleUpdate";
@@ -9,7 +9,7 @@ import { handleUpdateRequest } from "@/components/handleUpdate";
 export default function ChangeEmailScreen() {
     const { userData, userToken, setUserData } = useAuth();
     const [email, setEmail] = useState(userData?.email || '');
-    const navigation = useNavigation();
+    const router = useRouter();
 
     // Update `email` when `userData` changes (in case it changes externally)
     useEffect(() => {
@@ -48,7 +48,7 @@ export default function ChangeEmailScreen() {
 
                 Alert.alert('Success', 'Email updated successfully');
                 // Navigate back with a refresh
-                navigation.replace('(accountSetting)/accountSetting');
+                router.replace('/(tab)/(setting)/(accountSetting)/accountSetting');
             }
         } catch (error) {
             Alert.alert('Error', 'Failed to update email. Please try again.');
@@ -58,7 +58,7 @@ export default function ChangeEmailScreen() {
     return (
         <GradientTheme>
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => navigation.navigate('(accountSetting)/accountSetting')}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.backButton}><FontAwesome6 size={28} name="arrow-left" /></Text>
                 </TouchableOpacity>
                 <View style={styles.card}>
@@ -73,7 +73,7 @@ export default function ChangeEmailScreen() {
                     />
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
-                            onPress={() => navigation.navigate('(accountSetting)/accountSetting')}
+                            onPress={() => router.back()}
                             style={styles.cancelButton}
                         >
                             <Text style={styles.cancelText}>Cancel</Text>
